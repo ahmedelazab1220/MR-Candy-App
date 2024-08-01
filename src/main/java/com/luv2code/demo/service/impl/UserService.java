@@ -2,6 +2,7 @@ package com.luv2code.demo.service.impl;
 
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.luv2code.demo.dto.SystemMapper;
@@ -24,6 +25,10 @@ public class UserService implements IUserService {
 	@Override
 	public User getUserTokenDetails(String email) {
 
+		if(email.isEmpty()) {
+			throw new IllegalArgumentException("Email must not be empty");
+		}
+		
 		Optional<UserTokenResponseDTO> userToken = userRepository.findUserTokenDetailsByEmail(email);
 
 		if (!userToken.isPresent()) {
@@ -36,7 +41,18 @@ public class UserService implements IUserService {
 
 	@Override
 	public void createUser(User user) {
-
+        
+		if (user.getEmail() == null || user.getPassword() == null || user.getImageUrl() == null
+				|| user.getPhoneNumber() == null || user.getRole() == null) {
+			throw new IllegalArgumentException("Required fields are missing!");
+		}
+		
+		Boolean userIsExist = userRepository.existsByEmail(user.getEmail());
+		
+		if(userIsExist) {
+			throw new DataIntegrityViolationException("Email Is Already Exist!");
+		}
+		
 		userRepository.save(user);
 
 	}

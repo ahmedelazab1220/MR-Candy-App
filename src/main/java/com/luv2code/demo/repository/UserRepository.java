@@ -25,5 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<UserTokenResponseDTO> findUserTokenDetailsByEmail(@Param("email") String email);
 
 	Optional<User> findByEmail(@Param("email") String email);
+	
+	Boolean existsByEmail(@Param("email") String email);
 
 }

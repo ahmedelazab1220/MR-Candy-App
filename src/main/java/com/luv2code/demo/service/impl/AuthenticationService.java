@@ -20,7 +20,6 @@ import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.exc.custom.NotFoundTypeException;
 import com.luv2code.demo.helper.IFileHelper;
 import com.luv2code.demo.repository.RoleRepository;
-import com.luv2code.demo.repository.UserRepository;
 import com.luv2code.demo.security.SecurityUser;
 import com.luv2code.demo.service.IAuthenticationService;
 import com.luv2code.demo.service.IJwtService;
@@ -36,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthenticationService implements IAuthenticationService {
 
 	private final IUserService userService;
-	private final UserRepository userRepository;
 	private final RoleRepository roleRepository;
 	private final IFileHelper fileHelper;
 	private final PasswordEncoder passwordEncoder;
@@ -51,8 +49,7 @@ public class AuthenticationService implements IAuthenticationService {
 		authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
 
-		Optional<User> user = Optional.of(mapper.userTokenResponseDTOTOUser(
-				userRepository.findUserTokenDetailsByEmail(loginRequestDTO.getEmail()).get()));
+		Optional<User> user = Optional.ofNullable(userService.getUserTokenDetails(loginRequestDTO.getEmail()));
 
 		if (user.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
