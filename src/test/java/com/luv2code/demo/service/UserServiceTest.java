@@ -36,11 +36,31 @@ public class UserServiceTest {
 
 	@Mock
 	private SystemMapper mapper;
+	
+	private Role role;
+	
+	private User user;
 
+	/**
+	 * Sets up the necessary mocks and initializes the role and user objects before each test case.
+	 *
+	 * @throws Exception if there is an error with the mocks initialization.
+	 */
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+		
+		role = new Role(1L, "USER");
+		
+		user = new User();
+		user.setId(1L);
+		user.setFullName("ahmed");
+		user.setEmail("ahmed@gmail.com");
+		user.setPhoneNumber("01021045629");
+		user.setImageUrl("http://example.com/image.png");
+		user.setRole(role);
 	}
+	
 
 	/**
 	 * Test case to verify that the method `getUserTokenDetails` successfully
@@ -54,18 +74,8 @@ public class UserServiceTest {
 
 		String email = "ahmed@gmail.com";
 
-		Role role = new Role(1L, "USER");
-
 		UserTokenResponseDTO dto = new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629",
 				"http://example.com/image.png", role);
-
-		User user = new User();
-		user.setId(1L);
-		user.setFullName("ahmed");
-		user.setEmail("ahmed@gmail.com");
-		user.setPhoneNumber("01021045629");
-		user.setImageUrl("http://example.com/image.png");
-		user.setRole(role);
 
 		when(userRepository.findUserTokenDetailsByEmail(Mockito.anyString())).thenReturn(Optional.of(dto));
 
@@ -115,8 +125,6 @@ public class UserServiceTest {
 	public void shouldThrowExceptionWhenMappingFailsInGetUserTokenDetails() {
 
 		String email = "ahmed@gmail.com";
-
-		Role role = new Role(1L, "USER");
 
 		UserTokenResponseDTO dto = new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629",
 				"http://example.com/image.png", role);
@@ -196,16 +204,7 @@ public class UserServiceTest {
 	@Test
 	public void shouldCreateUserSuccessfully() {
 
-		Role role = new Role(1L, "USER");
-
-		User user = new User();
-		user.setId(1L);
-		user.setFullName("ahmed");
 		user.setPassword("12345678");
-		user.setEmail("ahmed@gmail.com");
-		user.setPhoneNumber("01021045629");
-		user.setImageUrl("http://example.com/image.png");
-		user.setRole(role);
 
 		userService.createUser(user);
 
@@ -224,17 +223,8 @@ public class UserServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenEmailAlreadyExistsWhenCreateUser() {
 
-		Role role = new Role(1L, "USER");
-
-		User user = new User();
-		user.setId(1L);
-		user.setFullName("ahmed");
 		user.setPassword("12345678");
-		user.setEmail("ahmed@gmail.com");
-		user.setPhoneNumber("01021045629");
-		user.setImageUrl("http://example.com/image.png");
-		user.setRole(role);
-
+		
 		when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
 
 		assertThrows(DataIntegrityViolationException.class, () -> userService.createUser(user));
@@ -254,11 +244,11 @@ public class UserServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenCreatingUserWithNullFields() {
 
-		User user = new User();
+		User invalidUser = new User();
 
 		assertThrows(IllegalArgumentException.class, () -> {
-			if (user.getEmail() == null || user.getPassword() == null || user.getImageUrl() == null
-					|| user.getPhoneNumber() == null || user.getRole() == null) {
+			if (invalidUser.getEmail() == null || invalidUser.getPassword() == null || invalidUser.getImageUrl() == null
+					|| invalidUser.getPhoneNumber() == null || invalidUser.getRole() == null) {
 				throw new IllegalArgumentException("Required fields are missing!");
 			}
 			userService.createUser(user);
@@ -292,15 +282,8 @@ public class UserServiceTest {
 	@Test
 	public void shouldSaveUserWithOptionalNullFields() {
 
-		Role role = new Role(1L, "USER");
-
-		User user = new User();
-		user.setId(1L);
-		user.setEmail("ahmed@gmail.com");
-		user.setPassword("12345678");
-		user.setPhoneNumber("01021545629");
-		user.setImageUrl("http://example.com/image.png");
-		user.setRole(role);
+		user.setFullName(null);
+		user.setPassword("12345678");		
 
 		userService.createUser(user);
 
