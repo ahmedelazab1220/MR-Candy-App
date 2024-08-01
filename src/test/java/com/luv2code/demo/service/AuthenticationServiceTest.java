@@ -75,9 +75,29 @@ public class AuthenticationServiceTest {
 	@Mock
 	private IRefreshTokenService refreshTokenService;
 
+	private Role role;
+
+	private User user;
+
+	private MultipartFile multipartFile;
+
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+
+		multipartFile = new MockMultipartFile("image", "image.png", "image/png", "imageContent".getBytes());
+
+		role = new Role(1L, "USER");
+
+		user = new User();
+
+		user.setId(1L);
+		user.setFullName("ahmed");
+		user.setEmail("ahmed@gmail.com");
+		user.setPhoneNumber("01021045629");
+		user.setImageUrl("http://example.com/image.png");
+		user.setRole(role);
+
 	}
 
 	/**
@@ -88,6 +108,11 @@ public class AuthenticationServiceTest {
 	 */
 	LoginRequestDTO getLoginRequestDTO() {
 		return new LoginRequestDTO("ahmed@gmail.com", "password");
+	}
+
+	RegisterRequestDTO getRegisterRequestDTO() {
+		return RegisterRequestDTO.builder().fullName("Ahmed").email("ahmed@gmail.com").password("password")
+				.phoneNumber("01021045629").image(multipartFile).build();
 	}
 
 	/**
@@ -140,16 +165,6 @@ public class AuthenticationServiceTest {
 
 		LoginRequestDTO loginRequest = getLoginRequestDTO();
 
-		Role role = new Role(1L, "USER");
-		User user = new User(); // Set up User entity as needed
-
-		user.setId(1L);
-		user.setFullName("ahmed");
-		user.setEmail("ahmed@gmail.com");
-		user.setPhoneNumber("01021045629");
-		user.setImageUrl("http://example.com/image.png");
-		user.setRole(role);
-
 		RefreshToken refreshToken = new RefreshToken();
 		refreshToken.setId(1L);
 		refreshToken.setToken("refreshToken");
@@ -190,23 +205,10 @@ public class AuthenticationServiceTest {
 	@Test
 	void shouldRegisterUserSuccessfully() throws IOException {
 
-		MultipartFile multipartFile = new MockMultipartFile("image", "image.png", "image/png",
-				"imageContent".getBytes());
+		RegisterRequestDTO registerRequestDTO = getRegisterRequestDTO();
 
-		RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO();
-		registerRequestDTO.setEmail("ahmed@gmail.com");
-		registerRequestDTO.setPassword("password");
-		registerRequestDTO.setFullName("Ahmed");
-		registerRequestDTO.setPhoneNumber("01021045629");
-		registerRequestDTO.setImage(multipartFile);
-
-		User user = new User();
-		user.setEmail("ahmed@gmail.com");
 		user.setPassword("encodedPassword");
-		user.setFullName("Ahmed");
-		user.setPhoneNumber("01021045629");
-
-		Role role = new Role(1L, "USER");
+		
 		when(roleRepository.findByRole("USER")).thenReturn(Optional.of(role));
 		when(fileHelper.uploadFileToFileSystem(multipartFile)).thenReturn("http://example.com/image.png");
 		when(passwordEncoder.encode(registerRequestDTO.getPassword())).thenReturn("encodedPassword");
@@ -236,17 +238,7 @@ public class AuthenticationServiceTest {
 	@Test
 	void shouldThrowIOExceptionDuringFileUpload() throws IOException {
 
-		MultipartFile multipartFile = new MockMultipartFile("image", "image.png", "image/png",
-				"imageContent".getBytes());
-
-		RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO();
-		registerRequestDTO.setEmail("ahmed@gmail.com");
-		registerRequestDTO.setPassword("password");
-		registerRequestDTO.setFullName("Ahmed");
-		registerRequestDTO.setPhoneNumber("01021045629");
-		registerRequestDTO.setImage(multipartFile);
-
-		Role role = new Role(1L, "USER");
+		RegisterRequestDTO registerRequestDTO = getRegisterRequestDTO();
 
 		when(roleRepository.findByRole("USER")).thenReturn(Optional.of(role));
 		when(fileHelper.uploadFileToFileSystem(multipartFile)).thenThrow(new IOException("File upload failed"));
@@ -275,20 +267,11 @@ public class AuthenticationServiceTest {
 	@Test
 	void shouldHandleMapperFailureDuringRegistration() throws IOException {
 
-		MultipartFile multipartFile = new MockMultipartFile("image", "image.png", "image/png",
-				"imageContent".getBytes());
-
-		RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO();
-		registerRequestDTO.setEmail("ahmed@gmail.com");
-		registerRequestDTO.setPassword("password");
-		registerRequestDTO.setFullName("Ahmed");
-		registerRequestDTO.setPhoneNumber("01021045629");
-		registerRequestDTO.setImage(multipartFile);
-
-		Role role = new Role(1L, "USER");
+		RegisterRequestDTO registerRequestDTO = getRegisterRequestDTO();
+		
 		when(roleRepository.findByRole("USER")).thenReturn(Optional.of(role));
 		when(fileHelper.uploadFileToFileSystem(multipartFile)).thenReturn("http://example.com/image.png");
-
+		when(passwordEncoder.encode(registerRequestDTO.getPassword())).thenReturn("encodedPassword");
 		when(mapper.registerRequestDTOTOUser(registerRequestDTO)).thenThrow(new RuntimeException("Mapping failed"));
 
 		RuntimeException exception = assertThrows(RuntimeException.class, () -> {
@@ -305,54 +288,36 @@ public class AuthenticationServiceTest {
 		verify(userService, times(0)).createUser(any(User.class));
 
 	}
-	
-	 /**
-     * Test case to verify the handling of a password encoder failure during user registration.
-     *
-     * @throws IOException if an I/O error occurs
-     */
+
+	/**
+	 * Test case to verify the handling of a password encoder failure during user
+	 * registration.
+	 *
+	 * @throws IOException if an I/O error occurs
+	 */
 	@Test
 	void shouldHandlePasswordEncoderFailure() throws IOException {
-	    
-	    MultipartFile multipartFile = new MockMultipartFile(
-	        "image", 
-	        "image.png", 
-	        "image/png", 
-	        "imageContent".getBytes()
-	    );
 
-	    RegisterRequestDTO registerRequestDTO = new RegisterRequestDTO();
-	    registerRequestDTO.setEmail("ahmed@gmail.com");
-	    registerRequestDTO.setPassword("password");
-	    registerRequestDTO.setFullName("Ahmed");
-	    registerRequestDTO.setPhoneNumber("01021045629");
-	    registerRequestDTO.setImage(multipartFile);
+		RegisterRequestDTO registerRequestDTO = getRegisterRequestDTO();
 
-	    User user = new User();
-	    user.setEmail("ahmed@gmail.com");
-	    user.setFullName("Ahmed");
-	    user.setPhoneNumber("01021045629");
-	    
-	    Role role = new Role(1L, "USER");
-	    
-	    when(roleRepository.findByRole("USER")).thenReturn(Optional.of(role));
-	    when(fileHelper.uploadFileToFileSystem(multipartFile)).thenReturn("http://example.com/image.png");
-	    when(passwordEncoder.encode(registerRequestDTO.getPassword())).thenThrow(new RuntimeException("Password encoding failed"));
+		when(roleRepository.findByRole("USER")).thenReturn(Optional.of(role));
+		when(fileHelper.uploadFileToFileSystem(multipartFile)).thenReturn("http://example.com/image.png");
+		when(passwordEncoder.encode(registerRequestDTO.getPassword()))
+				.thenThrow(new RuntimeException("Password encoding failed"));
 
-	    RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-	        authenticationService.register(registerRequestDTO);
-	    });
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+			authenticationService.register(registerRequestDTO);
+		});
 
-	    verify(roleRepository, times(1)).findByRole("USER");
-	    verify(fileHelper, times(1)).uploadFileToFileSystem(multipartFile);
-	    verify(passwordEncoder, times(1)).encode("password");
-	    
-	    assertEquals("Password encoding failed", exception.getMessage());
+		verify(roleRepository, times(1)).findByRole("USER");
+		verify(fileHelper, times(1)).uploadFileToFileSystem(multipartFile);
+		verify(passwordEncoder, times(1)).encode("password");
 
-	    verify(mapper, times(0)).registerRequestDTOTOUser(any(RegisterRequestDTO.class));
-	    verify(userService, times(0)).createUser(any(User.class));
+		assertEquals("Password encoding failed", exception.getMessage());
+
+		verify(mapper, times(0)).registerRequestDTOTOUser(any(RegisterRequestDTO.class));
+		verify(userService, times(0)).createUser(any(User.class));
+		
 	}
-
-
 
 }
