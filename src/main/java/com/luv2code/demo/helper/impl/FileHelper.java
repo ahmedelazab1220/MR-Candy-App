@@ -29,6 +29,7 @@ public class FileHelper implements IFileHelper {
 		Files.write(new File(imageUrl).toPath(), compressedFileData);
 
 		return imageUrl;
+		
 	}
 
 	@Override

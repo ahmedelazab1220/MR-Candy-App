@@ -27,10 +27,8 @@ import com.luv2code.demo.service.IRefreshTokenService;
 import com.luv2code.demo.service.IUserService;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @AllArgsConstructor
 public class AuthenticationService implements IAuthenticationService {
 
@@ -55,16 +53,11 @@ public class AuthenticationService implements IAuthenticationService {
 			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
 		}
 
-		if (user.isPresent())
-			log.info("User Is exist");
-
 		String accessToken = jwtService.generateToken(loginRequestDTO.getEmail(), user.map(SecurityUser::new).get());
 		String refreshToken = jwtService.generateRefreshToken(loginRequestDTO.getEmail());
 
 		RefreshToken refresh_token = RefreshToken.builder().token(refreshToken).user(user.get())
 				.expireDate(jwtService.extractExpiration(refreshToken).toInstant()).build();
-
-		log.info("save token");
 
 		refreshTokenService.save(refresh_token);
 
@@ -81,11 +74,11 @@ public class AuthenticationService implements IAuthenticationService {
 
 		String imageUrl = fileHelper.uploadFileToFileSystem(registerRequestDTO.getImage());
 
+		registerRequestDTO.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
+		
 		User user = mapper.registerRequestDTOTOUser(registerRequestDTO);
 
 		user.setImageUrl(imageUrl);
-
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
 
 		userService.createUser(user);
 
