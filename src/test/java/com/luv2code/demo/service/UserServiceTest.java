@@ -61,6 +61,12 @@ public class UserServiceTest {
 		user.setRole(role);
 	}
 	
+	UserTokenResponseDTO getUserTokenResponseDTO() {
+		
+       return  new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629",
+				"http://example.com/image.png", role);
+	}
+	
 
 	/**
 	 * Test case to verify that the method `getUserTokenDetails` successfully
@@ -74,8 +80,7 @@ public class UserServiceTest {
 
 		String email = "ahmed@gmail.com";
 
-		UserTokenResponseDTO dto = new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629",
-				"http://example.com/image.png", role);
+		UserTokenResponseDTO dto = getUserTokenResponseDTO();
 
 		when(userRepository.findUserTokenDetailsByEmail(Mockito.anyString())).thenReturn(Optional.of(dto));
 
@@ -126,8 +131,7 @@ public class UserServiceTest {
 
 		String email = "ahmed@gmail.com";
 
-		UserTokenResponseDTO dto = new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629",
-				"http://example.com/image.png", role);
+		UserTokenResponseDTO dto = getUserTokenResponseDTO();
 
 		when(userRepository.findUserTokenDetailsByEmail(Mockito.anyString())).thenReturn(Optional.of(dto));
 
