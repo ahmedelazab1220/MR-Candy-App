@@ -18,9 +18,9 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	List<CategoryResponseDTO> findAllCategories();
 
 	Boolean existsByName(@Param("name") String name);
-	
+
 	void deleteByName(@Param("name") String name);
-	
+
 	Optional<Category> findByName(@Param("name") String name);
-	
+
 }

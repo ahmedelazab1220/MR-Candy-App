@@ -63,39 +63,40 @@ public class CategoryService implements ICategoryService {
 	@Override
 	public Boolean existCategoryByName(String name) {
 
-        Boolean categoryExist = categoryRepository.existsByName(name);
-        
-        if(!categoryExist) {
-        	throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
-        }
-		
+		Boolean categoryExist = categoryRepository.existsByName(name);
+
+		if (!categoryExist) {
+			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
+		}
+
 		return categoryExist;
-		
+
 	}
 
 	@Override
-	public CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException {
-		
-		Optional<Category> category = categoryRepository.findByName(name); 
-		
-		if(category.isEmpty()) {
+	public CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
+			throws IllegalStateException, IOException {
+
+		Optional<Category> category = categoryRepository.findByName(name);
+
+		if (category.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
 		}
-		
-		if(categoryRequestDTO.getName() != null) {
+
+		if (categoryRequestDTO.getName() != null) {
 			category.get().setName(categoryRequestDTO.getName());
 		}
-		
-		if(categoryRequestDTO.getImage() != null) {
-			
+
+		if (categoryRequestDTO.getImage() != null) {
+
 			String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
-			
+
 			category.get().setImageUrl(imageUrl);
-			
+
 		}
-		
+
 		return mapper.categoryTOCategoryResponseDTO(categoryRepository.save(category.get()));
-		
+
 	}
 
 }

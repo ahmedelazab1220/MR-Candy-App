@@ -18,7 +18,8 @@ public interface ICategoryService {
 	CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException;
 
 	Boolean existCategoryByName(String name);
-	
-	CategoryResponseDTO updateCategory(String name , CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException;
-	
+
+	CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
+			throws IllegalStateException, IOException;
+
 }
