@@ -75,7 +75,7 @@ public class AuthenticationService implements IAuthenticationService {
 		String imageUrl = fileHelper.uploadFileToFileSystem(registerRequestDTO.getImage());
 
 		registerRequestDTO.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
-		
+
 		User user = mapper.registerRequestDTOTOUser(registerRequestDTO);
 
 		user.setImageUrl(imageUrl);

@@ -62,7 +62,7 @@ public class RefreshTokenService implements IRefreshTokenService {
 
 		refreshToken.setToken(newRefreshToken);
 		refreshTokenRepository.save(refreshToken);
-		
+
 		return createJwtResponse(accessToken, newRefreshToken);
 
 	}

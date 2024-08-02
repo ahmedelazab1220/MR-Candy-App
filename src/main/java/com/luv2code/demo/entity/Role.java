@@ -26,12 +26,12 @@ public class Role {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "role", nullable = false, unique = true , length = 255)
+	@Column(name = "role", nullable = false, unique = true, length = 255)
 	private String role;
-	
+
 	@Column(name = "createdAt", nullable = false)
 	private LocalDateTime createdAt;
-	
+
 	@PrePersist
 	protected void onCreate() {
 		createdAt = LocalDateTime.now();

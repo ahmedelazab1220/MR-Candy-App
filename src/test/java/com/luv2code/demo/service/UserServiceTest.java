@@ -292,7 +292,7 @@ public class UserServiceTest {
 	public void shouldSaveUserWithOptionalNullFields() {
 
 		user.setFullName(null);
-	
+
 		userService.createUser(user);
 
 		verify(userRepository, times(1)).save(user);

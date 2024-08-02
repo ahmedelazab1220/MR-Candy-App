@@ -29,8 +29,7 @@ public class AuthenticationController {
 	private final IRefreshTokenService refreshTokenService;
 
 	@PostMapping("/register")
-	public ResponseEntity<ApiResponseDTO> register(@Valid @ModelAttribute RegisterRequestDTO registerRequestDTO)
-			throws IOException {
+	public ResponseEntity<ApiResponseDTO> register(@Valid @ModelAttribute RegisterRequestDTO registerRequestDTO) throws IOException{
 
 		return authenticationService.register(registerRequestDTO);
 

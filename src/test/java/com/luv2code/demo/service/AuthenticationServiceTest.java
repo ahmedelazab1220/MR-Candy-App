@@ -80,7 +80,7 @@ public class AuthenticationServiceTest {
 	private Role role;
 
 	private User user;
-	
+
 	private Address address;
 
 	private MultipartFile multipartFile;
@@ -92,7 +92,7 @@ public class AuthenticationServiceTest {
 		multipartFile = new MockMultipartFile("image", "image.png", "image/png", "imageContent".getBytes());
 
 		address = new Address(1L, "Mostafa Kamel", "Tanta", "Egypt", "606165");
-		
+
 		role = new Role(1L, "USER", LocalDateTime.now());
 
 		user = new User();
@@ -133,7 +133,8 @@ public class AuthenticationServiceTest {
 
 		LoginRequestDTO loginRequest = getLoginRequestDTO();
 
-		doThrow(new BadCredentialsException("Bad credentials")).when(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+		doThrow(new BadCredentialsException("Bad credentials")).when(authenticationManager)
+				.authenticate(any(UsernamePasswordAuthenticationToken.class));
 
 		BadCredentialsException exception = assertThrows(BadCredentialsException.class, () -> {
 			authenticationService.login(loginRequest);
@@ -215,7 +216,7 @@ public class AuthenticationServiceTest {
 		RegisterRequestDTO registerRequestDTO = getRegisterRequestDTO();
 
 		user.setPassword("encodedPassword");
-		
+
 		when(roleRepository.findByRole("USER")).thenReturn(Optional.of(role));
 		when(fileHelper.uploadFileToFileSystem(multipartFile)).thenReturn("http://example.com/image.png");
 		when(passwordEncoder.encode(registerRequestDTO.getPassword())).thenReturn("encodedPassword");
@@ -275,7 +276,7 @@ public class AuthenticationServiceTest {
 	void shouldHandleMapperFailureDuringRegistration() throws IOException {
 
 		RegisterRequestDTO registerRequestDTO = getRegisterRequestDTO();
-		
+
 		when(roleRepository.findByRole("USER")).thenReturn(Optional.of(role));
 		when(fileHelper.uploadFileToFileSystem(multipartFile)).thenReturn("http://example.com/image.png");
 		when(passwordEncoder.encode(registerRequestDTO.getPassword())).thenReturn("encodedPassword");
@@ -324,7 +325,7 @@ public class AuthenticationServiceTest {
 
 		verify(mapper, times(0)).registerRequestDTOTOUser(any(RegisterRequestDTO.class));
 		verify(userService, times(0)).createUser(any(User.class));
-		
+
 	}
 
 }

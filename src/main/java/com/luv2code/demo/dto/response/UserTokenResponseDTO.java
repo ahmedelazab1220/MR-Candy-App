@@ -25,7 +25,7 @@ public class UserTokenResponseDTO {
 	private String phoneNumber;
 
 	private String imageUrl;
-	
+
 	private Address address;
 
 	private Role role;
