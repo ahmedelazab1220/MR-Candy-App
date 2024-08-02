@@ -7,4 +7,6 @@ public interface IUserService {
 	User getUserTokenDetails(String email);
 
 	void createUser(User user);
+	
+	User getUserSetterByEmail(String email);
 }

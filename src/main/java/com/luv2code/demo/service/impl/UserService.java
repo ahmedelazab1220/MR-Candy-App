@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.luv2code.demo.dto.SystemMapper;
+import com.luv2code.demo.dto.UserSetterDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
 import com.luv2code.demo.entity.User;
 import com.luv2code.demo.exc.custom.NotFoundException;
@@ -54,6 +55,21 @@ public class UserService implements IUserService {
 
 		userRepository.save(user);
 
+	}
+
+	@Override
+	public User getUserSetterByEmail(String email) {
+
+		Optional<UserSetterDTO> userSetterDTO = userRepository.findUserSetterByEmail(email);
+
+		if(userSetterDTO.isEmpty()) {
+			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
+		}
+		
+		UserSetterDTO userDto = userSetterDTO.get();
+		
+		return mapper.userSetterDTOTOUser(userDto);
+		
 	}
 
 }
