@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import com.luv2code.demo.exc.custom.NotFoundException;
-import com.luv2code.demo.exc.custom.TokenExpiredException;
+import com.luv2code.demo.exc.custom.ExpiredException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -218,17 +218,16 @@ public class GlobalExceptionHandler {
 	}
 
 	/**
-	 * Handles the TokenExpiredException by building an ErrorResponse object with
-	 * the appropriate status code, error type, message, details, and request
-	 * information.
+	 * Handles the ExpiredException by building an ErrorResponse object with the
+	 * appropriate status code, error type, message, and request information.
 	 *
-	 * @param ex      the TokenExpiredException that was thrown
+	 * @param ex      the ExpiredException that was thrown
 	 * @param request the WebRequest object containing information about the request
 	 * @return the ErrorResponse object with the appropriate information
 	 */
-	@ExceptionHandler(TokenExpiredException.class)
-	public ErrorResponse handleTokenExpiredException(TokenExpiredException ex, WebRequest request) {
-		return buildErrorResponse(StatusCode.FORBIDDEN, "TokenExpiredException", ex.getMessage(), ex.getClass(),
+	@ExceptionHandler(ExpiredException.class)
+	public ErrorResponse handleTokenExpiredException(ExpiredException ex, WebRequest request) {
+		return buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredException", ex.getMessage(), ex.getClass(),
 				request);
 	}
 

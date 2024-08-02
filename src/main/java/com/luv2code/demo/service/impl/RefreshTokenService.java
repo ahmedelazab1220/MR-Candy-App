@@ -10,7 +10,7 @@ import com.luv2code.demo.entity.RefreshToken;
 import com.luv2code.demo.entity.User;
 import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.exc.custom.NotFoundTypeException;
-import com.luv2code.demo.exc.custom.TokenExpiredException;
+import com.luv2code.demo.exc.custom.ExpiredException;
 import com.luv2code.demo.repository.RefreshTokenRepository;
 import com.luv2code.demo.security.SecurityUser;
 import com.luv2code.demo.service.IJwtService;
@@ -76,7 +76,7 @@ public class RefreshTokenService implements IRefreshTokenService {
 		}
 
 		if (refreshToken.get().getExpireDate().compareTo(Instant.now()) < 0) {
-			throw new TokenExpiredException("Token is expired. Please make a new login..!");
+			throw new ExpiredException("Token is expired. Please make a new login..!");
 		}
 
 		return refreshToken.get();
