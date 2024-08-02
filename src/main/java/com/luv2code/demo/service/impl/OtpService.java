@@ -22,6 +22,7 @@ import com.luv2code.demo.service.IOtpService;
 import com.luv2code.demo.service.IUserService;
 
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -33,6 +34,7 @@ public class OtpService implements IOtpService {
 	private final IOtpGenerator otpGenerator;
 	private final IEmailService emailService;
 	
+	@Transactional
 	@Override
 	public ResponseEntity<ApiResponseDTO> verfiyEmail(String email) throws MessagingException, IOException {
 		

@@ -18,6 +18,7 @@ import com.luv2code.demo.exc.custom.NotFoundTypeException;
 import com.luv2code.demo.repository.UserRepository;
 import com.luv2code.demo.service.IUserService;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -78,6 +79,7 @@ public class UserService implements IUserService {
 		
 	}
 
+	@Transactional
 	@Override
 	public ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest) {
 		
