@@ -41,6 +41,10 @@ public class CategoryService implements ICategoryService {
 
 		Optional<Category> category = categoryRepository.findByName(name);
 
+		if (category.isEmpty()) {
+			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
+		}
+		
 		fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
 
 		categoryRepository.delete(category.get());
