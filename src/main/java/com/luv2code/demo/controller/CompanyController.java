@@ -17,7 +17,6 @@ import com.luv2code.demo.dto.request.CompanyRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.CompanyResponseDTO;
 import com.luv2code.demo.service.ICompanyService;
-import com.luv2code.demo.service.IcompanyService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
