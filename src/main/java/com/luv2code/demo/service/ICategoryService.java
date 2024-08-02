@@ -13,7 +13,7 @@ public interface ICategoryService {
 
 	List<CategoryResponseDTO> getAllCategories();
 
-	ResponseEntity<ApiResponseDTO> deleteCategoryByName(String name);
+	ResponseEntity<ApiResponseDTO> deleteCategory(String name) throws IOException;
 
 	CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException;
 

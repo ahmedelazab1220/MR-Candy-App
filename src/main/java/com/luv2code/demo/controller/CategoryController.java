@@ -36,9 +36,10 @@ public class CategoryController {
 	}
 
 	@DeleteMapping("")
-	public ResponseEntity<ApiResponseDTO> deleteCategory(@RequestParam(required = true) String name) {
+	public ResponseEntity<ApiResponseDTO> deleteCategory(@RequestParam(required = true) String name)
+			throws IOException {
 
-		return categoryService.deleteCategoryByName(name);
+		return categoryService.deleteCategory(name);
 
 	}
 

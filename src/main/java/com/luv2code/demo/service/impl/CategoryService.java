@@ -18,6 +18,7 @@ import com.luv2code.demo.helper.IFileHelper;
 import com.luv2code.demo.repository.CategoryRepository;
 import com.luv2code.demo.service.ICategoryService;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -36,9 +37,13 @@ public class CategoryService implements ICategoryService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponseDTO> deleteCategoryByName(String name) {
+	public ResponseEntity<ApiResponseDTO> deleteCategory(String name) throws IOException {
 
-		categoryRepository.deleteByName(name);
+		Optional<Category> category = categoryRepository.findByName(name);
+
+		fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
+
+		categoryRepository.delete(category.get());
 
 		return ResponseEntity.ok(new ApiResponseDTO("Success Delete Category."));
 
@@ -73,6 +78,7 @@ public class CategoryService implements ICategoryService {
 
 	}
 
+	@Transactional
 	@Override
 	public CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
 			throws IllegalStateException, IOException {
@@ -89,6 +95,8 @@ public class CategoryService implements ICategoryService {
 
 		if (categoryRequestDTO.getImage() != null) {
 
+			fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
+			
 			String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
 
 			category.get().setImageUrl(imageUrl);

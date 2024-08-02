@@ -11,4 +11,6 @@ public interface IFileHelper {
 
 	public ResponseEntity<?> downloadImageFromFileSystem(String imageUrl) throws IOException;
 
+	Boolean deleteImageFromFileSystem(String imageUrl) throws IOException;
+
 }

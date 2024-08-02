@@ -3,6 +3,7 @@ package com.luv2code.demo.helper.impl;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,15 @@ public class FileHelper implements IFileHelper {
 
 		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png"))
 				.body(decompressedFileData);
+
+	}
+
+	@Override
+	public Boolean deleteImageFromFileSystem(String imageUrl) throws IOException {
+
+		Boolean fileIsDeleted = Files.deleteIfExists(Paths.get(imageUrl));
+
+		return fileIsDeleted;
 
 	}
 
