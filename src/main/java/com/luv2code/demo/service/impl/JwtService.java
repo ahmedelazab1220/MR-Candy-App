@@ -87,6 +87,7 @@ public class JwtService implements IJwtService {
 					.claim("fullName", ((SecurityUser) userDetail).getUser().getFullName())
 					.claim("role", ((SecurityUser) userDetail).getUser().getRole().getRole())
 					.claim("email", ((SecurityUser) userDetail).getUser().getEmail())
+					.claim("Address", ((SecurityUser) userDetail).getUser().getAddress())
 					.claim("imageUrl", ((SecurityUser) userDetail).getUser().getImageUrl());
 		}
 

@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Optional;
 
@@ -38,6 +39,7 @@ import com.luv2code.demo.dto.request.LoginRequestDTO;
 import com.luv2code.demo.dto.request.RegisterRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.JwtResponseDTO;
+import com.luv2code.demo.entity.Address;
 import com.luv2code.demo.entity.RefreshToken;
 import com.luv2code.demo.entity.Role;
 import com.luv2code.demo.entity.User;
@@ -78,6 +80,8 @@ public class AuthenticationServiceTest {
 	private Role role;
 
 	private User user;
+	
+	private Address address;
 
 	private MultipartFile multipartFile;
 
@@ -87,7 +91,9 @@ public class AuthenticationServiceTest {
 
 		multipartFile = new MockMultipartFile("image", "image.png", "image/png", "imageContent".getBytes());
 
-		role = new Role(1L, "USER");
+		address = new Address(1L, "Mostafa Kamel", "Tanta", "Egypt", "606165");
+		
+		role = new Role(1L, "USER", LocalDateTime.now());
 
 		user = new User();
 
@@ -96,6 +102,7 @@ public class AuthenticationServiceTest {
 		user.setEmail("ahmed@gmail.com");
 		user.setPhoneNumber("01021045629");
 		user.setImageUrl("http://example.com/image.png");
+		user.setAddress(address);
 		user.setRole(role);
 
 	}
@@ -112,7 +119,7 @@ public class AuthenticationServiceTest {
 
 	RegisterRequestDTO getRegisterRequestDTO() {
 		return RegisterRequestDTO.builder().fullName("Ahmed").email("ahmed@gmail.com").password("password")
-				.phoneNumber("01021045629").image(multipartFile).build();
+				.phoneNumber("01021045629").address(address).image(multipartFile).build();
 	}
 
 	/**
@@ -126,7 +133,7 @@ public class AuthenticationServiceTest {
 
 		LoginRequestDTO loginRequest = getLoginRequestDTO();
 
-		doThrow(new BadCredentialsException("Bad credentials")).when(authenticationManager).authenticate(any());
+		doThrow(new BadCredentialsException("Bad credentials")).when(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
 
 		BadCredentialsException exception = assertThrows(BadCredentialsException.class, () -> {
 			authenticationService.login(loginRequest);

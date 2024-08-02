@@ -1,5 +1,6 @@
 package com.luv2code.demo.dto.response;
 
+import com.luv2code.demo.entity.Address;
 import com.luv2code.demo.entity.Role;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +25,8 @@ public class UserTokenResponseDTO {
 	private String phoneNumber;
 
 	private String imageUrl;
+	
+	private Address address;
 
 	private Role role;
 

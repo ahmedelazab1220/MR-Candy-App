@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
+import com.luv2code.demo.entity.Address;
 import com.luv2code.demo.entity.Role;
 import com.luv2code.demo.entity.User;
 import com.luv2code.demo.exc.custom.NotFoundException;
@@ -36,37 +38,43 @@ public class UserServiceTest {
 
 	@Mock
 	private SystemMapper mapper;
-	
+
 	private Role role;
-	
+
 	private User user;
 
+	private Address address;
+
 	/**
-	 * Sets up the necessary mocks and initializes the role and user objects before each test case.
+	 * Sets up the necessary mocks and initializes the role and user objects before
+	 * each test case.
 	 *
 	 * @throws Exception if there is an error with the mocks initialization.
 	 */
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
-		
-		role = new Role(1L, "USER");
-		
+
+		role = new Role(1L, "USER", LocalDateTime.now());
+
+		address = new Address(1L, "Mostafa Kamel", "Tanta", "Egypt", "606165");
+
 		user = new User();
 		user.setId(1L);
 		user.setFullName("ahmed");
 		user.setEmail("ahmed@gmail.com");
+		user.setPassword("12345678");
 		user.setPhoneNumber("01021045629");
 		user.setImageUrl("http://example.com/image.png");
+		user.setAddress(address);
 		user.setRole(role);
 	}
-	
+
 	UserTokenResponseDTO getUserTokenResponseDTO() {
-		
-       return  new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629",
-				"http://example.com/image.png", role);
+
+		return new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629", "http://example.com/image.png",
+				address, role);
 	}
-	
 
 	/**
 	 * Test case to verify that the method `getUserTokenDetails` successfully
@@ -208,8 +216,6 @@ public class UserServiceTest {
 	@Test
 	public void shouldCreateUserSuccessfully() {
 
-		user.setPassword("12345678");
-
 		userService.createUser(user);
 
 		verify(userRepository, times(1)).save(user);
@@ -227,8 +233,6 @@ public class UserServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenEmailAlreadyExistsWhenCreateUser() {
 
-		user.setPassword("12345678");
-		
 		when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
 
 		assertThrows(DataIntegrityViolationException.class, () -> userService.createUser(user));
@@ -252,7 +256,8 @@ public class UserServiceTest {
 
 		assertThrows(IllegalArgumentException.class, () -> {
 			if (invalidUser.getEmail() == null || invalidUser.getPassword() == null || invalidUser.getImageUrl() == null
-					|| invalidUser.getPhoneNumber() == null || invalidUser.getRole() == null) {
+					|| invalidUser.getPhoneNumber() == null || invalidUser.getRole() == null
+					|| invalidUser.getAddress() == null) {
 				throw new IllegalArgumentException("Required fields are missing!");
 			}
 			userService.createUser(user);
@@ -287,8 +292,7 @@ public class UserServiceTest {
 	public void shouldSaveUserWithOptionalNullFields() {
 
 		user.setFullName(null);
-		user.setPassword("12345678");		
-
+	
 		userService.createUser(user);
 
 		verify(userRepository, times(1)).save(user);

@@ -20,12 +20,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<UserAuthenticationResponseDTO> findUserAuthenticationDetailsByEmail(@Param("email") String email);
 
 	@Query("SELECT new com.luv2code.demo.dto.response.UserTokenResponseDTO("
-			+ "u.id, u.fullName, u.email, u.phoneNumber, u.imageUrl, u.role) " + "FROM User u " + "LEFT JOIN u.role r "
-			+ "WHERE u.email = :email")
+			+ "u.id, u.fullName, u.email, u.phoneNumber, u.imageUrl, " + "a, r) " + "FROM User u "
+			+ "LEFT JOIN u.address a " + "LEFT JOIN u.role r " + "WHERE u.email = :email")
 	Optional<UserTokenResponseDTO> findUserTokenDetailsByEmail(@Param("email") String email);
 
 	Optional<User> findByEmail(@Param("email") String email);
-	
+
 	Boolean existsByEmail(@Param("email") String email);
 
 }

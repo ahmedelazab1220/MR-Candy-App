@@ -51,16 +51,18 @@ public class RefreshTokenService implements IRefreshTokenService {
 	@Override
 	public JwtResponseDTO generateNewToken(String token) {
 
-		RefreshToken refresh_token = getToken(token);
+		RefreshToken refreshToken = getToken(token);
 
-		Optional<User> user = Optional.ofNullable(refresh_token.getUser());
+		Optional<User> user = Optional.ofNullable(refreshToken.getUser());
 
-		refresh_token.setExpireDate(Instant.now());
-		refreshTokenRepository.save(refresh_token);
+		refreshToken.setExpireDate(Instant.now());
 
 		String accessToken = jwtService.generateToken(user.get().getEmail(), user.map(SecurityUser::new).get());
 		String newRefreshToken = jwtService.generateRefreshToken(user.get().getEmail());
 
+		refreshToken.setToken(newRefreshToken);
+		refreshTokenRepository.save(refreshToken);
+		
 		return createJwtResponse(accessToken, newRefreshToken);
 
 	}

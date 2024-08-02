@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -60,6 +61,10 @@ public class User {
 
 	@Column(name = "imageUrl", length = 1000, nullable = false)
 	private String imageUrl;
+	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "address_id", nullable = false)
+	private Address address;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<RefreshToken> refreshTokens;

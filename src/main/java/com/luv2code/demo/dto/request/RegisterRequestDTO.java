@@ -2,6 +2,7 @@ package com.luv2code.demo.dto.request;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.luv2code.demo.entity.Address;
 import com.luv2code.demo.entity.Role;
 
 import jakarta.validation.constraints.NotNull;
@@ -34,6 +35,9 @@ public class RegisterRequestDTO {
 
 	@NotNull
 	private MultipartFile image;
+	
+	@NotNull
+	private Address address;
 
 	private Role role;
 
