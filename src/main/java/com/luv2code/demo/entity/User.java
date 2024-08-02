@@ -36,12 +36,12 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "full_name", length = 255)
+	@Column(name = "full_name", length = 100)
 	@Size(min = 3, message = "Name lenght must greater than or equal 3")
 	@Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only alphabetic characters")
 	private String fullName;
 
-	@Column(name = "email", nullable = false, unique = true, length = 255)
+	@Column(name = "email", nullable = false, unique = true, length = 35)
 	@NotBlank
 	@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Invalid email address")
 	private String email;
@@ -51,7 +51,7 @@ public class User {
 	@Pattern(regexp = "^01[0-2,5]{1}[0-9]{8}$", message = "Invalid phone number")
 	private String phoneNumber;
 
-	@Column(name = "password", nullable = false, length = 255)
+	@Column(name = "password", nullable = false, length = 400)
 	@Size(min = 8, message = "Password must be at least 8 characters long")
 	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).*$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special character. No whitespace allowed.")
 	private String password;

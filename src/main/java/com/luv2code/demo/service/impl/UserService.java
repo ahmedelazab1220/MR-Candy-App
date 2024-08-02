@@ -1,11 +1,16 @@
 package com.luv2code.demo.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.UserSetterDTO;
+import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
+import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
 import com.luv2code.demo.entity.User;
 import com.luv2code.demo.exc.custom.NotFoundException;
@@ -20,6 +25,7 @@ import lombok.AllArgsConstructor;
 public class UserService implements IUserService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 	private final SystemMapper mapper;
 
 	@Override
@@ -70,6 +76,40 @@ public class UserService implements IUserService {
 		
 		return mapper.userSetterDTOTOUser(userDto);
 		
+	}
+
+	@Override
+	public ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest) {
+		
+		if (changePasswordRequest.getOldPassword() != null) {
+			Optional<String> pass = userRepository.findUserPasswordByEmail(changePasswordRequest.getEmail());
+
+			if (pass.isEmpty()) {
+				throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
+			}
+
+			if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), pass.get())) {
+				throw new IllegalArgumentException("Old password is incorrect!");
+			}
+
+		}
+
+		if (!Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getNewRepeatedPassword())) {
+			return ResponseEntity
+					.ok(new ApiResponseDTO("Password not equal confirmation password,Please enter the password again!"));
+		}
+
+		passwordEncoder.encode(changePasswordRequest.getNewPassword());
+		
+		Integer updateRows = userRepository.updatePasswordByEmail(changePasswordRequest.getEmail(),
+				changePasswordRequest.getNewPassword());
+
+		if (updateRows == 0) {
+			throw new NotFoundException("password not change ,please try later!");
+		}
+
+		return ResponseEntity.ok(new ApiResponseDTO("Password has been changed!"));
+
 	}
 
 }
