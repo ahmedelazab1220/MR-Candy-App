@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
@@ -227,7 +226,7 @@ public class UserServiceTest {
 	 * `DataIntegrityViolationException` when the email already exists in the
 	 * database.
 	 *
-	 * @throws DataIntegrityViolationException if the email already exists in the
+	 * @throws IllegalArgumentException if the email already exists in the
 	 *                                         database
 	 */
 	@Test
@@ -235,7 +234,7 @@ public class UserServiceTest {
 
 		when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
 
-		assertThrows(DataIntegrityViolationException.class, () -> userService.createUser(user));
+		assertThrows(IllegalArgumentException.class, () -> userService.createUser(user));
 
 		verify(userRepository, times(0)).save(user);
 

@@ -68,9 +68,9 @@ public class AuthenticationService implements IAuthenticationService {
 	@Override
 	public ResponseEntity<ApiResponseDTO> register(RegisterRequestDTO registerRequestDTO) throws IOException {
 
-		if (registerRequestDTO.getRole() == null) {
-			registerRequestDTO.setRole(roleRepository.findByRole("USER").get());
-		}
+		registerRequestDTO.setRole(roleRepository
+				.findByRole(registerRequestDTO.getRole() == null ? "USER" : registerRequestDTO.getRole().getRole())
+				.get());
 
 		String imageUrl = fileHelper.uploadFileToFileSystem(registerRequestDTO.getImage());
 

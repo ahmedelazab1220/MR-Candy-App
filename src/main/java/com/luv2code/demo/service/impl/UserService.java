@@ -2,7 +2,6 @@ package com.luv2code.demo.service.impl;
 
 import java.util.Optional;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.luv2code.demo.dto.SystemMapper;
@@ -50,7 +49,7 @@ public class UserService implements IUserService {
 		Boolean userIsExist = userRepository.existsByEmail(user.getEmail());
 
 		if (userIsExist) {
-			throw new DataIntegrityViolationException("Email Is Already Exist!");
+			throw new IllegalArgumentException("Email is already in use!");
 		}
 
 		userRepository.save(user);

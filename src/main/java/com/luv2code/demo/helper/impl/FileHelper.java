@@ -23,7 +23,7 @@ public class FileHelper implements IFileHelper {
 	public String uploadFileToFileSystem(MultipartFile file) throws IllegalStateException, IOException {
 
 		String imageUrl = FOLDER_PATH + file.getOriginalFilename() + " - " + UUID.randomUUID().toString();
-		
+
 		byte[] compressedFileData = FileUtils.compressFile(file.getBytes());
 
 		Files.write(new File(imageUrl).toPath(), compressedFileData);
