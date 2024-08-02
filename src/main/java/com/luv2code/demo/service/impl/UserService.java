@@ -98,11 +98,9 @@ public class UserService implements IUserService {
 			return ResponseEntity
 					.ok(new ApiResponseDTO("Password not equal confirmation password,Please enter the password again!"));
 		}
-
-		passwordEncoder.encode(changePasswordRequest.getNewPassword());
 		
 		Integer updateRows = userRepository.updatePasswordByEmail(changePasswordRequest.getEmail(),
-				changePasswordRequest.getNewPassword());
+				passwordEncoder.encode(changePasswordRequest.getNewPassword()));
 
 		if (updateRows == 0) {
 			throw new NotFoundException("password not change ,please try later!");
