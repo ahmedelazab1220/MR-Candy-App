@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -76,6 +77,8 @@ class CategoryServiceTest {
 		categoryName = "Category";
 
 		category = new Category();
+		category.setId(1L);
+		category.setCreatedAt(LocalDateTime.now());
 		category.setName(categoryName);
 		category.setImageUrl(imageUrl);
 
@@ -426,5 +429,134 @@ class CategoryServiceTest {
         
         verify(categoryRepository, times(1)).existsByName(categoryName);
     }
+
+	/**
+	 * Test case to verify that the updateCategory method of the CategoryService
+	 * updates a category successfully.
+	 *
+	 * @throws IOException if an error occurs during the file upload process
+	 */
+	@Test
+	void shouldUpdateCategorySuccessfully() throws IOException {
+		categoryRequestDTO = getCategoryRequestDTO();
+		categoryResponseDTO = getCategoryResponseDTO();
+
+		when(categoryRepository.findByName(categoryName)).thenReturn(Optional.of(category));
+		when(fileHelper.uploadFileToFileSystem(any(MultipartFile.class))).thenReturn(imageUrl);
+		when(mapper.categoryTOCategoryResponseDTO(any(Category.class))).thenReturn(categoryResponseDTO);
+		when(categoryRepository.save(any(Category.class))).thenReturn(category);
+
+		CategoryResponseDTO result = categoryService.updateCategory(categoryName, categoryRequestDTO);
+
+		assertEquals(categoryResponseDTO.getName(), result.getName());
+		assertEquals(categoryResponseDTO.getImageUrl(), result.getImageUrl());
+
+		verify(categoryRepository, times(1)).findByName(categoryName);
+		verify(fileHelper, times(1)).deleteImageFromFileSystem(category.getImageUrl());
+		verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
+		verify(categoryRepository, times(1)).save(any(Category.class));
+		verify(mapper, times(1)).categoryTOCategoryResponseDTO(any(Category.class));
+	}
+
+	/**
+     * Test case to verify that a NotFoundException is thrown when the category does not exist during the updateCategory method.
+     *
+     * @throws IOException if an I/O error occurs during the test
+     */
+	@Test
+	void shouldThrowNotFoundExceptionWhenUpdateCategoryDoesNotExist() throws IOException {
+	    when(categoryRepository.findByName(categoryName)).thenReturn(Optional.empty());
+
+	    NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+	        categoryService.updateCategory(categoryName, getCategoryRequestDTO());
+	    });
+
+	    assertEquals(NotFoundTypeException.CATEGORY + " Not Found!", exception.getMessage());
+
+	    verify(categoryRepository, times(1)).findByName(categoryName);
+	    verify(fileHelper, times(0)).deleteImageFromFileSystem(anyString());
+	    verify(categoryRepository, times(0)).save(any(Category.class));
+	}
+
+	/**
+	 * Test case to verify that an IOException is thrown when the image deletion
+	 * fails during the updateCategory method.
+	 *
+	 * @throws IOException if an I/O error occurs during the test
+	 */
+	@Test
+	void shouldThrowIOExceptionWhenImageDeletionFailsWhenUpdateCategory() throws IOException {
+		categoryRequestDTO = getCategoryRequestDTO();
+
+		when(categoryRepository.findByName(categoryName)).thenReturn(Optional.of(category));
+		doThrow(new IOException("Failed to delete image")).when(fileHelper)
+				.deleteImageFromFileSystem(category.getImageUrl());
+
+		IOException exception = assertThrows(IOException.class, () -> {
+			categoryService.updateCategory(categoryName, categoryRequestDTO);
+		});
+
+		assertEquals("Failed to delete image", exception.getMessage());
+
+		verify(categoryRepository, times(1)).findByName(categoryName);
+		verify(fileHelper, times(1)).deleteImageFromFileSystem(category.getImageUrl());
+		verify(fileHelper, times(0)).uploadFileToFileSystem(any(MultipartFile.class));
+		verify(categoryRepository, times(0)).save(any(Category.class));
+	}
+
+	/**
+	 * Test case to verify that an IOException is thrown when the image upload fails
+	 * during the updateCategory method.
+	 *
+	 * @throws IOException if an I/O error occurs during the test
+	 */
+	@Test
+	void shouldThrowIOExceptionWhenImageUploadFailsWhenUpdateCategory() throws IOException {
+		categoryRequestDTO = getCategoryRequestDTO();
+
+		when(categoryRepository.findByName(categoryName)).thenReturn(Optional.of(category));
+		when(fileHelper.deleteImageFromFileSystem(category.getImageUrl())).thenReturn(true);
+		when(fileHelper.uploadFileToFileSystem(any(MultipartFile.class)))
+				.thenThrow(new IOException("File upload failed"));
+
+		IOException exception = assertThrows(IOException.class, () -> {
+			categoryService.updateCategory(categoryName, categoryRequestDTO);
+		});
+
+		assertEquals("File upload failed", exception.getMessage());
+
+		verify(categoryRepository, times(1)).findByName(categoryName);
+		verify(fileHelper, times(1)).deleteImageFromFileSystem(category.getImageUrl());
+		verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
+		verify(categoryRepository, times(0)).save(any(Category.class));
+	}
+
+	/**
+	 * This test method verifies that the category service does not update the
+	 * category when no changes are provided.
+	 *
+	 * @throws IOException if an I/O error occurs during the test
+	 */
+	@Test
+	void shouldNotUpdateCategoryWhenNoChangesProvided() throws IOException {
+
+		CategoryRequestDTO emptyRequestDTO = new CategoryRequestDTO(null, null);
+
+		when(categoryRepository.findByName(categoryName)).thenReturn(Optional.of(category));
+		when(mapper.categoryTOCategoryResponseDTO(any(Category.class))).thenReturn(getCategoryResponseDTO());
+		when(categoryRepository.save(any(Category.class))).thenReturn(category);
+
+		CategoryResponseDTO result = categoryService.updateCategory(categoryName, emptyRequestDTO);
+
+		assertEquals(categoryName, result.getName());
+		assertEquals(imageUrl, result.getImageUrl());
+
+		verify(categoryRepository, times(1)).findByName(categoryName);
+		verify(fileHelper, times(0)).deleteImageFromFileSystem(anyString());
+		verify(fileHelper, times(0)).uploadFileToFileSystem(any(MultipartFile.class));
+		verify(categoryRepository, times(1)).save(any(Category.class));
+		verify(mapper, times(1)).categoryTOCategoryResponseDTO(any(Category.class));
+
+	}
 
 }
