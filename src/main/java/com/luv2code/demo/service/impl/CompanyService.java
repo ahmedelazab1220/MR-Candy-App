@@ -58,7 +58,7 @@ public class CompanyService implements ICompanyService {
 
 		String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
 
-		Company company = mapper.companyRequestDTOTCompany(companyRequestDTO);
+		Company company = mapper.companyRequestDTOTOCompany(companyRequestDTO);
 
 		company.setImageUrl(imageUrl);
 

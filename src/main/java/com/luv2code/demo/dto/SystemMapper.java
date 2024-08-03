@@ -31,7 +31,7 @@ public interface SystemMapper {
 
 	CategoryResponseDTO categoryTOCategoryResponseDTO(Category category);
 
-	Company companyRequestDTOTCompany(CompanyRequestDTO companyRequestDTO);
+	Company companyRequestDTOTOCompany(CompanyRequestDTO companyRequestDTO);
 
 	CompanyResponseDTO companyTOCompanyResponseDTO(Company company);
 
