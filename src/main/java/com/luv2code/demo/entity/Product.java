@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,15 +31,19 @@ public class Product {
 	private Long id;
 
 	@Column(name = "name", nullable = false)
+	@NotBlank
 	private String name;
 
 	@Column(name = "description" , nullable = false)
+	@NotBlank
 	private String description;
 
 	@Column(name = "price", nullable = false , precision = 10 , scale = 2)
+	@NotBlank
 	private BigDecimal price;
 
 	@Column(name = "quantity", nullable = false)
+	@NotBlank
 	private Integer quantity;
 
 	@Column(name = "size")
@@ -51,16 +56,18 @@ public class Product {
 	private String discount;
 	
 	@Column(name = "sales_count", nullable = false)
+	@NotBlank
 	private Long salesCount; 
 
 	@Column(name = "imageUrl", length = 1000, nullable = false)
+	@NotBlank
 	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id" , nullable = false)
+	@JoinColumn(name = "category_id")
 	private Category category;
 
-	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "company_id" , nullable = false)
 	private Company company;
 	
