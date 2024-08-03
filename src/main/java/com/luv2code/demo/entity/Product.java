@@ -32,13 +32,13 @@ public class Product {
 	@Column(name = "name", nullable = false)
 	private String name;
 
-	@Column(name = "description")
+	@Column(name = "description" , nullable = false)
 	private String description;
 
 	@Column(name = "price", nullable = false , precision = 10 , scale = 2)
 	private BigDecimal price;
 
-	@Column(name = "quantity", nullable = false , precision = 10 , scale = 0)
+	@Column(name = "quantity", nullable = false)
 	private Integer quantity;
 
 	@Column(name = "size")
@@ -49,16 +49,19 @@ public class Product {
 
 	@Column(name = "discount")
 	private String discount;
+	
+	@Column(name = "sales_count", nullable = false)
+	private Long salesCount; 
 
 	@Column(name = "imageUrl", length = 1000, nullable = false)
 	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id")
+	@JoinColumn(name = "category_id" , nullable = false)
 	private Category category;
 
 	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.ALL)
-	@JoinColumn(name = "company_id")
+	@JoinColumn(name = "company_id" , nullable = false)
 	private Company company;
 	
 }
