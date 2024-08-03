@@ -41,9 +41,10 @@ public class EmailService implements IEmailService {
 		helper.setText(htmlBody, true);
 
 		try {
-			javaMailSender.send(message);
-		} catch (MailException e) {
+            javaMailSender.send(message);
+        } catch (RuntimeException e) {
 			log.error("Mail server connection failed!");
+            throw new RuntimeException("Mail server connection failed!", e);
 		}
 
 		log.info("OTP email sent successfully to: {}", to);
