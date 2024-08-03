@@ -41,5 +41,5 @@ public class Company {
 	protected void onCreate() {
 		createdAt = LocalDateTime.now();
 	}
-	
+
 }

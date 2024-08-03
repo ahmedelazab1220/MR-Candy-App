@@ -16,11 +16,11 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
 	@Query("SELECT new com.luv2code.demo.dto.response.CompanyResponseDTO(c.name, c.imageUrl) " + "FROM Company c")
 	List<CompanyResponseDTO> findAllCompanies();
-	
+
 	Boolean existsByName(@Param("name") String name);
 
 	void deleteByName(@Param("name") String name);
 
 	Optional<Company> findByName(@Param("name") String name);
-	
+
 }

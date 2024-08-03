@@ -15,5 +15,5 @@ public interface OtpRepository extends JpaRepository<Otp, Long> {
 
 	@Query("SELECT o.expirationTime FROM Otp o JOIN o.user u WHERE o.otp = :otp AND u.email = :email")
 	Optional<Instant> findExpirationTimeByOtpAndUserEmail(@Param("otp") String otp, @Param("email") String email);
-	
+
 }

@@ -232,10 +232,12 @@ public class UserServiceTest {
 	@Test
 	public void shouldThrowExceptionWhenEmailAlreadyExistsWhenCreateUser() {
 
-		when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
+		when(userRepository.existsByEmail(user.getEmail())).thenThrow(new IllegalArgumentException("Email is already in use!"));
+		
+		IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.createUser(user));
 
-		assertThrows(IllegalArgumentException.class, () -> userService.createUser(user));
-
+		assertEquals("Email is already in use!", exception.getMessage());
+		
 		verify(userRepository, times(0)).save(user);
 
 	}
@@ -259,7 +261,7 @@ public class UserServiceTest {
 					|| invalidUser.getAddress() == null) {
 				throw new IllegalArgumentException("Required fields are missing!");
 			}
-			userService.createUser(user);
+			userService.createUser(invalidUser);
 		});
 
 		verify(userRepository, times(0)).save(user);

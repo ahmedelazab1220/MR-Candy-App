@@ -33,22 +33,22 @@ public class OtpService implements IOtpService {
 	private final IUserService userService;
 	private final IOtpGenerator otpGenerator;
 	private final IEmailService emailService;
-	
+
 	@Transactional
 	@Override
 	public ResponseEntity<ApiResponseDTO> verfiyEmail(String email) throws MessagingException, IOException {
-		
+
 		User user = userService.getUserSetterByEmail(email);
 
 		String generatedOtp = otpGenerator.generateTOTP();
-		
+
 		Otp otp = Otp.builder().otp(generatedOtp).expirationTime(Instant.now().plus(Duration.ofMinutes(4))).user(user)
 				.build();
-		
+
 		otpRepository.save(otp);
-		
+
 		emailService.sendOtpEmail(email, generatedOtp);
-		
+
 		return ResponseEntity.ok(new ApiResponseDTO("Email sent for verification!"));
 	}
 
@@ -56,24 +56,24 @@ public class OtpService implements IOtpService {
 	public ResponseEntity<ApiResponseDTO> verfiyOtp(String otp, String email) {
 
 		Optional<Instant> expirationTime = otpRepository.findExpirationTimeByOtpAndUserEmail(otp, email);
-		
+
 		if (expirationTime.isEmpty()) {
 			throw new NotFoundException("Invalid " + NotFoundTypeException.OTP);
 		}
-		
+
 		if (expirationTime.get().isBefore(Instant.now())) {
 			throw new ExpiredException("Otp Is Expired, If you need new one please click resend!");
 		}
-		
+
 		return ResponseEntity.ok(new ApiResponseDTO("OTP verified!"));
-		
+
 	}
 
 	@Override
 	public ResponseEntity<ApiResponseDTO> forgetPasswordHandler(ChangePasswordRequestDTO changePasswordRequest) {
-		
+
 		return userService.UpdatePassword(changePasswordRequest);
-		
+
 	}
 
 }

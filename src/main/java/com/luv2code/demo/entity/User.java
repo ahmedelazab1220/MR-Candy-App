@@ -68,7 +68,7 @@ public class User {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<RefreshToken> refreshTokens;
-	
+
 	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private List<Otp> otps;
 

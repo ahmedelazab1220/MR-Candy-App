@@ -27,35 +27,35 @@ public class CompanyService implements ICompanyService {
 	private final CompanyRepository companyRepository;
 	private final IFileHelper fileHelper;
 	private final SystemMapper mapper;
-	
+
 	@Override
 	public List<CompanyResponseDTO> getAllCompanies() {
-		
+
 		return companyRepository.findAllCompanies();
-		
+
 	}
 
 	@Override
 	public ResponseEntity<ApiResponseDTO> deleteCompany(String name) throws IOException {
-		
+
 		Optional<Company> company = companyRepository.findByName(name);
 
 		if (company.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
 		}
-		
+
 		fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
 
 		companyRepository.delete(company.get());
 
 		return ResponseEntity.ok(new ApiResponseDTO("Success Delete Company."));
-		
+
 	}
 
 	@Override
 	public CompanyResponseDTO createCompany(CompanyRequestDTO companyRequestDTO)
 			throws IllegalStateException, IOException {
-		
+
 		String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
 
 		Company company = mapper.companyRequestDTOTCompany(companyRequestDTO);
@@ -65,12 +65,12 @@ public class CompanyService implements ICompanyService {
 		CompanyResponseDTO companyDto = mapper.companyTOCompanyResponseDTO(companyRepository.save(company));
 
 		return companyDto;
-		
+
 	}
 
 	@Override
 	public Boolean existCompanyByName(String name) {
-		
+
 		Boolean companyExist = companyRepository.existsByName(name);
 
 		if (!companyExist) {
@@ -83,7 +83,7 @@ public class CompanyService implements ICompanyService {
 	@Override
 	public CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
 			throws IllegalStateException, IOException {
-		
+
 		Optional<Company> company = companyRepository.findByName(name);
 
 		if (company.isEmpty()) {
@@ -97,7 +97,7 @@ public class CompanyService implements ICompanyService {
 		if (companyRequestDTO.getImage() != null) {
 
 			fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
-			
+
 			String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
 
 			company.get().setImageUrl(imageUrl);
@@ -105,7 +105,7 @@ public class CompanyService implements ICompanyService {
 		}
 
 		return mapper.companyTOCompanyResponseDTO(companyRepository.save(company.get()));
-		
+
 	}
 
 }

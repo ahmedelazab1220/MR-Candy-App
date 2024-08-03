@@ -16,5 +16,5 @@ public interface IOtpService {
 	ResponseEntity<ApiResponseDTO> verfiyOtp(String otp, String email);
 
 	ResponseEntity<ApiResponseDTO> forgetPasswordHandler(ChangePasswordRequestDTO changePasswordRequest);
-	
+
 }

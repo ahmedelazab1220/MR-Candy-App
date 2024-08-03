@@ -69,20 +69,20 @@ public class UserService implements IUserService {
 
 		Optional<UserSetterDTO> userSetterDTO = userRepository.findUserSetterByEmail(email);
 
-		if(userSetterDTO.isEmpty()) {
+		if (userSetterDTO.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
 		}
-		
+
 		UserSetterDTO userDto = userSetterDTO.get();
-		
+
 		return mapper.userSetterDTOTOUser(userDto);
-		
+
 	}
 
 	@Transactional
 	@Override
 	public ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest) {
-		
+
 		if (changePasswordRequest.getOldPassword() != null) {
 			Optional<String> pass = userRepository.findUserPasswordByEmail(changePasswordRequest.getEmail());
 
@@ -97,10 +97,10 @@ public class UserService implements IUserService {
 		}
 
 		if (!Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getNewRepeatedPassword())) {
-			return ResponseEntity
-					.ok(new ApiResponseDTO("Password not equal confirmation password,Please enter the password again!"));
+			return ResponseEntity.ok(
+					new ApiResponseDTO("Password not equal confirmation password,Please enter the password again!"));
 		}
-		
+
 		Integer updateRows = userRepository.updatePasswordByEmail(changePasswordRequest.getEmail(),
 				passwordEncoder.encode(changePasswordRequest.getNewPassword()));
 

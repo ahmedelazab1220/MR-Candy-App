@@ -36,8 +36,7 @@ public class CompanyController {
 	}
 
 	@DeleteMapping("")
-	public ResponseEntity<ApiResponseDTO> deleteCompany(@RequestParam(required = true) String name)
-			throws IOException {
+	public ResponseEntity<ApiResponseDTO> deleteCompany(@RequestParam(required = true) String name) throws IOException {
 
 		return companyService.deleteCompany(name);
 
@@ -58,5 +57,5 @@ public class CompanyController {
 		return companyService.updateCompany(companyName, companyRequestDTO);
 
 	}
-	
+
 }

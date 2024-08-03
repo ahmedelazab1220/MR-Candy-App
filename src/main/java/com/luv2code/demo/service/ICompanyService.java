@@ -21,5 +21,5 @@ public interface ICompanyService {
 
 	CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
 			throws IllegalStateException, IOException;
-	
+
 }

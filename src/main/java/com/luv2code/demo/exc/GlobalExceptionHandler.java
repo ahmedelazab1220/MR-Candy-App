@@ -227,8 +227,7 @@ public class GlobalExceptionHandler {
 	 */
 	@ExceptionHandler(ExpiredException.class)
 	public ErrorResponse handleTokenExpiredException(ExpiredException ex, WebRequest request) {
-		return buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredException", ex.getMessage(), ex.getClass(),
-				request);
+		return buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredException", ex.getMessage(), ex.getClass(), request);
 	}
 
 }

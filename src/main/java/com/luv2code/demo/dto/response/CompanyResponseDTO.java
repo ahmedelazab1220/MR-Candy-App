@@ -14,5 +14,5 @@ public class CompanyResponseDTO {
 	private String name;
 
 	private String imageUrl;
-	
+
 }

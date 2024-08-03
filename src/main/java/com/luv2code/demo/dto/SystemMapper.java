@@ -22,17 +22,17 @@ public interface SystemMapper {
 	User registerRequestDTOTOUser(RegisterRequestDTO registerRequestDTO);
 
 	User userTokenResponseDTOTOUser(UserTokenResponseDTO userTokenResponseDTO);
-	
-    UserSetterDTO userTOUserSetterDTO(User user);
-	
+
+	UserSetterDTO userTOUserSetterDTO(User user);
+
 	User userSetterDTOTOUser(UserSetterDTO userSetterDTO);
 
 	Category categoryRequestDTOTOCategory(CategoryRequestDTO categoryRequestDTO);
 
 	CategoryResponseDTO categoryTOCategoryResponseDTO(Category category);
-	
+
 	Company companyRequestDTOTCompany(CompanyRequestDTO companyRequestDTO);
-	
+
 	CompanyResponseDTO companyTOCompanyResponseDTO(Company company);
 
 }

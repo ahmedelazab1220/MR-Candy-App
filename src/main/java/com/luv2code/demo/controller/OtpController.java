@@ -21,7 +21,7 @@ import lombok.AllArgsConstructor;
 public class OtpController {
 
 	private final IOtpService otpService;
-	
+
 	@PostMapping("")
 	public ResponseEntity<?> verifyEmail(@RequestParam(required = true) String email)
 			throws MessagingException, IOException {
@@ -44,5 +44,5 @@ public class OtpController {
 		return otpService.forgetPasswordHandler(changePasswordRequest);
 
 	}
-	
+
 }

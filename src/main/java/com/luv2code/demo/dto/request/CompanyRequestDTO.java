@@ -20,5 +20,5 @@ public class CompanyRequestDTO {
 
 	@NotNull
 	private MultipartFile image;
-	
+
 }

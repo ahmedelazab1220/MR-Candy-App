@@ -85,6 +85,12 @@ public class AuthenticationServiceTest {
 
 	private MultipartFile multipartFile;
 
+	/**
+	 * Sets up the necessary mocks and initializes the role and user objects before
+	 * each test case.
+	 *
+	 * @throws Exception if there is an error with the mocks initialization.
+	 */
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);

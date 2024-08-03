@@ -44,7 +44,7 @@ public class CategoryService implements ICategoryService {
 		if (category.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
 		}
-		
+
 		fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
 
 		categoryRepository.delete(category.get());
@@ -100,7 +100,7 @@ public class CategoryService implements ICategoryService {
 		if (categoryRequestDTO.getImage() != null) {
 
 			fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
-			
+
 			String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
 
 			category.get().setImageUrl(imageUrl);
