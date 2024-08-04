@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,6 +25,7 @@ import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
+import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
 import com.luv2code.demo.entity.Category;
 import com.luv2code.demo.entity.Company;
@@ -62,6 +68,8 @@ class ProductServiceTest {
     private String imageUrl;
 
     private Long productId;
+
+    private Pageable pageable;
 
     private MultipartFile multipartFile;
 
@@ -109,6 +117,10 @@ class ProductServiceTest {
         product.setQuantity(10);
         product.setCategory(category);
         product.setCompany(company);
+    }
+
+    Pageable getPagination(Integer page, Integer size) {
+        return PageRequest.of(page, size);
     }
 
     /**
@@ -494,6 +506,82 @@ class ProductServiceTest {
 
         assertEquals("PRODUCT Not Found!", exception.getMessage());
         verify(productRepository, times(1)).existsById(productId);
+
+    }
+
+    /**
+     * Test case to verify that a page of products is returned when a company
+     * exists.
+     *
+     * @throws Exception if an error occurs during the test
+     */
+    @Test
+    void shouldReturnPageOfProductsWhenCompanyExists() {
+
+        String companyName = "Acme Corp";
+
+        pageable = PageRequest.of(0, 10);
+
+        ProductCompanyResponseDTO productDTO = new ProductCompanyResponseDTO();
+        List<ProductCompanyResponseDTO> productList = List.of(productDTO);
+
+        Page<ProductCompanyResponseDTO> productPage = new PageImpl<>(productList);
+
+        when(productRepository.findAllProducts(companyName, pageable)).thenReturn(productPage);
+
+        Page<ProductCompanyResponseDTO> result = productService.getAllProductsInCompany(companyName, 0, 10);
+
+        assertEquals(productPage, result);
+        verify(productRepository, times(1)).findAllProducts(companyName, pageable);
+
+    }
+
+    /**
+     * Test case to verify that an empty page of products is returned when there
+     * are no products associated with a given company.
+     *
+     * @return void
+     */
+    @Test
+    void shouldReturnEmptyPageWhenNoProductsExistForCompany() {
+
+        String companyName = "Acme Corp";
+
+        pageable = PageRequest.of(0, 10);
+
+        Page<ProductCompanyResponseDTO> emptyPage = new PageImpl<>(List.of());
+
+        when(productRepository.findAllProducts(companyName, pageable)).thenReturn(emptyPage);
+
+        Page<ProductCompanyResponseDTO> result = productService.getAllProductsInCompany(companyName, 0, 10);
+
+        assertEquals(emptyPage, result);
+        verify(productRepository, times(1)).findAllProducts(companyName, pageable);
+
+    }
+
+    /**
+     * Test case to verify that an IllegalArgumentException is thrown when the
+     * page or size parameter is negative.
+     *
+     * @throws IllegalArgumentException if the page or size parameter is
+     * negative
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenPageOrSizeIsNegativeWhenGettingCompanyProducts() {
+
+        String companyName = "Acme Corp";
+
+        IllegalArgumentException pageException = assertThrows(IllegalArgumentException.class, () -> {
+            productService.getAllProductsInCompany(companyName, -1, 10);
+        });
+        assertEquals("Page index and page size must be non-negative integers.", pageException.getMessage());
+
+        IllegalArgumentException sizeException = assertThrows(IllegalArgumentException.class, () -> {
+            productService.getAllProductsInCompany(companyName, 0, -1);
+        });
+
+        assertEquals("Page index and page size must be non-negative integers.", sizeException.getMessage());
 
     }
 

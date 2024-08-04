@@ -142,6 +142,10 @@ public class ProductService implements IProductService {
     @Override
     public Page<ProductCompanyResponseDTO> getAllProductsInCompany(String companyName, Integer page, Integer size) {
 
+        if (page < 0 || size < 0) {
+            throw new IllegalArgumentException("Page index and page size must be non-negative integers.");
+        }
+
         Pageable pageable = PageRequest.of(page, size);
 
         return productRepository.findAllProducts(companyName, pageable);
@@ -151,6 +155,10 @@ public class ProductService implements IProductService {
     @Override
     public Page<ProductDetailsCompanyResponseDTO> getAllProductsDetailsInCompany(String companyName, Integer page, Integer size) {
 
+        if (page < 0 || size < 0) {
+            throw new IllegalArgumentException("Page index and page size must be non-negative integers.");
+        }
+
         Pageable pageable = PageRequest.of(page, size);
 
         return productRepository.findProductsByCompanyName(companyName, pageable);
@@ -159,6 +167,10 @@ public class ProductService implements IProductService {
 
     @Override
     public Page<ProductDetailsCategoryResponseDTO> getAllProductsDetailsInCategory(String categoryName, Integer page, Integer size) {
+
+        if (page < 0 || size < 0) {
+            throw new IllegalArgumentException("Page index and page size must be non-negative integers.");
+        }
 
         Pageable pageable = PageRequest.of(page, size);
 
