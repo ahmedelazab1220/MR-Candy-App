@@ -108,4 +108,17 @@ public class CompanyService implements ICompanyService {
 
 	}
 
+	@Override
+	public Company getCompanySetter(String name) {
+		
+		Optional<Company> company = Optional.ofNullable(mapper.companySetterDTOTOCompany(companyRepository.findCompanySetterDTOByName(name).get()));
+		
+		if (company.isEmpty()) {
+			throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
+		}
+		
+		return company.get();
+		
+	}
+
 }

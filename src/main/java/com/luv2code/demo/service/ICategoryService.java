@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import com.luv2code.demo.dto.request.CategoryRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.CategoryResponseDTO;
+import com.luv2code.demo.entity.Category;
 
 public interface ICategoryService {
 
@@ -22,4 +23,6 @@ public interface ICategoryService {
 	CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
 			throws IllegalStateException, IOException;
 
+	Category getCategorySetter(String name);
+	
 }

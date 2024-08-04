@@ -29,13 +29,19 @@ public class ProductRequestDTO {
 	@NotBlank
 	private Integer quantity;
 	
+	private String discount;
+	
+	private String size;
+	
+	private String type;
+	
 	@NotBlank
 	private Long salesCount; 
 	
 	@NotNull
 	private MultipartFile image;
 	
-	@NotNull
+	@NotBlank
 	private String categoryName;
 	
 	@NotBlank

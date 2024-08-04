@@ -111,4 +111,17 @@ public class CategoryService implements ICategoryService {
 
 	}
 
+	@Override
+	public Category getCategorySetter(String name) {
+		
+		Optional<Category> category = Optional.ofNullable(mapper.categorySetterDTOTOcaCategory(categoryRepository.findCategorySetterDTOByName(name).get()));
+		
+		if (category.isEmpty()) {
+			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
+		}
+		
+		return category.get();
+		
+	}
+
 }

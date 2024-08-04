@@ -3,6 +3,9 @@ package com.luv2code.demo.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,6 +33,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Setter
 @Getter
+@DynamicInsert
+@DynamicUpdate
 public class User {
 
 	@Id

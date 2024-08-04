@@ -2,6 +2,9 @@ package com.luv2code.demo.entity;
 
 import java.math.BigDecimal;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +27,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@DynamicInsert
+@DynamicUpdate
 public class Product {
 
 	@Id
@@ -64,11 +69,11 @@ public class Product {
 	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id")
+	@JoinColumn(name = "category_name" , nullable = false)
 	private Category category;
 
 	@ManyToOne(fetch = FetchType.LAZY , cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "company_id" , nullable = false)
+	@JoinColumn(name = "company_name" , nullable = false)
 	private Company company;
 	
 }

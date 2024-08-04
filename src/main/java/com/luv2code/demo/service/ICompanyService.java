@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import com.luv2code.demo.dto.request.CompanyRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.CompanyResponseDTO;
+import com.luv2code.demo.entity.Company;
 
 public interface ICompanyService {
 
@@ -22,4 +23,6 @@ public interface ICompanyService {
 	CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
 			throws IllegalStateException, IOException;
 
+	Company getCompanySetter(String name);
+	
 }
