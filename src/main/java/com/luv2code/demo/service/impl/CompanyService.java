@@ -38,7 +38,7 @@ public class CompanyService implements ICompanyService {
 	@Override
 	public ResponseEntity<ApiResponseDTO> deleteCompany(String name) throws IOException {
 
-		Optional<Company> company = companyRepository.findByName(name);
+		Optional<Company> company = companyRepository.findCompanyWithProductsByName(name);
 
 		if (company.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");

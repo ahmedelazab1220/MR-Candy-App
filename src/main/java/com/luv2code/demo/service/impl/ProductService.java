@@ -31,10 +31,8 @@ import com.luv2code.demo.service.IProductService;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @AllArgsConstructor
 public class ProductService implements IProductService {
 
@@ -93,14 +91,15 @@ public class ProductService implements IProductService {
 			throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
 		}
 
-		if (productRequestDTO.getCategoryName() != null
-				&& product.get().getCategory().getName() != productRequestDTO.getCategoryName()) {
+		if (productRequestDTO.getCategoryName() != null) {
 
-			log.info("cat");
-			
 			Category category = categoryService.getCategorySetter(productRequestDTO.getCategoryName());
 			
-			product.get().setCategory(category);
+			if(category != product.get().getCategory()) {
+			  
+				product.get().setCategory(category);
+				
+			}
 			
 		}
 		

@@ -27,5 +27,8 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 	void deleteByName(@Param("name") String name);
 
 	Optional<Company> findByName(@Param("name") String name);
+	
+	@Query("SELECT c FROM Company c LEFT JOIN FETCH c.products WHERE c.name = :name")
+	Optional<Company> findCompanyWithProductsByName(@Param("name") String name);
 
 }
