@@ -165,7 +165,7 @@ public class ProductService implements IProductService {
 	@Override
 	public List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller() {
 
-		Pageable pageable = PageRequest.of(0, 6);
+		Pageable pageable = PageRequest.of(0, 7);
 		
 		return productRepository.findTopBestSellers(pageable);
 		
