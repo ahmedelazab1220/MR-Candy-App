@@ -5,19 +5,24 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
+import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
+import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
 import com.luv2code.demo.entity.Category;
 import com.luv2code.demo.entity.Company;
 import com.luv2code.demo.entity.Product;
+import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.repository.ProductRepository;
 import com.luv2code.demo.service.impl.ProductService;
 import com.luv2code.demo.helper.IFileHelper;
@@ -44,6 +49,8 @@ class ProductServiceTest {
 
     private ProductRequestDTO productRequestDTO;
     
+    private ProductSetterDTO productSetterDTO;
+    
     private Company company;
     
     private Category category;
@@ -51,6 +58,8 @@ class ProductServiceTest {
     private Product product;
     
     private String imageUrl;
+    
+    private Long productId;
 
     /**
      * Initializes the mock objects and sets up the test data before each test case.
@@ -60,6 +69,12 @@ class ProductServiceTest {
         MockitoAnnotations.openMocks(this);
 
         imageUrl = "http://example.com/image.png";
+        productId = 1L;
+        
+        productSetterDTO = new ProductSetterDTO();
+        productSetterDTO.setId(productId);
+        productSetterDTO.setName("Test Product");
+        productSetterDTO.setImageUrl(imageUrl);
         
         productRequestDTO = new ProductRequestDTO();
         productRequestDTO.setName("Test Product");
@@ -79,7 +94,7 @@ class ProductServiceTest {
         category.setName("Test Category");
 
         product = new Product();
-        product.setId(1L);
+        product.setId(productId);
         product.setImageUrl(imageUrl);
         product.setName("Test Product");
         product.setDescription("Test Description");
@@ -200,6 +215,71 @@ class ProductServiceTest {
         verify(mapper, times(1)).productRequestDTOTOProduct(productRequestDTO);
         verify(productRepository, times(1)).save(product);
         verify(mapper, times(1)).ProductTOproductDetailsResponseDTO(product);
+        
+    }
+    
+    /**
+     * Tests the successful deletion of a product by ID.
+     * Verifies that the image is deleted, the product is removed from the repository, and the appropriate response is returned.
+     * 
+     * @throws IOException if an I/O error occurs during file operations
+     */
+    @Test
+    void shouldDeleteProductByIdSuccessfully() throws IOException {
+
+        when(productRepository.findProductSetterDTOById(productId)).thenReturn(Optional.of(productSetterDTO));
+        when(mapper.productSetterDTOTOProduct(productSetterDTO)).thenReturn(product);
+
+        ResponseEntity<ApiResponseDTO> response = productService.deleteProductById(productId);
+
+        assertNotNull(response);
+        assertEquals("Success Deleted Product.", response.getBody().getMessage());
+        assertEquals(200, response.getStatusCode().value());
+
+        verify(fileHelper, times(1)).deleteImageFromFileSystem(product.getImageUrl());
+        verify(productRepository, times(1)).delete(product);
+    }
+    
+    /**
+     * Tests the scenario where a product is not found by ID.
+     * Verifies that a NotFoundException is thrown with the appropriate message.
+     * 
+     * @throws IOException if an I/O error occurs during the test
+     */
+    @Test
+    void shouldThrowNotFoundExceptionWhenProductByIdNotFound() throws IOException {
+
+        when(productRepository.findProductSetterDTOById(productId)).thenReturn(Optional.empty());
+
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            productService.deleteProductById(productId);
+        });
+
+        assertEquals("PRODUCT Not Found!", exception.getMessage());
+
+        verify(fileHelper, never()).deleteImageFromFileSystem(anyString());
+        verify(productRepository, never()).delete(any(Product.class));
+    }
+    
+    /**
+     * Tests the scenario where an IOException is thrown while deleting the product image.
+     * Verifies that the exception is propagated.
+     * 
+     * @throws IOException if an I/O error occurs during file operations
+     */
+    @Test
+    void shouldThrowIOExceptionWhenDeletingProductImageFails() throws IOException {
+
+        when(productRepository.findProductSetterDTOById(productId)).thenReturn(Optional.of(productSetterDTO));
+        when(mapper.productSetterDTOTOProduct(productSetterDTO)).thenReturn(product);
+        doThrow(IOException.class).when(fileHelper).deleteImageFromFileSystem(product.getImageUrl());
+
+        assertThrows(IOException.class, () -> {
+            productService.deleteProductById(productId);
+        });
+
+        verify(fileHelper, times(1)).deleteImageFromFileSystem(product.getImageUrl());
+        verify(productRepository, never()).delete(product);
         
     }
     

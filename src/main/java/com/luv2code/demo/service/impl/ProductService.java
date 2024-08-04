@@ -66,8 +66,8 @@ public class ProductService implements IProductService {
 	@Override
 	public ResponseEntity<ApiResponseDTO> deleteProductById(Long theId) throws IOException {
 
-		Optional<Product> product = Optional
-				.ofNullable(mapper.productSetterDTOTOProduct(productRepository.findProductSetterDTOById(theId).get()));
+		Optional<Product> product = productRepository.findProductSetterDTOById(theId)
+		        .map(mapper::productSetterDTOTOProduct);
 
 		if (product.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
