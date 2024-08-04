@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.luv2code.demo.dto.ProductCartSetterDTO;
 import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
@@ -50,6 +51,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT new com.luv2code.demo.dto.ProductSetterDTO(p.id, p.name, p.imageUrl) " + "FROM Product p " + "WHERE p.id = :id")
     Optional<ProductSetterDTO> findProductSetterDTOById(@Param("id") Long id);
+    
+    @Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.quantity) " + "FROM Product p " + "WHERE p.id = :id")
+    Optional<ProductCartSetterDTO> findProductSetterCartDTOById(@Param("id") Long id);
 
     @EntityGraph(attributePaths = {"category", "company"})
     @Override

@@ -13,6 +13,7 @@ import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
+import com.luv2code.demo.entity.Product;
 
 public interface IProductService {
 
@@ -34,5 +35,7 @@ public interface IProductService {
     List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller();
 
     ProductDetailsResponseDTO getProductDetailsById(Long theId);
+    
+    Product getProductCartSetter(Long theId);
 
 }

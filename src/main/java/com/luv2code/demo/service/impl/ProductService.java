@@ -199,4 +199,17 @@ public class ProductService implements IProductService {
         return productDto.get();
     }
 
+    
+    @Override
+	public Product getProductCartSetter(Long theId) {
+
+		Optional<Product> product = productRepository.findProductSetterCartDTOById(theId).map(mapper::productCartSetterDTOTOProduct);;
+
+		if (product.isEmpty()) {
+			throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
+		}
+
+		return product.get();
+
+	}
 }

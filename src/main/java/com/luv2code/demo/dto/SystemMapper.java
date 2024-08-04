@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.ReportingPolicy;
 
+import com.luv2code.demo.dto.request.CartRequestDTO;
 import com.luv2code.demo.dto.request.CategoryRequestDTO;
 import com.luv2code.demo.dto.request.CompanyRequestDTO;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
@@ -13,6 +14,7 @@ import com.luv2code.demo.dto.response.CompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
 import com.luv2code.demo.dto.response.UserAuthenticationResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
+import com.luv2code.demo.entity.Cart;
 import com.luv2code.demo.entity.Category;
 import com.luv2code.demo.entity.Company;
 import com.luv2code.demo.entity.Product;
@@ -49,6 +51,10 @@ public interface SystemMapper {
 
     Product productSetterDTOTOProduct(ProductSetterDTO productSetterDTO);
 
+    Product productCartSetterDTOTOProduct(ProductCartSetterDTO productSetterDTO);
+    
     void updateProductFromRequestDTO(ProductRequestDTO productRequestDTO, @MappingTarget Product product);
-
+    
+    Cart cartRequestDTOTOCart(CartRequestDTO cartRequestDTO);
+    
 }
