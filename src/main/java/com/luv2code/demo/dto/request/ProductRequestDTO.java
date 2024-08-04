@@ -17,33 +17,33 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductRequestDTO {
 
-	@NotBlank
-	private String name;
-	
-	@NotBlank
-	private String description;
-	
-	@NotNull
-	private BigDecimal price;
+    @NotBlank
+    private String name;
 
-	@NotNull
-	private Integer quantity;
-	
-	private String discount;
-	
-	private String size;
-	
-	private String type;
-	
-	@NotNull
-	private Long salesCount; 
-	
-	@NotNull
-	private MultipartFile image;
-	
-	@NotBlank
-	private String categoryName;
-	
-	@NotBlank
-	private String companyName;
+    @NotBlank
+    private String description;
+
+    @NotNull
+    private BigDecimal price;
+
+    @NotNull
+    private Integer quantity;
+
+    private String discount;
+
+    private String size;
+
+    private String type;
+
+    @NotNull
+    private Long salesCount;
+
+    @NotNull
+    private MultipartFile image;
+
+    @NotBlank
+    private String categoryName;
+
+    @NotBlank
+    private String companyName;
 }

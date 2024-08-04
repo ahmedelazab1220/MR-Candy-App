@@ -12,17 +12,17 @@ import com.luv2code.demo.entity.Category;
 
 public interface ICategoryService {
 
-	List<CategoryResponseDTO> getAllCategories();
+    List<CategoryResponseDTO> getAllCategories();
 
-	ResponseEntity<ApiResponseDTO> deleteCategory(String name) throws IOException;
+    ResponseEntity<ApiResponseDTO> deleteCategory(String name) throws IOException;
 
-	CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException;
+    CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException;
 
-	Boolean existCategoryByName(String name);
+    Boolean existCategoryByName(String name);
 
-	CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
-			throws IllegalStateException, IOException;
+    CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
+            throws IllegalStateException, IOException;
 
-	Category getCategorySetter(String name);
-	
+    Category getCategorySetter(String name);
+
 }

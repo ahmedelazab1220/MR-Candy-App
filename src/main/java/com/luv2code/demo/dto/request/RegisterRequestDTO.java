@@ -22,27 +22,27 @@ import lombok.Setter;
 @Builder
 public class RegisterRequestDTO {
 
-	private String fullName;
+    private String fullName;
 
-	@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Invalid email address")
-	@NotBlank
-	private String email;
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Invalid email address")
+    @NotBlank
+    private String email;
 
-	@Size(min = 8, message = "Password must be at least 8 characters long")
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).*$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special character. No whitespace allowed.")
-	@NotBlank
-	private String password;
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).*$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special character. No whitespace allowed.")
+    @NotBlank
+    private String password;
 
-	@Pattern(regexp = "^01[0-2,5]{1}[0-9]{8}$", message = "Invalid phone number")
-	@NotBlank
-	private String phoneNumber;
+    @Pattern(regexp = "^01[0-2,5]{1}[0-9]{8}$", message = "Invalid phone number")
+    @NotBlank
+    private String phoneNumber;
 
-	@NotNull
-	private MultipartFile image;
+    @NotNull
+    private MultipartFile image;
 
-	@NotNull
-	private Address address;
+    @NotNull
+    private Address address;
 
-	private Role role;
+    private Role role;
 
 }

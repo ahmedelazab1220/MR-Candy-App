@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CategoryResponseDTO {
 
-	private String name;
+    private String name;
 
-	private String imageUrl;
+    private String imageUrl;
 
 }

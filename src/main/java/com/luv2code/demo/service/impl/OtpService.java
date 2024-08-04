@@ -29,51 +29,51 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class OtpService implements IOtpService {
 
-	private final OtpRepository otpRepository;
-	private final IUserService userService;
-	private final IOtpGenerator otpGenerator;
-	private final IEmailService emailService;
+    private final OtpRepository otpRepository;
+    private final IUserService userService;
+    private final IOtpGenerator otpGenerator;
+    private final IEmailService emailService;
 
-	@Transactional
-	@Override
-	public ResponseEntity<ApiResponseDTO> verfiyEmail(String email) throws MessagingException, IOException {
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponseDTO> verfiyEmail(String email) throws MessagingException, IOException {
 
-		User user = userService.getUserSetterByEmail(email);
+        User user = userService.getUserSetterByEmail(email);
 
-		String generatedOtp = otpGenerator.generateTOTP();
+        String generatedOtp = otpGenerator.generateTOTP();
 
-		Otp otp = Otp.builder().otp(generatedOtp).expirationTime(Instant.now().plus(Duration.ofMinutes(4))).user(user)
-				.build();
+        Otp otp = Otp.builder().otp(generatedOtp).expirationTime(Instant.now().plus(Duration.ofMinutes(4))).user(user)
+                .build();
 
-		otpRepository.save(otp);
+        otpRepository.save(otp);
 
-		emailService.sendOtpEmail(email, generatedOtp);
+        emailService.sendOtpEmail(email, generatedOtp);
 
-		return ResponseEntity.ok(new ApiResponseDTO("Email sent for verification!"));
-	}
+        return ResponseEntity.ok(new ApiResponseDTO("Email sent for verification!"));
+    }
 
-	@Override
-	public ResponseEntity<ApiResponseDTO> verfiyOtp(String otp, String email) {
+    @Override
+    public ResponseEntity<ApiResponseDTO> verfiyOtp(String otp, String email) {
 
-		Optional<Instant> expirationTime = otpRepository.findExpirationTimeByOtpAndUserEmail(otp, email);
+        Optional<Instant> expirationTime = otpRepository.findExpirationTimeByOtpAndUserEmail(otp, email);
 
-		if (expirationTime.isEmpty()) {
-			throw new NotFoundException("Invalid " + NotFoundTypeException.OTP);
-		}
+        if (expirationTime.isEmpty()) {
+            throw new NotFoundException("Invalid " + NotFoundTypeException.OTP);
+        }
 
-		if (expirationTime.get().isBefore(Instant.now())) {
-			throw new ExpiredException("Otp Is Expired, If you need new one please click resend!");
-		}
+        if (expirationTime.get().isBefore(Instant.now())) {
+            throw new ExpiredException("Otp Is Expired, If you need new one please click resend!");
+        }
 
-		return ResponseEntity.ok(new ApiResponseDTO("OTP verified!"));
+        return ResponseEntity.ok(new ApiResponseDTO("OTP verified!"));
 
-	}
+    }
 
-	@Override
-	public ResponseEntity<ApiResponseDTO> forgetPasswordHandler(ChangePasswordRequestDTO changePasswordRequest) {
+    @Override
+    public ResponseEntity<ApiResponseDTO> forgetPasswordHandler(ChangePasswordRequestDTO changePasswordRequest) {
 
-		return userService.UpdatePassword(changePasswordRequest);
+        return userService.UpdatePassword(changePasswordRequest);
 
-	}
+    }
 
 }

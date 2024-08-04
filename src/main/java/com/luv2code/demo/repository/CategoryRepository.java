@@ -15,17 +15,17 @@ import com.luv2code.demo.entity.Category;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-	@Query("SELECT new com.luv2code.demo.dto.response.CategoryResponseDTO(c.name, c.imageUrl) " + "FROM Category c")
-	List<CategoryResponseDTO> findAllCategories();
-	
-	@Query("SELECT new com.luv2code.demo.dto.CategorySetterDTO(c.id, c.name) " + "FROM Category c "
-			+ "WHERE c.name = :name")
-	Optional<CategorySetterDTO> findCategorySetterDTOByName(@Param("name") String name);
+    @Query("SELECT new com.luv2code.demo.dto.response.CategoryResponseDTO(c.name, c.imageUrl) " + "FROM Category c")
+    List<CategoryResponseDTO> findAllCategories();
 
-	Boolean existsByName(@Param("name") String name);
+    @Query("SELECT new com.luv2code.demo.dto.CategorySetterDTO(c.id, c.name) " + "FROM Category c "
+            + "WHERE c.name = :name")
+    Optional<CategorySetterDTO> findCategorySetterDTOByName(@Param("name") String name);
 
-	void deleteByName(@Param("name") String name);
+    Boolean existsByName(@Param("name") String name);
 
-	Optional<Category> findByName(@Param("name") String name);
+    void deleteByName(@Param("name") String name);
+
+    Optional<Category> findByName(@Param("name") String name);
 
 }

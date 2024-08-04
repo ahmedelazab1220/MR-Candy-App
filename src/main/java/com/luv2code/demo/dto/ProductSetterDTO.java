@@ -11,10 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductSetterDTO {
 
-	private Long id;
-	
-	private String name;
-	
-	private String imageUrl;
-	
+    private Long id;
+
+    private String name;
+
+    private String imageUrl;
+
 }

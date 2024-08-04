@@ -15,20 +15,20 @@ import com.luv2code.demo.entity.Company;
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 
-	@Query("SELECT new com.luv2code.demo.dto.response.CompanyResponseDTO(c.name, c.imageUrl) " + "FROM Company c")
-	List<CompanyResponseDTO> findAllCompanies();
+    @Query("SELECT new com.luv2code.demo.dto.response.CompanyResponseDTO(c.name, c.imageUrl) " + "FROM Company c")
+    List<CompanyResponseDTO> findAllCompanies();
 
-	@Query("SELECT new com.luv2code.demo.dto.CompanySetterDTO(c.id, c.name, c.imageUrl) " + "FROM Company c "
-			+ "WHERE c.name = :name")
-	Optional<CompanySetterDTO> findCompanySetterDTOByName(@Param("name") String name);
+    @Query("SELECT new com.luv2code.demo.dto.CompanySetterDTO(c.id, c.name, c.imageUrl) " + "FROM Company c "
+            + "WHERE c.name = :name")
+    Optional<CompanySetterDTO> findCompanySetterDTOByName(@Param("name") String name);
 
-	Boolean existsByName(@Param("name") String name);
+    Boolean existsByName(@Param("name") String name);
 
-	void deleteByName(@Param("name") String name);
+    void deleteByName(@Param("name") String name);
 
-	Optional<Company> findByName(@Param("name") String name);
-	
-	@Query("SELECT c FROM Company c LEFT JOIN FETCH c.products WHERE c.name = :name")
-	Optional<Company> findCompanyWithProductsByName(@Param("name") String name);
+    Optional<Company> findByName(@Param("name") String name);
+
+    @Query("SELECT c FROM Company c LEFT JOIN FETCH c.products WHERE c.name = :name")
+    Optional<Company> findCompanyWithProductsByName(@Param("name") String name);
 
 }

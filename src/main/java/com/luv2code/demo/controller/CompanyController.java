@@ -26,36 +26,36 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CompanyController {
 
-	private final ICompanyService companyService;
+    private final ICompanyService companyService;
 
-	@GetMapping("")
-	public List<CompanyResponseDTO> getAllCompanies() {
+    @GetMapping("")
+    public List<CompanyResponseDTO> getAllCompanies() {
 
-		return companyService.getAllCompanies();
+        return companyService.getAllCompanies();
 
-	}
+    }
 
-	@DeleteMapping("")
-	public ResponseEntity<ApiResponseDTO> deleteCompany(@RequestParam(required = true) String name) throws IOException {
+    @DeleteMapping("")
+    public ResponseEntity<ApiResponseDTO> deleteCompany(@RequestParam(required = true) String name) throws IOException {
 
-		return companyService.deleteCompany(name);
+        return companyService.deleteCompany(name);
 
-	}
+    }
 
-	@PostMapping("")
-	public CompanyResponseDTO createCompany(@Valid @ModelAttribute CompanyRequestDTO CompanyRequestDTO)
-			throws IllegalStateException, IOException {
+    @PostMapping("")
+    public CompanyResponseDTO createCompany(@Valid @ModelAttribute CompanyRequestDTO CompanyRequestDTO)
+            throws IllegalStateException, IOException {
 
-		return companyService.createCompany(CompanyRequestDTO);
+        return companyService.createCompany(CompanyRequestDTO);
 
-	}
+    }
 
-	@PutMapping("")
-	public CompanyResponseDTO updateCompany(@RequestParam(required = true) String companyName,
-			@Valid @ModelAttribute CompanyRequestDTO companyRequestDTO) throws IllegalStateException, IOException {
+    @PutMapping("")
+    public CompanyResponseDTO updateCompany(@RequestParam(required = true) String companyName,
+            @Valid @ModelAttribute CompanyRequestDTO companyRequestDTO) throws IllegalStateException, IOException {
 
-		return companyService.updateCompany(companyName, companyRequestDTO);
+        return companyService.updateCompany(companyName, companyRequestDTO);
 
-	}
+    }
 
 }

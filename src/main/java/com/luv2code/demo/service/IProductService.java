@@ -16,23 +16,23 @@ import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
 
 public interface IProductService {
 
-	ProductDetailsResponseDTO createProduct(ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException;
-	
-	ResponseEntity<ApiResponseDTO> deleteProductById(Long theId) throws IOException;
-	
-	ProductDetailsResponseDTO updateProductById(Long theId , ProductRequestDTO productRequestDTO)
-			throws IllegalStateException, IOException;
-	
-	Boolean existProductById(Long theId);
-	
-	Page<ProductCompanyResponseDTO> getAllProductsInCompany(String companyName , Integer page , Integer size);
-	
-	Page<ProductDetailsCompanyResponseDTO> getAllProductsDetailsInCompany(String companyName , Integer page , Integer size);
-	
-	Page<ProductDetailsCategoryResponseDTO> getAllProductsDetailsInCategory(String categoryName , Integer page , Integer size);
-	
-	List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller(); 
-	
-	ProductDetailsResponseDTO getProductDetailsById(Long theId);
-	
+    ProductDetailsResponseDTO createProduct(ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException;
+
+    ResponseEntity<ApiResponseDTO> deleteProductById(Long theId) throws IOException;
+
+    ProductDetailsResponseDTO updateProductById(Long theId, ProductRequestDTO productRequestDTO)
+            throws IllegalStateException, IOException;
+
+    Boolean existProductById(Long theId);
+
+    Page<ProductCompanyResponseDTO> getAllProductsInCompany(String companyName, Integer page, Integer size);
+
+    Page<ProductDetailsCompanyResponseDTO> getAllProductsDetailsInCompany(String companyName, Integer page, Integer size);
+
+    Page<ProductDetailsCategoryResponseDTO> getAllProductsDetailsInCategory(String categoryName, Integer page, Integer size);
+
+    List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller();
+
+    ProductDetailsResponseDTO getProductDetailsById(Long theId);
+
 }

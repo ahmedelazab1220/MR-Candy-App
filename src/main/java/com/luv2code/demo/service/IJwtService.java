@@ -9,16 +9,16 @@ import io.jsonwebtoken.Claims;
 
 public interface IJwtService {
 
-	String extractUsername(String token);
+    String extractUsername(String token);
 
-	Date extractExpiration(String token);
+    Date extractExpiration(String token);
 
-	<T> T extractClaim(String token, Function<Claims, T> claimsResolver);
+    <T> T extractClaim(String token, Function<Claims, T> claimsResolver);
 
-	Boolean validateToken(String token, UserDetails userDetails);
+    Boolean validateToken(String token, UserDetails userDetails);
 
-	String generateToken(String username, UserDetails userDetail);
+    String generateToken(String username, UserDetails userDetail);
 
-	String generateRefreshToken(String username);
+    String generateRefreshToken(String username);
 
 }

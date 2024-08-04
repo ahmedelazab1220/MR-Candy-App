@@ -24,101 +24,101 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CompanyService implements ICompanyService {
 
-	private final CompanyRepository companyRepository;
-	private final IFileHelper fileHelper;
-	private final SystemMapper mapper;
+    private final CompanyRepository companyRepository;
+    private final IFileHelper fileHelper;
+    private final SystemMapper mapper;
 
-	@Override
-	public List<CompanyResponseDTO> getAllCompanies() {
+    @Override
+    public List<CompanyResponseDTO> getAllCompanies() {
 
-		return companyRepository.findAllCompanies();
+        return companyRepository.findAllCompanies();
 
-	}
+    }
 
-	@Override
-	public ResponseEntity<ApiResponseDTO> deleteCompany(String name) throws IOException {
+    @Override
+    public ResponseEntity<ApiResponseDTO> deleteCompany(String name) throws IOException {
 
-		Optional<Company> company = companyRepository.findCompanyWithProductsByName(name);
+        Optional<Company> company = companyRepository.findCompanyWithProductsByName(name);
 
-		if (company.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
-		}
+        if (company.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
+        }
 
-		fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
+        fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
 
-		companyRepository.delete(company.get());
+        companyRepository.delete(company.get());
 
-		return ResponseEntity.ok(new ApiResponseDTO("Success Delete Company."));
+        return ResponseEntity.ok(new ApiResponseDTO("Success Delete Company."));
 
-	}
+    }
 
-	@Override
-	public CompanyResponseDTO createCompany(CompanyRequestDTO companyRequestDTO)
-			throws IllegalStateException, IOException {
+    @Override
+    public CompanyResponseDTO createCompany(CompanyRequestDTO companyRequestDTO)
+            throws IllegalStateException, IOException {
 
-		String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
+        String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
 
-		Company company = mapper.companyRequestDTOTOCompany(companyRequestDTO);
+        Company company = mapper.companyRequestDTOTOCompany(companyRequestDTO);
 
-		company.setImageUrl(imageUrl);
+        company.setImageUrl(imageUrl);
 
-		CompanyResponseDTO companyDto = mapper.companyTOCompanyResponseDTO(companyRepository.save(company));
+        CompanyResponseDTO companyDto = mapper.companyTOCompanyResponseDTO(companyRepository.save(company));
 
-		return companyDto;
+        return companyDto;
 
-	}
+    }
 
-	@Override
-	public Boolean existCompanyByName(String name) {
+    @Override
+    public Boolean existCompanyByName(String name) {
 
-		Boolean companyExist = companyRepository.existsByName(name);
+        Boolean companyExist = companyRepository.existsByName(name);
 
-		if (!companyExist) {
-			throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
-		}
+        if (!companyExist) {
+            throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
+        }
 
-		return companyExist;
-	}
+        return companyExist;
+    }
 
-	@Override
-	public CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
-			throws IllegalStateException, IOException {
+    @Override
+    public CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
+            throws IllegalStateException, IOException {
 
-		Optional<Company> company = companyRepository.findByName(name);
+        Optional<Company> company = companyRepository.findByName(name);
 
-		if (company.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
-		}
+        if (company.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
+        }
 
-		if (companyRequestDTO.getName() != null) {
-			company.get().setName(companyRequestDTO.getName());
-		}
+        if (companyRequestDTO.getName() != null) {
+            company.get().setName(companyRequestDTO.getName());
+        }
 
-		if (companyRequestDTO.getImage() != null) {
+        if (companyRequestDTO.getImage() != null) {
 
-			fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
+            fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
 
-			String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
+            String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
 
-			company.get().setImageUrl(imageUrl);
+            company.get().setImageUrl(imageUrl);
 
-		}
+        }
 
-		return mapper.companyTOCompanyResponseDTO(companyRepository.save(company.get()));
+        return mapper.companyTOCompanyResponseDTO(companyRepository.save(company.get()));
 
-	}
+    }
 
-	@Override
-	public Company getCompanySetter(String name) {
-		
-		Optional<Company> company = Optional.ofNullable(mapper.companySetterDTOTOCompany(companyRepository.findCompanySetterDTOByName(name).get()));
-		
-		if (company.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
-		}
-		
-		return company.get();
-		
-	}
+    @Override
+    public Company getCompanySetter(String name) {
+
+        Optional<Company> company = Optional.ofNullable(mapper.companySetterDTOTOCompany(companyRepository.findCompanySetterDTOByName(name).get()));
+
+        if (company.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
+        }
+
+        return company.get();
+
+    }
 
 }

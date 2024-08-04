@@ -21,34 +21,34 @@ import com.luv2code.demo.entity.User;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface SystemMapper {
 
-	User userAuthenticationResponseDTOTOUser(UserAuthenticationResponseDTO userAuthenticationResponseDTO);
+    User userAuthenticationResponseDTOTOUser(UserAuthenticationResponseDTO userAuthenticationResponseDTO);
 
-	User registerRequestDTOTOUser(RegisterRequestDTO registerRequestDTO);
+    User registerRequestDTOTOUser(RegisterRequestDTO registerRequestDTO);
 
-	User userTokenResponseDTOTOUser(UserTokenResponseDTO userTokenResponseDTO);
+    User userTokenResponseDTOTOUser(UserTokenResponseDTO userTokenResponseDTO);
 
-	UserSetterDTO userTOUserSetterDTO(User user);
+    UserSetterDTO userTOUserSetterDTO(User user);
 
-	User userSetterDTOTOUser(UserSetterDTO userSetterDTO);
+    User userSetterDTOTOUser(UserSetterDTO userSetterDTO);
 
-	Category categoryRequestDTOTOCategory(CategoryRequestDTO categoryRequestDTO);
+    Category categoryRequestDTOTOCategory(CategoryRequestDTO categoryRequestDTO);
 
-	CategoryResponseDTO categoryTOCategoryResponseDTO(Category category);
+    CategoryResponseDTO categoryTOCategoryResponseDTO(Category category);
 
-	Category categorySetterDTOTOcaCategory(CategorySetterDTO categorySetterDTO);
-	
-	Company companyRequestDTOTOCompany(CompanyRequestDTO companyRequestDTO);
+    Category categorySetterDTOTOcaCategory(CategorySetterDTO categorySetterDTO);
 
-	CompanyResponseDTO companyTOCompanyResponseDTO(Company company);
-	
-	Company companySetterDTOTOCompany(CompanySetterDTO companySetterDTO);
-	
-	Product productRequestDTOTOProduct(ProductRequestDTO productRequestDTO);
+    Company companyRequestDTOTOCompany(CompanyRequestDTO companyRequestDTO);
 
-	ProductDetailsResponseDTO ProductTOproductDetailsResponseDTO(Product product);
-	
-	Product productSetterDTOTOProduct(ProductSetterDTO productSetterDTO);	
-	
-	void updateProductFromRequestDTO(ProductRequestDTO productRequestDTO, @MappingTarget Product product);
-	
+    CompanyResponseDTO companyTOCompanyResponseDTO(Company company);
+
+    Company companySetterDTOTOCompany(CompanySetterDTO companySetterDTO);
+
+    Product productRequestDTOTOProduct(ProductRequestDTO productRequestDTO);
+
+    ProductDetailsResponseDTO ProductTOproductDetailsResponseDTO(Product product);
+
+    Product productSetterDTOTOProduct(ProductSetterDTO productSetterDTO);
+
+    void updateProductFromRequestDTO(ProductRequestDTO productRequestDTO, @MappingTarget Product product);
+
 }

@@ -11,8 +11,8 @@ import com.luv2code.demo.dto.response.JwtResponseDTO;
 
 public interface IAuthenticationService {
 
-	JwtResponseDTO login(LoginRequestDTO loginRequest);
+    JwtResponseDTO login(LoginRequestDTO loginRequest);
 
-	ResponseEntity<ApiResponseDTO> register(RegisterRequestDTO registerRequest) throws IOException;
+    ResponseEntity<ApiResponseDTO> register(RegisterRequestDTO registerRequest) throws IOException;
 
 }

@@ -36,155 +36,155 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ProductService implements IProductService {
 
-	private final ProductRepository productRepository;
-	private final SystemMapper mapper;
-	private final IFileHelper fileHelper;
-	private final ICategoryService categoryService;
-	private final ICompanyService companyService;
+    private final ProductRepository productRepository;
+    private final SystemMapper mapper;
+    private final IFileHelper fileHelper;
+    private final ICategoryService categoryService;
+    private final ICompanyService companyService;
 
-	@Transactional
-	@Override
-	public ProductDetailsResponseDTO createProduct(ProductRequestDTO productRequestDTO)
-			throws IllegalStateException, IOException {
+    @Transactional
+    @Override
+    public ProductDetailsResponseDTO createProduct(ProductRequestDTO productRequestDTO)
+            throws IllegalStateException, IOException {
 
-		Company company = companyService.getCompanySetter(productRequestDTO.getCompanyName());
+        Company company = companyService.getCompanySetter(productRequestDTO.getCompanyName());
 
-		Category category = categoryService.getCategorySetter(productRequestDTO.getCategoryName());
+        Category category = categoryService.getCategorySetter(productRequestDTO.getCategoryName());
 
-		String imageUrl = fileHelper.uploadFileToFileSystem(productRequestDTO.getImage());
+        String imageUrl = fileHelper.uploadFileToFileSystem(productRequestDTO.getImage());
 
-		Product product = mapper.productRequestDTOTOProduct(productRequestDTO);
+        Product product = mapper.productRequestDTOTOProduct(productRequestDTO);
 
-		product.setImageUrl(imageUrl);
+        product.setImageUrl(imageUrl);
 
-		product.setCategory(category);
-		product.setCompany(company);
+        product.setCategory(category);
+        product.setCompany(company);
 
-		return mapper.ProductTOproductDetailsResponseDTO(productRepository.save(product));
-	}
+        return mapper.ProductTOproductDetailsResponseDTO(productRepository.save(product));
+    }
 
-	@Override
-	public ResponseEntity<ApiResponseDTO> deleteProductById(Long theId) throws IOException {
+    @Override
+    public ResponseEntity<ApiResponseDTO> deleteProductById(Long theId) throws IOException {
 
-		Optional<Product> product = productRepository.findProductSetterDTOById(theId)
-		        .map(mapper::productSetterDTOTOProduct);
+        Optional<Product> product = productRepository.findProductSetterDTOById(theId)
+                .map(mapper::productSetterDTOTOProduct);
 
-		if (product.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
-		}
-
-		fileHelper.deleteImageFromFileSystem(product.get().getImageUrl());
-
-		productRepository.delete(product.get());
-
-		return ResponseEntity.ok(new ApiResponseDTO("Success Deleted Product."));
-	}
-
-	@Transactional
-	@Override
-	public ProductDetailsResponseDTO updateProductById(Long theId, ProductRequestDTO productRequestDTO)
-			throws IllegalStateException, IOException {
-
-		Optional<Product> product = productRepository.findById(theId);
-
-		if (product.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
-		}
-
-		if (productRequestDTO.getCategoryName() != null) {
-
-			Category category = categoryService.getCategorySetter(productRequestDTO.getCategoryName());
-			
-			if(category != product.get().getCategory()) {
-			  
-				product.get().setCategory(category);
-				
-			}
-			
-		}
-		
-		if (productRequestDTO.getCompanyName() != null
-				&& product.get().getCompany().getName() != productRequestDTO.getCompanyName()) {
-
-			Company company = companyService.getCompanySetter(productRequestDTO.getCompanyName());
-			
-			product.get().setCompany(company);
-			
-		}
-		
-		if(productRequestDTO.getImage() != null) {
-			
-			fileHelper.deleteImageFromFileSystem(product.get().getImageUrl());
-
-			String imageUrl = fileHelper.uploadFileToFileSystem(productRequestDTO.getImage());
-			
-			product.get().setImageUrl(imageUrl);
-			
-		}
-		
-		mapper.updateProductFromRequestDTO(productRequestDTO, product.get());
-		
-		return mapper.ProductTOproductDetailsResponseDTO(productRepository.save(product.get()));
-	}
-
-	@Override
-	public Boolean existProductById(Long theId) {
-	    
-		Boolean productIsExist = productRepository.existsById(theId);
-		
-		if(!productIsExist) {
-			throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
-		}
-		
-		return productIsExist;
-	}
-
-	@Override
-	public Page<ProductCompanyResponseDTO> getAllProductsInCompany(String companyName , Integer page , Integer size) {
-		
-		Pageable pageable = PageRequest.of(page, size);
-				
-		return productRepository.findAllProducts(companyName, pageable);
-		
-	}
-
-	@Override
-	public Page<ProductDetailsCompanyResponseDTO> getAllProductsDetailsInCompany(String companyName , Integer page , Integer size) {
-
-		Pageable pageable = PageRequest.of(page, size);
-		
-		return productRepository.findProductsByCompanyName(companyName, pageable);
-		
-	}
-
-	@Override
-	public Page<ProductDetailsCategoryResponseDTO> getAllProductsDetailsInCategory(String categoryName , Integer page , Integer size) {
-
-		Pageable pageable = PageRequest.of(page, size);
-		
-		return productRepository.findProductsByCategoryName(categoryName, pageable);
-		
-	}
-
-	@Override
-	public List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller() {
-
-		Pageable pageable = PageRequest.of(0, 7);
-		
-		return productRepository.findTopBestSellers(pageable);
-		
-	}
-
-	@Override
-	public ProductDetailsResponseDTO getProductDetailsById(Long theId) {
-
-        Optional<ProductDetailsResponseDTO> productDto = productRepository.findProductDetailsById(theId); 
-		
-        if(productDto.isEmpty()) {
-        	throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
+        if (product.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
         }
-        
-		return productDto.get();
-	}
+
+        fileHelper.deleteImageFromFileSystem(product.get().getImageUrl());
+
+        productRepository.delete(product.get());
+
+        return ResponseEntity.ok(new ApiResponseDTO("Success Deleted Product."));
+    }
+
+    @Transactional
+    @Override
+    public ProductDetailsResponseDTO updateProductById(Long theId, ProductRequestDTO productRequestDTO)
+            throws IllegalStateException, IOException {
+
+        Optional<Product> product = productRepository.findById(theId);
+
+        if (product.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
+        }
+
+        if (productRequestDTO.getCategoryName() != null) {
+
+            Category category = categoryService.getCategorySetter(productRequestDTO.getCategoryName());
+
+            if (category != product.get().getCategory()) {
+
+                product.get().setCategory(category);
+
+            }
+
+        }
+
+        if (productRequestDTO.getCompanyName() != null
+                && product.get().getCompany().getName() != productRequestDTO.getCompanyName()) {
+
+            Company company = companyService.getCompanySetter(productRequestDTO.getCompanyName());
+
+            product.get().setCompany(company);
+
+        }
+
+        if (productRequestDTO.getImage() != null) {
+
+            fileHelper.deleteImageFromFileSystem(product.get().getImageUrl());
+
+            String imageUrl = fileHelper.uploadFileToFileSystem(productRequestDTO.getImage());
+
+            product.get().setImageUrl(imageUrl);
+
+        }
+
+        mapper.updateProductFromRequestDTO(productRequestDTO, product.get());
+
+        return mapper.ProductTOproductDetailsResponseDTO(productRepository.save(product.get()));
+    }
+
+    @Override
+    public Boolean existProductById(Long theId) {
+
+        Boolean productIsExist = productRepository.existsById(theId);
+
+        if (!productIsExist) {
+            throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
+        }
+
+        return productIsExist;
+    }
+
+    @Override
+    public Page<ProductCompanyResponseDTO> getAllProductsInCompany(String companyName, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return productRepository.findAllProducts(companyName, pageable);
+
+    }
+
+    @Override
+    public Page<ProductDetailsCompanyResponseDTO> getAllProductsDetailsInCompany(String companyName, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return productRepository.findProductsByCompanyName(companyName, pageable);
+
+    }
+
+    @Override
+    public Page<ProductDetailsCategoryResponseDTO> getAllProductsDetailsInCategory(String categoryName, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return productRepository.findProductsByCategoryName(categoryName, pageable);
+
+    }
+
+    @Override
+    public List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller() {
+
+        Pageable pageable = PageRequest.of(0, 7);
+
+        return productRepository.findTopBestSellers(pageable);
+
+    }
+
+    @Override
+    public ProductDetailsResponseDTO getProductDetailsById(Long theId) {
+
+        Optional<ProductDetailsResponseDTO> productDto = productRepository.findProductDetailsById(theId);
+
+        if (productDto.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
+        }
+
+        return productDto.get();
+    }
 
 }

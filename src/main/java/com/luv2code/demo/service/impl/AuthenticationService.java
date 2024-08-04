@@ -32,64 +32,64 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthenticationService implements IAuthenticationService {
 
-	private final IUserService userService;
-	private final RoleRepository roleRepository;
-	private final IFileHelper fileHelper;
-	private final PasswordEncoder passwordEncoder;
-	private final AuthenticationManager authenticationManager;
-	private final SystemMapper mapper;
-	private final IJwtService jwtService;
-	private final IRefreshTokenService refreshTokenService;
+    private final IUserService userService;
+    private final RoleRepository roleRepository;
+    private final IFileHelper fileHelper;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final SystemMapper mapper;
+    private final IJwtService jwtService;
+    private final IRefreshTokenService refreshTokenService;
 
-	@Override
-	public JwtResponseDTO login(LoginRequestDTO loginRequestDTO) {
+    @Override
+    public JwtResponseDTO login(LoginRequestDTO loginRequestDTO) {
 
-		authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
 
-		Optional<User> user = Optional.ofNullable(userService.getUserTokenDetails(loginRequestDTO.getEmail()));
+        Optional<User> user = Optional.ofNullable(userService.getUserTokenDetails(loginRequestDTO.getEmail()));
 
-		if (user.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
-		}
+        if (user.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
+        }
 
-		String accessToken = jwtService.generateToken(loginRequestDTO.getEmail(), user.map(SecurityUser::new).get());
-		String refreshToken = jwtService.generateRefreshToken(loginRequestDTO.getEmail());
+        String accessToken = jwtService.generateToken(loginRequestDTO.getEmail(), user.map(SecurityUser::new).get());
+        String refreshToken = jwtService.generateRefreshToken(loginRequestDTO.getEmail());
 
-		RefreshToken refresh_token = RefreshToken.builder().token(refreshToken).user(user.get())
-				.expireDate(jwtService.extractExpiration(refreshToken).toInstant()).build();
+        RefreshToken refresh_token = RefreshToken.builder().token(refreshToken).user(user.get())
+                .expireDate(jwtService.extractExpiration(refreshToken).toInstant()).build();
 
-		refreshTokenService.save(refresh_token);
+        refreshTokenService.save(refresh_token);
 
-		return createJwtResponse(accessToken, refreshToken);
+        return createJwtResponse(accessToken, refreshToken);
 
-	}
+    }
 
-	@Override
-	public ResponseEntity<ApiResponseDTO> register(RegisterRequestDTO registerRequestDTO) throws IOException {
+    @Override
+    public ResponseEntity<ApiResponseDTO> register(RegisterRequestDTO registerRequestDTO) throws IOException {
 
-		registerRequestDTO.setRole(roleRepository
-				.findByRole(registerRequestDTO.getRole() == null ? "USER" : registerRequestDTO.getRole().getRole())
-				.get());
+        registerRequestDTO.setRole(roleRepository
+                .findByRole(registerRequestDTO.getRole() == null ? "USER" : registerRequestDTO.getRole().getRole())
+                .get());
 
-		String imageUrl = fileHelper.uploadFileToFileSystem(registerRequestDTO.getImage());
+        String imageUrl = fileHelper.uploadFileToFileSystem(registerRequestDTO.getImage());
 
-		registerRequestDTO.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
+        registerRequestDTO.setPassword(passwordEncoder.encode(registerRequestDTO.getPassword()));
 
-		User user = mapper.registerRequestDTOTOUser(registerRequestDTO);
+        User user = mapper.registerRequestDTOTOUser(registerRequestDTO);
 
-		user.setImageUrl(imageUrl);
+        user.setImageUrl(imageUrl);
 
-		userService.createUser(user);
+        userService.createUser(user);
 
-		return ResponseEntity.ok(new ApiResponseDTO("Registration successful! Welcome to Mr Candy App."));
+        return ResponseEntity.ok(new ApiResponseDTO("Registration successful! Welcome to Mr Candy App."));
 
-	}
+    }
 
-	private JwtResponseDTO createJwtResponse(String accessToken, String refreshToken) {
+    private JwtResponseDTO createJwtResponse(String accessToken, String refreshToken) {
 
-		return new JwtResponseDTO(accessToken, refreshToken);
+        return new JwtResponseDTO(accessToken, refreshToken);
 
-	}
+    }
 
 }

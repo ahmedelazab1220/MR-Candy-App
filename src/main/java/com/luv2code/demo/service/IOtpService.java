@@ -11,10 +11,10 @@ import jakarta.mail.MessagingException;
 
 public interface IOtpService {
 
-	ResponseEntity<ApiResponseDTO> verfiyEmail(String email) throws MessagingException, IOException;
+    ResponseEntity<ApiResponseDTO> verfiyEmail(String email) throws MessagingException, IOException;
 
-	ResponseEntity<ApiResponseDTO> verfiyOtp(String otp, String email);
+    ResponseEntity<ApiResponseDTO> verfiyOtp(String otp, String email);
 
-	ResponseEntity<ApiResponseDTO> forgetPasswordHandler(ChangePasswordRequestDTO changePasswordRequest);
+    ResponseEntity<ApiResponseDTO> forgetPasswordHandler(ChangePasswordRequestDTO changePasswordRequest);
 
 }

@@ -24,20 +24,20 @@ import lombok.Setter;
 @DynamicUpdate
 public class Address {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "street", nullable = false)
-	private String street;
+    @Column(name = "street", nullable = false)
+    private String street;
 
-	@Column(name = "city", nullable = false)
-	private String city;
+    @Column(name = "city", nullable = false)
+    private String city;
 
-	@Column(name = "state", nullable = false)
-	private String state;
+    @Column(name = "state", nullable = false)
+    private String state;
 
-	@Column(name = "zip_code")
-	private String zipCode;
+    @Column(name = "zip_code")
+    private String zipCode;
 
 }

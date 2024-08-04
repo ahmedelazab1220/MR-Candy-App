@@ -12,52 +12,52 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileUtils {
 
-	public static byte[] compressFile(byte[] data) {
+    public static byte[] compressFile(byte[] data) {
 
-		Deflater deflater = new Deflater();
-		deflater.setInput(data);
-		deflater.setLevel(Deflater.BEST_COMPRESSION);
-		deflater.finish();
+        Deflater deflater = new Deflater();
+        deflater.setInput(data);
+        deflater.setLevel(Deflater.BEST_COMPRESSION);
+        deflater.finish();
 
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
 
-		while (!deflater.finished()) {
-			int size = deflater.deflate(buffer);
-			outputStream.write(buffer, 0, size);
-		}
+        while (!deflater.finished()) {
+            int size = deflater.deflate(buffer);
+            outputStream.write(buffer, 0, size);
+        }
 
-		try {
-			outputStream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		byte[] outputData = outputStream.toByteArray();
-		log.info(data.length / 1024 + " KB");
-		log.info(outputData.length / 1024 + " KB");
+        byte[] outputData = outputStream.toByteArray();
+        log.info(data.length / 1024 + " KB");
+        log.info(outputData.length / 1024 + " KB");
 
-		return outputData;
-	}
+        return outputData;
+    }
 
-	public static byte[] decompressFile(byte[] data) {
-		Inflater inflater = new Inflater();
-		inflater.setInput(data);
+    public static byte[] decompressFile(byte[] data) {
+        Inflater inflater = new Inflater();
+        inflater.setInput(data);
 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		byte[] buffer = new byte[1024];
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
 
-		try {
-			while (!inflater.finished()) {
-				int size = inflater.inflate(buffer);
-				stream.write(buffer, 0, size);
-			}
-			stream.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        try {
+            while (!inflater.finished()) {
+                int size = inflater.inflate(buffer);
+                stream.write(buffer, 0, size);
+            }
+            stream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return stream.toByteArray();
-	}
+        return stream.toByteArray();
+    }
 
 }

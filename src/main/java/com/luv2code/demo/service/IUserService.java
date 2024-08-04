@@ -8,11 +8,11 @@ import com.luv2code.demo.entity.User;
 
 public interface IUserService {
 
-	User getUserTokenDetails(String email);
+    User getUserTokenDetails(String email);
 
-	void createUser(User user);
+    void createUser(User user);
 
-	User getUserSetterByEmail(String email);
+    User getUserSetterByEmail(String email);
 
-	ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest);
+    ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest);
 }

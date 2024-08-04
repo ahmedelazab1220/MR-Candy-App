@@ -23,70 +23,70 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RefreshTokenService implements IRefreshTokenService {
 
-	private final RefreshTokenRepository refreshTokenRepository;
-	private final IJwtService jwtService;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final IJwtService jwtService;
 
-	@Override
-	public RefreshToken save(RefreshToken refreshToken) {
+    @Override
+    public RefreshToken save(RefreshToken refreshToken) {
 
-		return refreshTokenRepository.save(refreshToken);
+        return refreshTokenRepository.save(refreshToken);
 
-	}
+    }
 
-	@Override
-	public RefreshToken findByToken(String token) {
+    @Override
+    public RefreshToken findByToken(String token) {
 
-		return getToken(token);
+        return getToken(token);
 
-	}
+    }
 
-	@Override
-	public void deleteByEntity(RefreshToken refreshToken) {
+    @Override
+    public void deleteByEntity(RefreshToken refreshToken) {
 
-		refreshTokenRepository.delete(refreshToken);
+        refreshTokenRepository.delete(refreshToken);
 
-	}
+    }
 
-	@Transactional
-	@Override
-	public JwtResponseDTO generateNewToken(String token) {
+    @Transactional
+    @Override
+    public JwtResponseDTO generateNewToken(String token) {
 
-		RefreshToken refreshToken = getToken(token);
+        RefreshToken refreshToken = getToken(token);
 
-		Optional<User> user = Optional.ofNullable(refreshToken.getUser());
+        Optional<User> user = Optional.ofNullable(refreshToken.getUser());
 
-		refreshToken.setExpireDate(Instant.now());
+        refreshToken.setExpireDate(Instant.now());
 
-		String accessToken = jwtService.generateToken(user.get().getEmail(), user.map(SecurityUser::new).get());
-		String newRefreshToken = jwtService.generateRefreshToken(user.get().getEmail());
+        String accessToken = jwtService.generateToken(user.get().getEmail(), user.map(SecurityUser::new).get());
+        String newRefreshToken = jwtService.generateRefreshToken(user.get().getEmail());
 
-		refreshToken.setToken(newRefreshToken);
-		refreshTokenRepository.save(refreshToken);
+        refreshToken.setToken(newRefreshToken);
+        refreshTokenRepository.save(refreshToken);
 
-		return createJwtResponse(accessToken, newRefreshToken);
+        return createJwtResponse(accessToken, newRefreshToken);
 
-	}
+    }
 
-	private RefreshToken getToken(String token) {
+    private RefreshToken getToken(String token) {
 
-		Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByToken(token);
 
-		if (refreshToken.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.TOKEN + " Not Found OR Revoked!");
-		}
+        if (refreshToken.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.TOKEN + " Not Found OR Revoked!");
+        }
 
-		if (refreshToken.get().getExpireDate().compareTo(Instant.now()) < 0) {
-			throw new ExpiredException("Token is expired. Please make a new login..!");
-		}
+        if (refreshToken.get().getExpireDate().compareTo(Instant.now()) < 0) {
+            throw new ExpiredException("Token is expired. Please make a new login..!");
+        }
 
-		return refreshToken.get();
+        return refreshToken.get();
 
-	}
+    }
 
-	private JwtResponseDTO createJwtResponse(String accessToken, String refreshToken) {
+    private JwtResponseDTO createJwtResponse(String accessToken, String refreshToken) {
 
-		return new JwtResponseDTO(accessToken, refreshToken);
+        return new JwtResponseDTO(accessToken, refreshToken);
 
-	}
+    }
 
 }

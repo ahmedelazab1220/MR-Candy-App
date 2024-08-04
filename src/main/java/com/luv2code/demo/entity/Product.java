@@ -32,49 +32,49 @@ import lombok.Setter;
 @DynamicUpdate
 public class Product {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "name", nullable = false)
-	@NotBlank
-	private String name;
+    @Column(name = "name", nullable = false)
+    @NotBlank
+    private String name;
 
-	@Column(name = "description", nullable = false)
-	@NotBlank
-	private String description;
+    @Column(name = "description", nullable = false)
+    @NotBlank
+    private String description;
 
-	@Column(name = "price", nullable = false, precision = 10, scale = 2)
-	@NotNull
-	private BigDecimal price;
+    @Column(name = "price", nullable = false, precision = 10, scale = 2)
+    @NotNull
+    private BigDecimal price;
 
-	@Column(name = "quantity", nullable = false)
-	@NotNull
-	private Integer quantity;
+    @Column(name = "quantity", nullable = false)
+    @NotNull
+    private Integer quantity;
 
-	@Column(name = "size")
-	private String size;
+    @Column(name = "size")
+    private String size;
 
-	@Column(name = "type")
-	private String type;
+    @Column(name = "type")
+    private String type;
 
-	@Column(name = "discount")
-	private String discount;
+    @Column(name = "discount")
+    private String discount;
 
-	@Column(name = "sales_count", nullable = false)
-	@NotNull
-	private Long salesCount;
+    @Column(name = "sales_count", nullable = false)
+    @NotNull
+    private Long salesCount;
 
-	@Column(name = "imageUrl", length = 1000, nullable = false)
-	@NotBlank
-	private String imageUrl;
+    @Column(name = "imageUrl", length = 1000, nullable = false)
+    @NotBlank
+    private String imageUrl;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id")
-	private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "company_id", nullable = false)
-	private Company company;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
 }

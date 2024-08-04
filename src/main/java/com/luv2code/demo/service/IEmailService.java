@@ -6,6 +6,6 @@ import jakarta.mail.MessagingException;
 
 public interface IEmailService {
 
-	void sendOtpEmail(String to, String otp) throws MessagingException, IOException;
+    void sendOtpEmail(String to, String otp) throws MessagingException, IOException;
 
 }

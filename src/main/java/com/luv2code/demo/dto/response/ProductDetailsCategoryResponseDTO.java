@@ -13,16 +13,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductDetailsCategoryResponseDTO {
 
-	private Long id;
-	
+    private Long id;
+
     private String description;
-	
-	private String discount;
-		
-	private String imageUrl;
-	
-	private BigDecimal price;
-	
-	private String companyName;
-	
+
+    private String discount;
+
+    private String imageUrl;
+
+    private BigDecimal price;
+
+    private String companyName;
+
 }

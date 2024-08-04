@@ -11,6 +11,6 @@ import com.luv2code.demo.entity.Role;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
-	Optional<Role> findByRole(@Param("role") String role);
+    Optional<Role> findByRole(@Param("role") String role);
 
 }

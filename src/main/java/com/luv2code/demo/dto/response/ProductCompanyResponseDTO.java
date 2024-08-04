@@ -11,10 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductCompanyResponseDTO {
 
-	private Long id;
-	
-	private String name;
-	
-	private String imageUrl;
-	
+    private Long id;
+
+    private String name;
+
+    private String imageUrl;
+
 }

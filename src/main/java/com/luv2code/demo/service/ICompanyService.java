@@ -12,17 +12,17 @@ import com.luv2code.demo.entity.Company;
 
 public interface ICompanyService {
 
-	List<CompanyResponseDTO> getAllCompanies();
+    List<CompanyResponseDTO> getAllCompanies();
 
-	ResponseEntity<ApiResponseDTO> deleteCompany(String name) throws IOException;
+    ResponseEntity<ApiResponseDTO> deleteCompany(String name) throws IOException;
 
-	CompanyResponseDTO createCompany(CompanyRequestDTO companyRequestDTO) throws IllegalStateException, IOException;
+    CompanyResponseDTO createCompany(CompanyRequestDTO companyRequestDTO) throws IllegalStateException, IOException;
 
-	Boolean existCompanyByName(String name);
+    Boolean existCompanyByName(String name);
 
-	CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
-			throws IllegalStateException, IOException;
+    CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
+            throws IllegalStateException, IOException;
 
-	Company getCompanySetter(String name);
-	
+    Company getCompanySetter(String name);
+
 }

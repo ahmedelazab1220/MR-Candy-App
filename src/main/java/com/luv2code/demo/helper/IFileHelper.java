@@ -7,10 +7,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface IFileHelper {
 
-	public String uploadFileToFileSystem(MultipartFile file) throws IllegalStateException, IOException;
+    public String uploadFileToFileSystem(MultipartFile file) throws IllegalStateException, IOException;
 
-	public ResponseEntity<?> downloadImageFromFileSystem(String imageUrl) throws IOException;
+    public ResponseEntity<?> downloadImageFromFileSystem(String imageUrl) throws IOException;
 
-	Boolean deleteImageFromFileSystem(String imageUrl) throws IOException;
+    Boolean deleteImageFromFileSystem(String imageUrl) throws IOException;
 
 }

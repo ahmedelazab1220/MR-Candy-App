@@ -20,29 +20,29 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class OtpController {
 
-	private final IOtpService otpService;
+    private final IOtpService otpService;
 
-	@PostMapping("")
-	public ResponseEntity<?> verifyEmail(@RequestParam(required = true) String email)
-			throws MessagingException, IOException {
+    @PostMapping("")
+    public ResponseEntity<?> verifyEmail(@RequestParam(required = true) String email)
+            throws MessagingException, IOException {
 
-		return otpService.verfiyEmail(email);
+        return otpService.verfiyEmail(email);
 
-	}
+    }
 
-	@PostMapping("/verfiy")
-	public ResponseEntity<?> verifyOtp(@RequestParam(required = true) String otp,
-			@RequestParam(required = true) String email) {
+    @PostMapping("/verfiy")
+    public ResponseEntity<?> verifyOtp(@RequestParam(required = true) String otp,
+            @RequestParam(required = true) String email) {
 
-		return otpService.verfiyOtp(otp, email);
+        return otpService.verfiyOtp(otp, email);
 
-	}
+    }
 
-	@PostMapping("/pass")
-	public ResponseEntity<?> forgetPasswordHandler(@RequestBody ChangePasswordRequestDTO changePasswordRequest) {
+    @PostMapping("/pass")
+    public ResponseEntity<?> forgetPasswordHandler(@RequestBody ChangePasswordRequestDTO changePasswordRequest) {
 
-		return otpService.forgetPasswordHandler(changePasswordRequest);
+        return otpService.forgetPasswordHandler(changePasswordRequest);
 
-	}
+    }
 
 }

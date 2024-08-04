@@ -13,14 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserAuthenticationResponseDTO {
 
-	private Long id;
+    private Long id;
 
-	private String email;
+    private String email;
 
-	private String password;
+    private String password;
 
-	private String phoneNumber;
+    private String phoneNumber;
 
-	private Role role;
+    private Role role;
 
 }

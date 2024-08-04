@@ -25,29 +25,29 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthenticationController {
 
-	private final IAuthenticationService authenticationService;
-	private final IRefreshTokenService refreshTokenService;
+    private final IAuthenticationService authenticationService;
+    private final IRefreshTokenService refreshTokenService;
 
-	@PostMapping("/register")
-	public ResponseEntity<ApiResponseDTO> register(@Valid @ModelAttribute RegisterRequestDTO registerRequestDTO)
-			throws IOException {
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponseDTO> register(@Valid @ModelAttribute RegisterRequestDTO registerRequestDTO)
+            throws IOException {
 
-		return authenticationService.register(registerRequestDTO);
+        return authenticationService.register(registerRequestDTO);
 
-	}
+    }
 
-	@PostMapping("/login")
-	public ResponseEntity<JwtResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
 
-		return ResponseEntity.ok(authenticationService.login(loginRequestDTO));
+        return ResponseEntity.ok(authenticationService.login(loginRequestDTO));
 
-	}
+    }
 
-	@PostMapping("/refresh-token")
-	public JwtResponseDTO refreshToken(@RequestParam String refreshToken) {
+    @PostMapping("/refresh-token")
+    public JwtResponseDTO refreshToken(@RequestParam String refreshToken) {
 
-		return refreshTokenService.generateNewToken(refreshToken);
+        return refreshTokenService.generateNewToken(refreshToken);
 
-	}
+    }
 
 }

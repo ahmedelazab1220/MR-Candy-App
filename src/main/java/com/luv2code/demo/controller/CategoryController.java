@@ -26,37 +26,37 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CategoryController {
 
-	private final ICategoryService categoryService;
+    private final ICategoryService categoryService;
 
-	@GetMapping("")
-	public List<CategoryResponseDTO> getAllCategories() {
+    @GetMapping("")
+    public List<CategoryResponseDTO> getAllCategories() {
 
-		return categoryService.getAllCategories();
+        return categoryService.getAllCategories();
 
-	}
+    }
 
-	@DeleteMapping("")
-	public ResponseEntity<ApiResponseDTO> deleteCategory(@RequestParam(required = true) String name)
-			throws IOException {
+    @DeleteMapping("")
+    public ResponseEntity<ApiResponseDTO> deleteCategory(@RequestParam(required = true) String name)
+            throws IOException {
 
-		return categoryService.deleteCategory(name);
+        return categoryService.deleteCategory(name);
 
-	}
+    }
 
-	@PostMapping("")
-	public CategoryResponseDTO createCategory(@Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO)
-			throws IllegalStateException, IOException {
+    @PostMapping("")
+    public CategoryResponseDTO createCategory(@Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO)
+            throws IllegalStateException, IOException {
 
-		return categoryService.createCategory(categoryRequestDTO);
+        return categoryService.createCategory(categoryRequestDTO);
 
-	}
+    }
 
-	@PutMapping("")
-	public CategoryResponseDTO updateCategory(@RequestParam(required = true) String categoryName,
-			@Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException {
+    @PutMapping("")
+    public CategoryResponseDTO updateCategory(@RequestParam(required = true) String categoryName,
+            @Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException {
 
-		return categoryService.updateCategory(categoryName, categoryRequestDTO);
+        return categoryService.updateCategory(categoryName, categoryRequestDTO);
 
-	}
+    }
 
 }

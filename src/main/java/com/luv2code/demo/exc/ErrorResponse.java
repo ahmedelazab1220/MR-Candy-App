@@ -2,77 +2,77 @@ package com.luv2code.demo.exc;
 
 public class ErrorResponse {
 
-	private int status;
+    private int status;
 
-	private String title;
+    private String title;
 
-	private String message;
+    private String message;
 
-	private Object detail;
+    private Object detail;
 
-	private String path;
+    private String path;
 
-	private long timeStamp;
+    private long timeStamp;
 
-	public ErrorResponse() {
+    public ErrorResponse() {
 
-	}
+    }
 
-	public ErrorResponse(int status, String title, String message, Object detail, String path, long timeStamp) {
-		this.status = status;
-		this.title = title;
-		this.message = message;
-		this.detail = detail;
-		this.path = path;
-		this.timeStamp = timeStamp;
-	}
+    public ErrorResponse(int status, String title, String message, Object detail, String path, long timeStamp) {
+        this.status = status;
+        this.title = title;
+        this.message = message;
+        this.detail = detail;
+        this.path = path;
+        this.timeStamp = timeStamp;
+    }
 
-	public int getStatus() {
-		return status;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public Object getDetail() {
-		return detail;
-	}
+    public Object getDetail() {
+        return detail;
+    }
 
-	public void setDetail(Object detail) {
-		this.detail = detail;
-	}
+    public void setDetail(Object detail) {
+        this.detail = detail;
+    }
 
-	public long getTimeStamp() {
-		return timeStamp;
-	}
+    public long getTimeStamp() {
+        return timeStamp;
+    }
 
-	public void setTimeStamp(long timeStamp) {
-		this.timeStamp = timeStamp;
-	}
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
-	public String getPath() {
-		return path;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
+    public void setPath(String path) {
+        this.path = path;
+    }
 
 }

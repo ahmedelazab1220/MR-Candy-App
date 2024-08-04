@@ -12,8 +12,8 @@ import com.luv2code.demo.entity.RefreshToken;
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 
-	@Query("SELECT rt FROM RefreshToken rt " + "JOIN FETCH rt.user u " + "JOIN FETCH u.address " + "JOIN FETCH u.role "
-			+ "WHERE rt.token = :token")
-	Optional<RefreshToken> findByToken(@Param("token") String token);
+    @Query("SELECT rt FROM RefreshToken rt " + "JOIN FETCH rt.user u " + "JOIN FETCH u.address " + "JOIN FETCH u.role "
+            + "WHERE rt.token = :token")
+    Optional<RefreshToken> findByToken(@Param("token") String token);
 
 }

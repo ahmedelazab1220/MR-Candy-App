@@ -19,19 +19,19 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserDetailService implements UserDetailsService {
 
-	private final UserRepository userRepository;
-	private final SystemMapper mapper;
+    private final UserRepository userRepository;
+    private final SystemMapper mapper;
 
-	@Override
-	public UserDetails loadUserByUsername(String username) {
-		Optional<User> user = Optional.of(mapper.userAuthenticationResponseDTOTOUser(
-				userRepository.findUserAuthenticationDetailsByEmail(username).get()));
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        Optional<User> user = Optional.of(mapper.userAuthenticationResponseDTOTOUser(
+                userRepository.findUserAuthenticationDetailsByEmail(username).get()));
 
-		if (!user.isPresent()) {
-			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
-		}
+        if (!user.isPresent()) {
+            throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
+        }
 
-		return user.map(SecurityUser::new).get();
-	}
+        return user.map(SecurityUser::new).get();
+    }
 
 }

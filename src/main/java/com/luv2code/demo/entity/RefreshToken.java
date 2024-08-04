@@ -27,19 +27,19 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RefreshToken {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "token", length = 1000, nullable = false)
-	private String token;
+    @Column(name = "token", length = 1000, nullable = false)
+    private String token;
 
-	@Column(name = "expire_date", nullable = false)
-	private Instant expireDate;
+    @Column(name = "expire_date", nullable = false)
+    private Instant expireDate;
 
-	@ManyToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	@JsonIgnore
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
 }

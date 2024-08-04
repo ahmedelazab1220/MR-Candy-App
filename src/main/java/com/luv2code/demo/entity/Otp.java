@@ -28,19 +28,19 @@ import lombok.Setter;
 @Table(name = "otps")
 public class Otp {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "otp" , nullable = false)
-	private String otp;
+    @Column(name = "otp", nullable = false)
+    private String otp;
 
-	@Column(name = "expirationTime" , nullable = false)
-	private Instant expirationTime;
+    @Column(name = "expirationTime", nullable = false)
+    private Instant expirationTime;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id" , nullable = false)
-	@JsonIgnore
-	private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
+    private User user;
 
 }

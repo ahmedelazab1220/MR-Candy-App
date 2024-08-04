@@ -16,18 +16,18 @@ import lombok.Setter;
 @Builder
 public class UserTokenResponseDTO {
 
-	private Long id;
+    private Long id;
 
-	private String fullName;
+    private String fullName;
 
-	private String email;
+    private String email;
 
-	private String phoneNumber;
+    private String phoneNumber;
 
-	private String imageUrl;
+    private String imageUrl;
 
-	private Address address;
+    private Address address;
 
-	private Role role;
+    private Role role;
 
 }

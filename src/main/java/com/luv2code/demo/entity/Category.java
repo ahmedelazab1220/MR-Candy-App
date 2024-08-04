@@ -32,26 +32,26 @@ import lombok.Setter;
 @DynamicUpdate
 public class Category {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@Column(name = "name" , nullable = false, unique = true)
-	@NotBlank
-	private String name;
+    @Column(name = "name", nullable = false, unique = true)
+    @NotBlank
+    private String name;
 
-	@Column(name = "createdAt")
-	private LocalDateTime createdAt;
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt;
 
-	@Column(name = "imageUrl", length = 1000, nullable = false)
-	private String imageUrl;
-	
-	@OneToMany(mappedBy = "category" , fetch = FetchType.LAZY , cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	private List<Product> products;
+    @Column(name = "imageUrl", length = 1000, nullable = false)
+    private String imageUrl;
 
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-	}
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Product> products;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
 }

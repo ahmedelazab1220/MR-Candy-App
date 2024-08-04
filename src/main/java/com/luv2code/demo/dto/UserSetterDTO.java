@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserSetterDTO {
 
-	private Long id;
+    private Long id;
 
-	private String email;
+    private String email;
 
 }

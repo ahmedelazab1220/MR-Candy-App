@@ -18,40 +18,40 @@ import com.luv2code.demo.utils.FileUtils;
 @Service
 public class FileHelper implements IFileHelper {
 
-	private final String FOLDER_PATH = "C:/Users/Lenovo/Documents/Github/Spring/StoreApp/assets/images/";
+    private final String FOLDER_PATH = "C:/Users/Lenovo/Documents/Github/Spring/StoreApp/assets/images/";
 
-	@Override
-	public String uploadFileToFileSystem(MultipartFile file) throws IllegalStateException, IOException {
+    @Override
+    public String uploadFileToFileSystem(MultipartFile file) throws IllegalStateException, IOException {
 
-		String imageUrl = FOLDER_PATH + file.getOriginalFilename() + " - " + UUID.randomUUID().toString();
+        String imageUrl = FOLDER_PATH + file.getOriginalFilename() + " - " + UUID.randomUUID().toString();
 
-		byte[] compressedFileData = FileUtils.compressFile(file.getBytes());
+        byte[] compressedFileData = FileUtils.compressFile(file.getBytes());
 
-		Files.write(new File(imageUrl).toPath(), compressedFileData);
+        Files.write(new File(imageUrl).toPath(), compressedFileData);
 
-		return imageUrl;
+        return imageUrl;
 
-	}
+    }
 
-	@Override
-	public ResponseEntity<byte[]> downloadImageFromFileSystem(String imageUrl) throws IOException {
+    @Override
+    public ResponseEntity<byte[]> downloadImageFromFileSystem(String imageUrl) throws IOException {
 
-		byte[] compressedFileData = Files.readAllBytes(new File(imageUrl).toPath());
+        byte[] compressedFileData = Files.readAllBytes(new File(imageUrl).toPath());
 
-		byte[] decompressedFileData = FileUtils.decompressFile(compressedFileData);
+        byte[] decompressedFileData = FileUtils.decompressFile(compressedFileData);
 
-		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png"))
-				.body(decompressedFileData);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png"))
+                .body(decompressedFileData);
 
-	}
+    }
 
-	@Override
-	public Boolean deleteImageFromFileSystem(String imageUrl) throws IOException {
+    @Override
+    public Boolean deleteImageFromFileSystem(String imageUrl) throws IOException {
 
-		Boolean fileIsDeleted = Files.deleteIfExists(Paths.get(imageUrl));
+        Boolean fileIsDeleted = Files.deleteIfExists(Paths.get(imageUrl));
 
-		return fileIsDeleted;
+        return fileIsDeleted;
 
-	}
+    }
 
 }

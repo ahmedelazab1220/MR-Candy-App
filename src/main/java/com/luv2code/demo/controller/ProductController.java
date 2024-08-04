@@ -32,67 +32,67 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ProductController {
 
-	private final IProductService productService;
+    private final IProductService productService;
 
-	@GetMapping("/bestSeller")
-	public List<ProductBestSellerResponseDTO> getAllTopBestSellerProducts() {
+    @GetMapping("/bestSeller")
+    public List<ProductBestSellerResponseDTO> getAllTopBestSellerProducts() {
 
-		return productService.getTopSevenProductsWithBestSeller();
+        return productService.getTopSevenProductsWithBestSeller();
 
-	}
+    }
 
-	@GetMapping("/company")
-	public Page<ProductCompanyResponseDTO> getProductsInCompany(@RequestParam(required = true) String companyName,
-			@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
+    @GetMapping("/company")
+    public Page<ProductCompanyResponseDTO> getProductsInCompany(@RequestParam(required = true) String companyName,
+            @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
 
-		return productService.getAllProductsInCompany(companyName, page, size);
+        return productService.getAllProductsInCompany(companyName, page, size);
 
-	}
+    }
 
-	@GetMapping("/details/category")
-	public Page<ProductDetailsCategoryResponseDTO> getProductsInCategory(
-			@RequestParam(required = true) String categoryName, @RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "10") Integer size) {
+    @GetMapping("/details/category")
+    public Page<ProductDetailsCategoryResponseDTO> getProductsInCategory(
+            @RequestParam(required = true) String categoryName, @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
 
-		return productService.getAllProductsDetailsInCategory(categoryName, page, size);
+        return productService.getAllProductsDetailsInCategory(categoryName, page, size);
 
-	}
+    }
 
-	@GetMapping("/details/company")
-	public Page<ProductDetailsCompanyResponseDTO> getProductsDetailsInCompany(
-			@RequestParam(required = true) String companyName, @RequestParam(defaultValue = "0") Integer page,
-			@RequestParam(defaultValue = "10") Integer size) {
+    @GetMapping("/details/company")
+    public Page<ProductDetailsCompanyResponseDTO> getProductsDetailsInCompany(
+            @RequestParam(required = true) String companyName, @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size) {
 
-		return productService.getAllProductsDetailsInCompany(companyName, page, size);
+        return productService.getAllProductsDetailsInCompany(companyName, page, size);
 
-	}
-	
-	@GetMapping("/{theId}")
-	public ProductDetailsResponseDTO getProductDetails(@PathVariable(name="theId" , required = true) Long theId) {
-		
-		return productService.getProductDetailsById(theId);
-		
-	}
-	
-	@DeleteMapping("/{theId}")
-	public ResponseEntity<ApiResponseDTO> deleteProduct(@PathVariable(name="theId" , required = true) Long theId) throws IOException{
-		
-		return productService.deleteProductById(theId);
-		
-	}
-	
-	@PostMapping("")
-	public ProductDetailsResponseDTO createProduct(@Valid @ModelAttribute ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException {
-		
-		return productService.createProduct(productRequestDTO);
-		
-	}
-	
-	@PutMapping("/{theId}")
-	public ProductDetailsResponseDTO updateProduct(@PathVariable(name="theId" , required = true) Long theId ,@Valid @ModelAttribute ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException {
-		
-		return productService.updateProductById(theId, productRequestDTO);
-		
-	}
+    }
+
+    @GetMapping("/{theId}")
+    public ProductDetailsResponseDTO getProductDetails(@PathVariable(name = "theId", required = true) Long theId) {
+
+        return productService.getProductDetailsById(theId);
+
+    }
+
+    @DeleteMapping("/{theId}")
+    public ResponseEntity<ApiResponseDTO> deleteProduct(@PathVariable(name = "theId", required = true) Long theId) throws IOException {
+
+        return productService.deleteProductById(theId);
+
+    }
+
+    @PostMapping("")
+    public ProductDetailsResponseDTO createProduct(@Valid @ModelAttribute ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException {
+
+        return productService.createProduct(productRequestDTO);
+
+    }
+
+    @PutMapping("/{theId}")
+    public ProductDetailsResponseDTO updateProduct(@PathVariable(name = "theId", required = true) Long theId, @Valid @ModelAttribute ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException {
+
+        return productService.updateProductById(theId, productRequestDTO);
+
+    }
 
 }

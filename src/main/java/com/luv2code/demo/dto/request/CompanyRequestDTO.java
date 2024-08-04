@@ -15,10 +15,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CompanyRequestDTO {
 
-	@NotBlank
-	private String name;
+    @NotBlank
+    private String name;
 
-	@NotNull
-	private MultipartFile image;
+    @NotNull
+    private MultipartFile image;
 
 }

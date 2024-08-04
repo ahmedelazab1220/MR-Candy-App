@@ -25,91 +25,91 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserService implements IUserService {
 
-	private final UserRepository userRepository;
-	private final PasswordEncoder passwordEncoder;
-	private final SystemMapper mapper;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final SystemMapper mapper;
 
-	@Override
-	public User getUserTokenDetails(String email) {
+    @Override
+    public User getUserTokenDetails(String email) {
 
-		if (email.isEmpty()) {
-			throw new IllegalArgumentException("Email must not be empty");
-		}
+        if (email.isEmpty()) {
+            throw new IllegalArgumentException("Email must not be empty");
+        }
 
-		Optional<UserTokenResponseDTO> userToken = userRepository.findUserTokenDetailsByEmail(email);
+        Optional<UserTokenResponseDTO> userToken = userRepository.findUserTokenDetailsByEmail(email);
 
-		if (!userToken.isPresent()) {
-			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
-		}
+        if (!userToken.isPresent()) {
+            throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
+        }
 
-		return mapper.userTokenResponseDTOTOUser(userToken.get());
+        return mapper.userTokenResponseDTOTOUser(userToken.get());
 
-	}
+    }
 
-	@Override
-	public void createUser(User user) {
+    @Override
+    public void createUser(User user) {
 
-		if (user.getEmail() == null || user.getPassword() == null || user.getImageUrl() == null
-				|| user.getPhoneNumber() == null || user.getRole() == null || user.getAddress() == null) {
-			throw new IllegalArgumentException("Required fields are missing!");
-		}
+        if (user.getEmail() == null || user.getPassword() == null || user.getImageUrl() == null
+                || user.getPhoneNumber() == null || user.getRole() == null || user.getAddress() == null) {
+            throw new IllegalArgumentException("Required fields are missing!");
+        }
 
-		Boolean userIsExist = userRepository.existsByEmail(user.getEmail());
+        Boolean userIsExist = userRepository.existsByEmail(user.getEmail());
 
-		if (userIsExist) {
-			throw new IllegalArgumentException("Email is already in use!");
-		}
+        if (userIsExist) {
+            throw new IllegalArgumentException("Email is already in use!");
+        }
 
-		userRepository.save(user);
+        userRepository.save(user);
 
-	}
+    }
 
-	@Override
-	public User getUserSetterByEmail(String email) {
+    @Override
+    public User getUserSetterByEmail(String email) {
 
-		Optional<UserSetterDTO> userSetterDTO = userRepository.findUserSetterByEmail(email);
+        Optional<UserSetterDTO> userSetterDTO = userRepository.findUserSetterByEmail(email);
 
-		if (userSetterDTO.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
-		}
+        if (userSetterDTO.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
+        }
 
-		UserSetterDTO userDto = userSetterDTO.get();
+        UserSetterDTO userDto = userSetterDTO.get();
 
-		return mapper.userSetterDTOTOUser(userDto);
+        return mapper.userSetterDTOTOUser(userDto);
 
-	}
+    }
 
-	@Transactional
-	@Override
-	public ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest) {
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest) {
 
-		if (changePasswordRequest.getOldPassword() != null) {
-			Optional<String> pass = userRepository.findUserPasswordByEmail(changePasswordRequest.getEmail());
+        if (changePasswordRequest.getOldPassword() != null) {
+            Optional<String> pass = userRepository.findUserPasswordByEmail(changePasswordRequest.getEmail());
 
-			if (pass.isEmpty()) {
-				throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
-			}
+            if (pass.isEmpty()) {
+                throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
+            }
 
-			if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), pass.get())) {
-				throw new IllegalArgumentException("Old password is incorrect!");
-			}
+            if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), pass.get())) {
+                throw new IllegalArgumentException("Old password is incorrect!");
+            }
 
-		}
+        }
 
-		if (!Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getNewRepeatedPassword())) {
-			return ResponseEntity.ok(
-					new ApiResponseDTO("Password not equal confirmation password,Please enter the password again!"));
-		}
+        if (!Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getNewRepeatedPassword())) {
+            return ResponseEntity.ok(
+                    new ApiResponseDTO("Password not equal confirmation password,Please enter the password again!"));
+        }
 
-		Integer updateRows = userRepository.updatePasswordByEmail(changePasswordRequest.getEmail(),
-				passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        Integer updateRows = userRepository.updatePasswordByEmail(changePasswordRequest.getEmail(),
+                passwordEncoder.encode(changePasswordRequest.getNewPassword()));
 
-		if (updateRows == 0) {
-			throw new NotFoundException("password not change ,please try later!");
-		}
+        if (updateRows == 0) {
+            throw new NotFoundException("password not change ,please try later!");
+        }
 
-		return ResponseEntity.ok(new ApiResponseDTO("Password has been changed!"));
+        return ResponseEntity.ok(new ApiResponseDTO("Password has been changed!"));
 
-	}
+    }
 
 }

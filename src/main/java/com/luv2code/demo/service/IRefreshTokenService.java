@@ -5,12 +5,12 @@ import com.luv2code.demo.entity.RefreshToken;
 
 public interface IRefreshTokenService {
 
-	RefreshToken save(RefreshToken refreshToken);
+    RefreshToken save(RefreshToken refreshToken);
 
-	RefreshToken findByToken(String token);
+    RefreshToken findByToken(String token);
 
-	void deleteByEntity(RefreshToken refreshToken);
+    void deleteByEntity(RefreshToken refreshToken);
 
-	JwtResponseDTO generateNewToken(String token);
+    JwtResponseDTO generateNewToken(String token);
 
 }

@@ -25,103 +25,103 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CategoryService implements ICategoryService {
 
-	private final CategoryRepository categoryRepository;
-	private final IFileHelper fileHelper;
-	private final SystemMapper mapper;
+    private final CategoryRepository categoryRepository;
+    private final IFileHelper fileHelper;
+    private final SystemMapper mapper;
 
-	@Override
-	public List<CategoryResponseDTO> getAllCategories() {
+    @Override
+    public List<CategoryResponseDTO> getAllCategories() {
 
-		return categoryRepository.findAllCategories();
+        return categoryRepository.findAllCategories();
 
-	}
+    }
 
-	@Override
-	public ResponseEntity<ApiResponseDTO> deleteCategory(String name) throws IOException {
+    @Override
+    public ResponseEntity<ApiResponseDTO> deleteCategory(String name) throws IOException {
 
-		Optional<Category> category = categoryRepository.findByName(name);
+        Optional<Category> category = categoryRepository.findByName(name);
 
-		if (category.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
-		}
+        if (category.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
+        }
 
-		fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
+        fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
 
-		categoryRepository.delete(category.get());
+        categoryRepository.delete(category.get());
 
-		return ResponseEntity.ok(new ApiResponseDTO("Success Delete Category."));
+        return ResponseEntity.ok(new ApiResponseDTO("Success Delete Category."));
 
-	}
+    }
 
-	@Override
-	public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO)
-			throws IllegalStateException, IOException {
+    @Override
+    public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO)
+            throws IllegalStateException, IOException {
 
-		String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
+        String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
 
-		Category category = mapper.categoryRequestDTOTOCategory(categoryRequestDTO);
+        Category category = mapper.categoryRequestDTOTOCategory(categoryRequestDTO);
 
-		category.setImageUrl(imageUrl);
+        category.setImageUrl(imageUrl);
 
-		CategoryResponseDTO categoryDto = mapper.categoryTOCategoryResponseDTO(categoryRepository.save(category));
+        CategoryResponseDTO categoryDto = mapper.categoryTOCategoryResponseDTO(categoryRepository.save(category));
 
-		return categoryDto;
+        return categoryDto;
 
-	}
+    }
 
-	@Override
-	public Boolean existCategoryByName(String name) {
+    @Override
+    public Boolean existCategoryByName(String name) {
 
-		Boolean categoryExist = categoryRepository.existsByName(name);
+        Boolean categoryExist = categoryRepository.existsByName(name);
 
-		if (!categoryExist) {
-			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
-		}
+        if (!categoryExist) {
+            throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
+        }
 
-		return categoryExist;
+        return categoryExist;
 
-	}
+    }
 
-	@Transactional
-	@Override
-	public CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
-			throws IllegalStateException, IOException {
+    @Transactional
+    @Override
+    public CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
+            throws IllegalStateException, IOException {
 
-		Optional<Category> category = categoryRepository.findByName(name);
+        Optional<Category> category = categoryRepository.findByName(name);
 
-		if (category.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
-		}
+        if (category.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
+        }
 
-		if (categoryRequestDTO.getName() != null) {
-			category.get().setName(categoryRequestDTO.getName());
-		}
+        if (categoryRequestDTO.getName() != null) {
+            category.get().setName(categoryRequestDTO.getName());
+        }
 
-		if (categoryRequestDTO.getImage() != null) {
+        if (categoryRequestDTO.getImage() != null) {
 
-			fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
+            fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
 
-			String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
+            String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
 
-			category.get().setImageUrl(imageUrl);
+            category.get().setImageUrl(imageUrl);
 
-		}
+        }
 
-		return mapper.categoryTOCategoryResponseDTO(categoryRepository.save(category.get()));
+        return mapper.categoryTOCategoryResponseDTO(categoryRepository.save(category.get()));
 
-	}
+    }
 
-	@Override
-	public Category getCategorySetter(String name) {
-		
-		Optional<Category> category = Optional.ofNullable(mapper.categorySetterDTOTOcaCategory(categoryRepository.findCategorySetterDTOByName(name).get()));
-		
-		if (category.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
-		}
-		
-		return category.get();
-		
-	}
+    @Override
+    public Category getCategorySetter(String name) {
+
+        Optional<Category> category = Optional.ofNullable(mapper.categorySetterDTOTOcaCategory(categoryRepository.findCategorySetterDTOByName(name).get()));
+
+        if (category.isEmpty()) {
+            throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
+        }
+
+        return category.get();
+
+    }
 
 }
