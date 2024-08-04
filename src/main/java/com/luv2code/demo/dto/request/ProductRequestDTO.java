@@ -23,10 +23,10 @@ public class ProductRequestDTO {
 	@NotBlank
 	private String description;
 	
-	@NotBlank
+	@NotNull
 	private BigDecimal price;
 
-	@NotBlank
+	@NotNull
 	private Integer quantity;
 	
 	private String discount;
@@ -35,7 +35,7 @@ public class ProductRequestDTO {
 	
 	private String type;
 	
-	@NotBlank
+	@NotNull
 	private Long salesCount; 
 	
 	@NotNull

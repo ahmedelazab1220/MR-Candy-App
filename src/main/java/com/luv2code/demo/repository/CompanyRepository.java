@@ -18,7 +18,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 	@Query("SELECT new com.luv2code.demo.dto.response.CompanyResponseDTO(c.name, c.imageUrl) " + "FROM Company c")
 	List<CompanyResponseDTO> findAllCompanies();
 
-	@Query("SELECT new com.luv2code.demo.dto.CompanySetterDTO(c.name, c.imageUrl) " + "FROM Company c "
+	@Query("SELECT new com.luv2code.demo.dto.CompanySetterDTO(c.id, c.name, c.imageUrl) " + "FROM Company c "
 			+ "WHERE c.name = :name")
 	Optional<CompanySetterDTO> findCompanySetterDTOByName(@Param("name") String name);
 

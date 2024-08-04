@@ -31,8 +31,10 @@ import com.luv2code.demo.service.IProductService;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class ProductService implements IProductService {
 
@@ -42,6 +44,7 @@ public class ProductService implements IProductService {
 	private final ICategoryService categoryService;
 	private final ICompanyService companyService;
 
+	@Transactional
 	@Override
 	public ProductDetailsResponseDTO createProduct(ProductRequestDTO productRequestDTO)
 			throws IllegalStateException, IOException {
@@ -93,6 +96,8 @@ public class ProductService implements IProductService {
 		if (productRequestDTO.getCategoryName() != null
 				&& product.get().getCategory().getName() != productRequestDTO.getCategoryName()) {
 
+			log.info("cat");
+			
 			Category category = categoryService.getCategorySetter(productRequestDTO.getCategoryName());
 			
 			product.get().setCategory(category);

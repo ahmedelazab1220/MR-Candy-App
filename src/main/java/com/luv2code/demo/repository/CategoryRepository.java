@@ -18,7 +18,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 	@Query("SELECT new com.luv2code.demo.dto.response.CategoryResponseDTO(c.name, c.imageUrl) " + "FROM Category c")
 	List<CategoryResponseDTO> findAllCategories();
 	
-	@Query("SELECT new com.luv2code.demo.dto.CategorySetterDTO(c.name) " + "FROM Category c "
+	@Query("SELECT new com.luv2code.demo.dto.CategorySetterDTO(c.id, c.name) " + "FROM Category c "
 			+ "WHERE c.name = :name")
 	Optional<CategorySetterDTO> findCategorySetterDTOByName(@Param("name") String name);
 
