@@ -25,7 +25,10 @@ import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
+import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
+import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
+import com.luv2code.demo.dto.response.ProductDetailsCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
 import com.luv2code.demo.entity.Category;
 import com.luv2code.demo.entity.Company;
@@ -117,10 +120,6 @@ class ProductServiceTest {
         product.setQuantity(10);
         product.setCategory(category);
         product.setCompany(company);
-    }
-
-    Pageable getPagination(Integer page, Integer size) {
-        return PageRequest.of(page, size);
     }
 
     /**
@@ -545,7 +544,7 @@ class ProductServiceTest {
     @Test
     void shouldReturnEmptyPageWhenNoProductsExistForCompany() {
 
-        String companyName = "Acme Corp";
+        String companyName = "Pepsi";
 
         pageable = PageRequest.of(0, 10);
 
@@ -570,7 +569,7 @@ class ProductServiceTest {
     @Test
     void shouldThrowIllegalArgumentExceptionWhenPageOrSizeIsNegativeWhenGettingCompanyProducts() {
 
-        String companyName = "Acme Corp";
+        String companyName = "Pepsi";
 
         IllegalArgumentException pageException = assertThrows(IllegalArgumentException.class, () -> {
             productService.getAllProductsInCompany(companyName, -1, 10);
@@ -582,6 +581,179 @@ class ProductServiceTest {
         });
 
         assertEquals("Page index and page size must be non-negative integers.", sizeException.getMessage());
+
+    }
+
+    /**
+     * Test case to verify that the method
+     * shouldReturnProductsDetailsWhenPaginationParametersAreValid returns the
+     * expected page of product details for a given company.
+     *
+     * @param companyName the name of the company
+     * @return void
+     */
+    @Test
+    void shouldReturnProductsDetailsWhenPaginationParametersAreValid() {
+
+        String companyName = "Pepsi";
+
+        pageable = PageRequest.of(0, 10);
+
+        Page<ProductDetailsCompanyResponseDTO> expectedPage = new PageImpl<>(List.of(new ProductDetailsCompanyResponseDTO()));
+
+        when(productRepository.findProductsByCompanyName(companyName, pageable)).thenReturn(expectedPage);
+
+        Page<ProductDetailsCompanyResponseDTO> result = productService.getAllProductsDetailsInCompany(companyName, 0, 10);
+
+        assertEquals(expectedPage, result);
+        verify(productRepository, times(1)).findProductsByCompanyName(companyName, pageable);
+
+    }
+
+    /**
+     * Test case to verify that an IllegalArgumentException is thrown when the
+     * page or size parameter is negative.
+     *
+     * @throws IllegalArgumentException if the page or size parameter is
+     * negative
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenPageOrSizeIsNegative() {
+
+        String companyName = "Pepsi";
+
+        IllegalArgumentException pageException = assertThrows(IllegalArgumentException.class, () -> {
+            productService.getAllProductsDetailsInCompany(companyName, -1, 10);
+        });
+
+        assertEquals("Page index and page size must be non-negative integers.", pageException.getMessage());
+
+        IllegalArgumentException sizeException = assertThrows(IllegalArgumentException.class, () -> {
+            productService.getAllProductsDetailsInCompany(companyName, 0, -1);
+        });
+
+        assertEquals("Page index and page size must be non-negative integers.", sizeException.getMessage());
+
+    }
+
+    /**
+     * Test case to verify that the method
+     * shouldReturnProductsDetailsWhenPaginationParametersAreValidForCategory
+     * returns the expected page of product details for a given category.
+     *
+     * @param categoryName the name of the category
+     * @return void
+     */
+    @Test
+    void shouldReturnProductsDetailsWhenPaginationParametersAreValidForCategory() {
+
+        String categoryName = "Electronics";
+
+        pageable = PageRequest.of(0, 10);
+
+        Page<ProductDetailsCategoryResponseDTO> expectedPage = new PageImpl<>(List.of(new ProductDetailsCategoryResponseDTO()));
+
+        when(productRepository.findProductsByCategoryName(categoryName, pageable)).thenReturn(expectedPage);
+
+        Page<ProductDetailsCategoryResponseDTO> result = productService.getAllProductsDetailsInCategory(categoryName, 0, 10);
+
+        assertEquals(expectedPage, result);
+        verify(productRepository, times(1)).findProductsByCategoryName(categoryName, pageable);
+
+    }
+
+    /**
+     * Test case to verify that an IllegalArgumentException is thrown when the
+     * page or size parameter is negative for a category.
+     *
+     * @throws IllegalArgumentException if the page or size parameter is
+     * negative
+     */
+    @Test
+    void shouldThrowIllegalArgumentExceptionWhenPageOrSizeIsNegativeForCategory() {
+
+        String categoryName = "Electronics";
+
+        IllegalArgumentException pageException = assertThrows(IllegalArgumentException.class, () -> {
+            productService.getAllProductsDetailsInCategory(categoryName, -1, 10);
+        });
+
+        assertEquals("Page index and page size must be non-negative integers.", pageException.getMessage());
+
+        IllegalArgumentException sizeException = assertThrows(IllegalArgumentException.class, () -> {
+            productService.getAllProductsDetailsInCategory(categoryName, 0, -1);
+        });
+
+        assertEquals("Page index and page size must be non-negative integers.", sizeException.getMessage());
+
+    }
+
+    /**
+     * Test case to verify that the method
+     * shouldReturnTopSevenBestSellingProducts returns the expected list of best
+     * selling products.
+     *
+     * @throws Exception if an error occurs during the test execution
+     */
+    @Test
+    void shouldReturnTopSevenBestSellingProducts() {
+
+        pageable = PageRequest.of(0, 7);
+
+        List<ProductBestSellerResponseDTO> expectedBestSellers = List.of(
+                new ProductBestSellerResponseDTO(),
+                new ProductBestSellerResponseDTO(),
+                new ProductBestSellerResponseDTO()
+        );
+
+        when(productRepository.findTopBestSellers(pageable)).thenReturn(expectedBestSellers);
+
+        List<ProductBestSellerResponseDTO> result = productService.getTopSevenProductsWithBestSeller();
+
+        assertEquals(expectedBestSellers, result);
+        verify(productRepository, times(1)).findTopBestSellers(pageable);
+
+    }
+
+    /**
+     * Tests the scenario where product details exist. Verifies that the
+     * getProductDetailsById method returns the expected product details and
+     * verifies that the productRepository's findProductDetailsById method is
+     * called once.
+     *
+     * @throws Exception if an error occurs during the test
+     */
+    @Test
+    void shouldReturnProductDetailsWhenProductExists() {
+
+        ProductDetailsResponseDTO expectedProductDetails = new ProductDetailsResponseDTO();
+
+        when(productRepository.findProductDetailsById(productId)).thenReturn(Optional.of(expectedProductDetails));
+
+        ProductDetailsResponseDTO result = productService.getProductDetailsById(productId);
+
+        assertEquals(expectedProductDetails, result);
+        verify(productRepository, times(1)).findProductDetailsById(productId);
+
+    }
+
+    /**
+     * Tests the scenario where product details do not exist. Verifies that a
+     * NotFoundException is thrown with the appropriate message.
+     *
+     * @throws NotFoundException if the product details do not exist
+     */
+    @Test
+    void shouldThrowNotFoundExceptionWhenProductDetailsDoesNotExist() {
+
+        when(productRepository.findProductDetailsById(productId)).thenReturn(Optional.empty());
+
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            productService.getProductDetailsById(productId);
+        });
+
+        assertEquals("PRODUCT Not Found!", exception.getMessage());
+        verify(productRepository, times(1)).findProductDetailsById(productId);
 
     }
 
