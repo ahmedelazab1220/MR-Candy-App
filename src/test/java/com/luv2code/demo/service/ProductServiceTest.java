@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.SystemMapper;
@@ -60,6 +62,8 @@ class ProductServiceTest {
     private String imageUrl;
     
     private Long productId;
+    
+    private MultipartFile multipartFile;
 
     /**
      * Initializes the mock objects and sets up the test data before each test case.
@@ -67,6 +71,8 @@ class ProductServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        
+        multipartFile = new MockMultipartFile("image", "image.png", "image/png", "imageContent".getBytes());
 
         imageUrl = "http://example.com/image.png";
         productId = 1L;
@@ -283,5 +289,173 @@ class ProductServiceTest {
         
     }
     
+    /**
+     * Tests the scenario where a product is successfully updated by ID.
+     * Verifies that the product is updated correctly and returns the expected response.
+     * 
+     * @throws IllegalStateException if the update fails
+     * @throws IOException if file operations fail
+     */
+    @Test
+    void shouldUpdateProductSuccessfully() throws IllegalStateException, IOException {
+
+        productRequestDTO.setCategoryName("Updated Category");
+        productRequestDTO.setCompanyName("Updated Company");
+        productRequestDTO.setImage(multipartFile);
+
+        
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(categoryService.getCategorySetter("Updated Category")).thenReturn(category);
+        when(companyService.getCompanySetter("Updated Company")).thenReturn(company);
+        when(fileHelper.deleteImageFromFileSystem(imageUrl)).thenReturn(true);
+        when(fileHelper.uploadFileToFileSystem(productRequestDTO.getImage())).thenReturn(imageUrl);
+        doNothing().when(mapper).updateProductFromRequestDTO(productRequestDTO, product);
+        when(productRepository.save(product)).thenReturn(product);
+
+        ProductDetailsResponseDTO expectedResponse = new ProductDetailsResponseDTO();
+        when(mapper.ProductTOproductDetailsResponseDTO(product)).thenReturn(expectedResponse);
+
+        ProductDetailsResponseDTO actualResponse = productService.updateProductById(1L, productRequestDTO);
+
+        assertNotNull(actualResponse);
+        assertEquals(expectedResponse, actualResponse);
+
+        verify(categoryService, times(1)).getCategorySetter("Updated Category");
+        verify(companyService, times(1)).getCompanySetter("Updated Company");
+        verify(fileHelper, times(1)).uploadFileToFileSystem(productRequestDTO.getImage());
+        verify(fileHelper, times(1)).deleteImageFromFileSystem(imageUrl);
+        verify(mapper, times(1)).updateProductFromRequestDTO(productRequestDTO, product);
+        verify(productRepository, times(1)).save(product);
+        verify(mapper, times(1)).ProductTOproductDetailsResponseDTO(product);
+        
+    }
+
+    /**
+     * Tests the scenario where the product is not found by ID.
+     * Verifies that a NotFoundException is thrown with the appropriate message.
+     * 
+     * @throws IllegalStateException if the update fails
+     * @throws IOException if file operations fail
+     */
+    @Test
+    void shouldThrowNotFoundExceptionWhenUpdateProductById() throws IllegalStateException, IOException {
+
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setCategoryName("Nonexistent Category");
+
+        when(productRepository.findById(1L)).thenReturn(Optional.empty());
+
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            productService.updateProductById(1L, productRequestDTO);
+        });
+
+        assertEquals("PRODUCT Not Found!", exception.getMessage());
+
+        verify(categoryService, never()).getCategorySetter(anyString());
+        verify(companyService, never()).getCompanySetter(anyString());
+        verify(fileHelper, never()).uploadFileToFileSystem(any());
+        verify(fileHelper, never()).deleteImageFromFileSystem(anyString());
+        verify(mapper, never()).updateProductFromRequestDTO(any(), any());
+        verify(productRepository, never()).save(any());
+        verify(mapper, never()).ProductTOproductDetailsResponseDTO(any());
+        
+    }
+
+    /**
+     * Tests the scenario where the product's category is updated.
+     * Verifies that the category is updated correctly.
+     * 
+     * @throws IllegalStateException if the update fails
+     * @throws IOException if file operations fail
+     */
+    @Test
+    void shouldUpdateCategoryWhenCategoryNameIsProvided() throws IllegalStateException, IOException {
+
+        Category newCategory = new Category();
+        newCategory.setId(2L);
+        newCategory.setName("New Category");
+
+        ProductRequestDTO productRequestDTO = new ProductRequestDTO();
+        productRequestDTO.setCategoryName("New Category");
+
+        Product product = new Product();
+        product.setId(1L);
+        product.setCategory(new Category());
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(categoryService.getCategorySetter("New Category")).thenReturn(newCategory);
+
+        productService.updateProductById(1L, productRequestDTO);
+
+        assertEquals(newCategory.getId(), product.getCategory().getId());
+        assertEquals(newCategory.getName(), product.getCategory().getName());
+
+        verify(categoryService, times(1)).getCategorySetter("New Category");
+        verify(productRepository, times(1)).save(product);
+        
+    }
+
+    /**
+     * Tests the scenario where the product's company is updated.
+     * Verifies that the company is updated correctly.
+     * 
+     * @throws IllegalStateException if the update fails
+     * @throws IOException if file operations fail
+     */
+    @Test
+    void shouldUpdateCompanyWhenCompanyNameIsProvided() throws IllegalStateException, IOException {
+
+    	Company newCompany = new Company();
+    	company.setId(2L);
+    	company.setName("New Category");
+    	
+        productRequestDTO.setCompanyName("New Company");
+
+        product.setCompany(newCompany);
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(companyService.getCompanySetter("New Company")).thenReturn(newCompany);
+
+        productService.updateProductById(1L, productRequestDTO);
+
+        assertEquals(newCompany.getId(), product.getCompany().getId());
+        assertEquals(newCompany.getName(), product.getCompany().getName());
+
+        verify(companyService, times(1)).getCompanySetter("New Company");
+        verify(productRepository, times(1)).save(product);
+        
+    }
+
+    /**
+     * Tests the scenario where the product's image is updated.
+     * Verifies that the old image is deleted and the new image is set correctly.
+     * 
+     * @throws IllegalStateException if the update fails
+     * @throws IOException if file operations fail
+     */
+    @Test
+    void shouldUpdateImageWhenImageIsProvided() throws IllegalStateException, IOException {
+
+        productRequestDTO.setImage(multipartFile);
+
+        product.setImageUrl("old-image-url-" + imageUrl);
+
+        String newImageUrl = "new-image-url-" + imageUrl;
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(fileHelper.deleteImageFromFileSystem("old-image-url-" + imageUrl)).thenReturn(true);
+        when(fileHelper.uploadFileToFileSystem(multipartFile)).thenReturn(newImageUrl);
+
+        productService.updateProductById(1L, productRequestDTO);
+
+        assertEquals(newImageUrl, product.getImageUrl());
+
+        verify(fileHelper, times(1)).deleteImageFromFileSystem("old-image-url-" + imageUrl);
+        verify(fileHelper, times(1)).uploadFileToFileSystem(multipartFile);
+        verify(productRepository, times(1)).save(product);
+        
+    }
+
+
 }
 
