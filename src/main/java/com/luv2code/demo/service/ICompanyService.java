@@ -18,8 +18,6 @@ public interface ICompanyService {
 
     CompanyResponseDTO createCompany(CompanyRequestDTO companyRequestDTO) throws IllegalStateException, IOException;
 
-    Boolean existCompanyByName(String name);
-
     CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
             throws IllegalStateException, IOException;
 

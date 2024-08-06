@@ -8,8 +8,8 @@ import com.luv2code.demo.dto.response.CartResponseDTO;
 
 public interface ICartService {
 
-	ResponseEntity<CartResponseDTO> createOrder(CartRequestDTO cartRequestDTO);
+    ResponseEntity<CartResponseDTO> createOrder(CartRequestDTO cartRequestDTO);
 
-	ResponseEntity<ApiResponseDTO> deleteOrder(Long theId);
-	
+    ResponseEntity<ApiResponseDTO> deleteOrder(Long theId);
+
 }

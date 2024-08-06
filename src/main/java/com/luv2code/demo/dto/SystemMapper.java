@@ -52,9 +52,9 @@ public interface SystemMapper {
     Product productSetterDTOTOProduct(ProductSetterDTO productSetterDTO);
 
     Product productCartSetterDTOTOProduct(ProductCartSetterDTO productSetterDTO);
-    
+
     void updateProductFromRequestDTO(ProductRequestDTO productRequestDTO, @MappingTarget Product product);
-    
+
     Cart cartRequestDTOTOCart(CartRequestDTO cartRequestDTO);
-    
+
 }

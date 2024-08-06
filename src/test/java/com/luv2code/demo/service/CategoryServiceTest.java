@@ -394,51 +394,6 @@ class CategoryServiceTest {
     }
 
     /**
-     * Test case to verify that the `existCategoryByName` method returns `true`
-     * when the category exists.
-     *
-     * This test case sets up a mocked `categoryRepository` to return `true`
-     * when `existsByName` is called with the specified `categoryName`. Then it
-     * calls the `existCategoryByName` method with the same `categoryName` and
-     * asserts that the returned value is `true`. Finally, it verifies that
-     * `existsByName` was called exactly once with the specified `categoryName`.
-     *
-     * @throws Exception if an error occurs during the test execution
-     */
-    @Test
-    void shouldReturnTrueWhenCategoryExists() {
-
-        when(categoryRepository.existsByName(categoryName)).thenReturn(true);
-
-        Boolean result = categoryService.existCategoryByName(categoryName);
-
-        assertTrue(result);
-
-        verify(categoryRepository, times(1)).existsByName(categoryName);
-
-    }
-
-    /**
-     * Test case to verify that a NotFoundException is thrown when the category
-     * does not exist.
-     *
-     * @throws NotFoundException if the category is not found
-     */
-    @Test
-    void shouldThrowNotFoundExceptionWhenCategoryDoesNotExist() {
-
-        when(categoryRepository.existsByName(categoryName)).thenReturn(false);
-
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            categoryService.existCategoryByName(categoryName);
-        });
-
-        assertEquals(NotFoundTypeException.CATEGORY + " Not Found!", exception.getMessage());
-
-        verify(categoryRepository, times(1)).existsByName(categoryName);
-    }
-
-    /**
      * Test case to verify that the updateCategory method of the CategoryService
      * updates a category successfully.
      *

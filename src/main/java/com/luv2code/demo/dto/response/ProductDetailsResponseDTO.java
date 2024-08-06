@@ -9,8 +9,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProductDetailsResponseDTO {
 
     private Long id;

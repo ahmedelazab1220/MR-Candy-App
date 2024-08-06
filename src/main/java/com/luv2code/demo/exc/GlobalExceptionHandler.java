@@ -10,20 +10,21 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import com.luv2code.demo.exc.custom.NotFoundException;
+import com.luv2code.demo.exc.custom.QuantityNotAvailableException;
 import com.luv2code.demo.exc.custom.ExpiredException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.UnexpectedTypeException;
 
 @RestControllerAdvice
-@Slf4j
 public class GlobalExceptionHandler {
 
     private ErrorResponse buildErrorResponse(int statusCode, String errorType, String message, Object details,
@@ -118,7 +119,7 @@ public class GlobalExceptionHandler {
             message = matcher.group(1);
         }
 
-        return buildErrorResponse(StatusCode.Conflict, "DataIntegrityViolationException", message, ex.getClass(),
+        return buildErrorResponse(StatusCode.CONFLICT, "DataIntegrityViolationException", message, ex.getClass(),
                 request);
     }
 
@@ -139,11 +140,9 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult().getFieldError().getField();
         String defaultMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
 
-        log.info("on Field - " + message);
-
         String customMessage = "Validation failed on field '" + message + "': " + defaultMessage;
 
-        return buildErrorResponse(StatusCode.Conflict, "MethodArgumentNotValidException", customMessage, ex.getClass(),
+        return buildErrorResponse(StatusCode.CONFLICT, "MethodArgumentNotValidException", customMessage, ex.getClass(),
                 request);
     }
 
@@ -229,6 +228,51 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles the IllegalArgumentException by building an ErrorResponse object
+     * with the appropriate status code, error type, message, details, and
+     * request information.
+     *
+     * @param ex	the IllegalArgumentException that was thrown
+     * @param request	the WebRequest object containing information about the
+     * request
+     * @return the ErrorResponse object with the appropriate information
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        return buildErrorResponse(StatusCode.INVALID_ARGUMENT, "IllegalArgumentException", ex.getMessage(), ex.getClass(), request);
+    }
+
+    /**
+     * Handles the MissingServletRequestParameterException by building an
+     * ErrorResponse object with the appropriate status code, error type,
+     * message, details, and request information.
+     *
+     * @param ex the MissingServletRequestParameterException that was thrown
+     * @param request the WebRequest object containing information about the
+     * request
+     * @return the ErrorResponse object with the appropriate information
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ErrorResponse handleMissingServletRequestParameterExceptio(MissingServletRequestParameterException ex, WebRequest request) {
+        return buildErrorResponse(StatusCode.INVALID_ARGUMENT, "MissingServletRequestParameterException", ex.getMessage(), ex.getClass(), request);
+    }
+
+    /**
+     * Handles the QuantityNotAvailableException by building an ErrorResponse
+     * object with the appropriate status code, error type, message, details,
+     * and request information.
+     *
+     * @param ex the QuantityNotAvailableException that was thrown
+     * @param request the WebRequest object containing information about the
+     * request
+     * @return the ErrorResponse object with the appropriate information
+     */
+    @ExceptionHandler(QuantityNotAvailableException.class)
+    public ErrorResponse handleMissingServletRequestParameterExceptio(QuantityNotAvailableException ex, WebRequest request) {
+        return buildErrorResponse(StatusCode.INVALID_ARGUMENT, "QuantityNotAvailableException", ex.getMessage(), ex.getClass(), request);
+    }
+
+    /**
      * Handles the ExpiredException by building an ErrorResponse object with the
      * appropriate status code, error type, message, and request information.
      *
@@ -240,6 +284,36 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ExpiredException.class)
     public ErrorResponse handleTokenExpiredException(ExpiredException ex, WebRequest request) {
         return buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredException", ex.getMessage(), ex.getClass(), request);
+    }
+
+    /**
+     * Handles the UnexpectedTypeException by building an ErrorResponse object
+     * with the appropriate status code, error type, message, and request
+     * information.
+     *
+     * @param ex the UnexpectedTypeException that was thrown
+     * @param request the WebRequest object containing information about the
+     * request
+     * @return the ErrorResponse object with the appropriate information
+     */
+    @ExceptionHandler(UnexpectedTypeException.class)
+    public ErrorResponse handleUnexpectedTypeException(UnexpectedTypeException ex, WebRequest request) {
+        return buildErrorResponse(StatusCode.FORBIDDEN, "UnexpectedTypeException", ex.getMessage(), ex.getClass(), request);
+    }
+
+    /**
+     * Handles the Exception by building an ErrorResponse object with the
+     * appropriate status code, error type, message, and request information.
+     *
+     * @param ex the Exception that was thrown
+     * @param request the WebRequest object containing information about the
+     * request
+     * @return the ErrorResponse object with the appropriate information
+     */
+    @ExceptionHandler(Exception.class)
+    public ErrorResponse handleException(Exception ex, WebRequest request) {
+        return buildErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, "Exception", "An unknown error occurred.",
+                ex.getMessage(), request);
     }
 
 }

@@ -23,33 +23,32 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "carts")
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Cart {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
-			CascadeType.REFRESH }, fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-	@Column(name = "createdAt", nullable = false)
-	private LocalDateTime createdAt;
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt;
 
-	@Column(name = "total_price", nullable = false , precision = 30 , scale = 2)
-	private BigDecimal totalPrice;
+    @Column(name = "total_price", nullable = false, precision = 30, scale = 2)
+    private BigDecimal totalPrice;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.ALL)
-	private List<OrderItem> orderItems;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
 
-	@PrePersist
-	protected void onCreate() {
-		createdAt = LocalDateTime.now();
-	}
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 
 }

@@ -7,10 +7,6 @@ public interface IRefreshTokenService {
 
     RefreshToken save(RefreshToken refreshToken);
 
-    RefreshToken findByToken(String token);
-
-    void deleteByEntity(RefreshToken refreshToken);
-
     JwtResponseDTO generateNewToken(String token);
 
 }

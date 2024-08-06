@@ -7,14 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProductCartSetterDTO {
 
-	private Long id;
+    private Long id;
 
     private String name;
-    
+
     private Integer quantity;
-	
+
 }

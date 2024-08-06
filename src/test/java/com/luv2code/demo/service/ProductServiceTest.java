@@ -37,6 +37,7 @@ import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.repository.ProductRepository;
 import com.luv2code.demo.service.impl.ProductService;
 import com.luv2code.demo.helper.IFileHelper;
+import com.luv2code.demo.helper.IPaginationHelper;
 
 class ProductServiceTest {
 
@@ -48,6 +49,9 @@ class ProductServiceTest {
 
     @Mock
     private IFileHelper fileHelper;
+
+    @Mock
+    private IPaginationHelper paginationHelper;
 
     @Mock
     private ICategoryService categoryService;
@@ -471,44 +475,6 @@ class ProductServiceTest {
     }
 
     /**
-     * Tests the scenario where a product exists. Verifies that the
-     * productService returns true when the product exists.
-     *
-     * @return void
-     */
-    @Test
-    void shouldReturnTrueWhenProductExists() {
-
-        when(productRepository.existsById(productId)).thenReturn(true);
-
-        Boolean result = productService.existProductById(productId);
-
-        assertTrue(result);
-        verify(productRepository, times(1)).existsById(productId);
-
-    }
-
-    /**
-     * Tests the scenario where a product does not exist. Verifies that a
-     * NotFoundException is thrown with the appropriate message.
-     *
-     * @throws NotFoundException if the product does not exist
-     */
-    @Test
-    void shouldThrowNotFoundExceptionWhenProductDoesNotExist() {
-
-        when(productRepository.existsById(productId)).thenReturn(false);
-
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            productService.existProductById(productId);
-        });
-
-        assertEquals("PRODUCT Not Found!", exception.getMessage());
-        verify(productRepository, times(1)).existsById(productId);
-
-    }
-
-    /**
      * Test case to verify that a page of products is returned when a company
      * exists.
      *
@@ -574,13 +540,14 @@ class ProductServiceTest {
         IllegalArgumentException pageException = assertThrows(IllegalArgumentException.class, () -> {
             productService.getAllProductsInCompany(companyName, -1, 10);
         });
-        assertEquals("Page index and page size must be non-negative integers.", pageException.getMessage());
+
+        assertEquals("Page index must not be less than zero", pageException.getMessage());
 
         IllegalArgumentException sizeException = assertThrows(IllegalArgumentException.class, () -> {
             productService.getAllProductsInCompany(companyName, 0, -1);
         });
 
-        assertEquals("Page index and page size must be non-negative integers.", sizeException.getMessage());
+        assertEquals("Page size must not be less than one", sizeException.getMessage());
 
     }
 
@@ -593,7 +560,7 @@ class ProductServiceTest {
      * @return void
      */
     @Test
-    void shouldReturnProductsDetailsWhenPaginationParametersAreValid() {
+    void shouldReturnProductsDetailsWhenPaginationParametersAreValidWhenGettingCompanyProductsDetails() {
 
         String companyName = "Pepsi";
 
@@ -626,13 +593,13 @@ class ProductServiceTest {
             productService.getAllProductsDetailsInCompany(companyName, -1, 10);
         });
 
-        assertEquals("Page index and page size must be non-negative integers.", pageException.getMessage());
+        assertEquals("Page index must not be less than zero", pageException.getMessage());
 
         IllegalArgumentException sizeException = assertThrows(IllegalArgumentException.class, () -> {
             productService.getAllProductsDetailsInCompany(companyName, 0, -1);
         });
 
-        assertEquals("Page index and page size must be non-negative integers.", sizeException.getMessage());
+        assertEquals("Page size must not be less than one", sizeException.getMessage());
 
     }
 
@@ -678,13 +645,13 @@ class ProductServiceTest {
             productService.getAllProductsDetailsInCategory(categoryName, -1, 10);
         });
 
-        assertEquals("Page index and page size must be non-negative integers.", pageException.getMessage());
+        assertEquals("Page index must not be less than zero", pageException.getMessage());
 
         IllegalArgumentException sizeException = assertThrows(IllegalArgumentException.class, () -> {
             productService.getAllProductsDetailsInCategory(categoryName, 0, -1);
         });
 
-        assertEquals("Page index and page size must be non-negative integers.", sizeException.getMessage());
+        assertEquals("Page size must not be less than one", sizeException.getMessage());
 
     }
 
@@ -754,6 +721,56 @@ class ProductServiceTest {
 
         assertEquals("PRODUCT Not Found!", exception.getMessage());
         verify(productRepository, times(1)).findProductDetailsById(productId);
+
+    }
+
+    /**
+     * Tests the scenario where product quantity is successfully updated.
+     * Verifies that the update is done correctly and the expected quantity is
+     * returned.
+     *
+     * @param None
+     * @return None
+     */
+    @Test
+    void shouldUpdateProductQuantitySuccessfully() {
+
+        Integer newQuantity = 20;
+
+        when(productRepository.updateProductQuantity(productId, newQuantity)).thenReturn(1);
+
+        Integer updatedQuantity = productService.updateProductQuantityById(productId, newQuantity);
+
+        assertNotNull(updatedQuantity);
+        assertEquals(1, updatedQuantity);
+
+        verify(productRepository, times(1)).updateProductQuantity(productId, newQuantity);
+
+    }
+
+    /**
+     * Tests the scenario where updating the product quantity fails. Verifies
+     * that a RuntimeException is thrown with the appropriate message. Verifies
+     * that the productRepository's updateProductQuantity method is called once.
+     *
+     * @param productId the ID of the product to update the quantity for
+     * @param newQuantity the new quantity to set for the product
+     * @return void
+     */
+    @Test
+    void shouldThrowRuntimeExceptionWhenUpdateProductQuantityFails() {
+
+        Integer newQuantity = 20;
+
+        when(productRepository.updateProductQuantity(productId, newQuantity)).thenReturn(0);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.updateProductQuantityById(productId, newQuantity);
+        });
+
+        assertEquals("Update Product With ID: {}" + productId, exception.getMessage());
+
+        verify(productRepository, times(1)).updateProductQuantity(productId, newQuantity);
 
     }
 

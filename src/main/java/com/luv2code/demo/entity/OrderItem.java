@@ -2,8 +2,10 @@ package com.luv2code.demo.entity;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,28 +19,28 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "order_items")
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderItem {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "cart_id", nullable = false)
-	private Cart cart;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_id", nullable = false)
+    private Cart cart;
 
-	@ManyToOne
-	@JoinColumn(name = "product_id", nullable = false)
-	private Product product;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
-	@Column(name = "quantity")
-	private Integer quantity;
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
 
-	@Column(name = "price", nullable = false , precision = 15 , scale = 2)
-	private BigDecimal price;
+    @Column(name = "price", nullable = false, precision = 15, scale = 2)
+    private BigDecimal price;
 
 }

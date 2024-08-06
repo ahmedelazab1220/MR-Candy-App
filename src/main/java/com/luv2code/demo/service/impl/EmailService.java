@@ -27,12 +27,17 @@ public class EmailService implements IEmailService {
     @Override
     @Async
     public void sendOtpEmail(String to, String otp) throws MessagingException, IOException {
+
         String subject = "Your Verification Code";
+
+        log.info("Preparing to send OTP email to: {}", to);
 
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
         String htmlBody = emailBulider.buildEmailBody(otp);
+
+        log.debug("Email body built successfully for OTP: {}", otp);
 
         helper.setTo(to);
         helper.setFrom("ahmedelazab1210@gmail.com");
@@ -41,12 +46,12 @@ public class EmailService implements IEmailService {
 
         try {
             javaMailSender.send(message);
+            log.info("OTP email sent successfully to: {}", to);
         } catch (RuntimeException e) {
             log.error("Mail server connection failed!");
             throw new RuntimeException("Mail server connection failed!", e);
         }
 
-        log.info("OTP email sent successfully to: {}", to);
     }
 
 }

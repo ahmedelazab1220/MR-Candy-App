@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/categories")
+@RequestMapping("${api.version}/categories")
 @AllArgsConstructor
 public class CategoryController {
 

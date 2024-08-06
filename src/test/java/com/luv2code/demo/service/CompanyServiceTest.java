@@ -40,10 +40,10 @@ import com.luv2code.demo.service.impl.CompanyService;
 class CompanyServiceTest {
 
     @InjectMocks
-    private CompanyService CompanyService;
+    private CompanyService companyService;
 
     @Mock
-    private CompanyRepository CompanyRepository;
+    private CompanyRepository companyRepository;
 
     @Mock
     private IFileHelper fileHelper;
@@ -106,13 +106,13 @@ class CompanyServiceTest {
         List<CompanyResponseDTO> CompanyResponseDTOs = List.of(new CompanyResponseDTO(companyName, imageUrl),
                 new CompanyResponseDTO(companyName, imageUrl));
 
-        when(CompanyRepository.findAllCompanies()).thenReturn(CompanyResponseDTOs);
+        when(companyRepository.findAllCompanies()).thenReturn(CompanyResponseDTOs);
 
-        List<CompanyResponseDTO> result = CompanyService.getAllCompanies();
+        List<CompanyResponseDTO> result = companyService.getAllCompanies();
 
         assertEquals(CompanyResponseDTOs, result);
 
-        verify(CompanyRepository, times(1)).findAllCompanies();
+        verify(companyRepository, times(1)).findAllCompanies();
 
     }
 
@@ -127,13 +127,13 @@ class CompanyServiceTest {
 
         List<CompanyResponseDTO> Companies = List.of(); // Empty list
 
-        when(CompanyRepository.findAllCompanies()).thenReturn(Companies);
+        when(companyRepository.findAllCompanies()).thenReturn(Companies);
 
-        List<CompanyResponseDTO> result = CompanyService.getAllCompanies();
+        List<CompanyResponseDTO> result = companyService.getAllCompanies();
 
         assertTrue(result.isEmpty());
 
-        verify(CompanyRepository, times(1)).findAllCompanies();
+        verify(companyRepository, times(1)).findAllCompanies();
 
     }
 
@@ -152,9 +152,9 @@ class CompanyServiceTest {
         when(fileHelper.uploadFileToFileSystem(any(MultipartFile.class))).thenReturn(imageUrl);
         when(mapper.companyRequestDTOTOCompany(companyRequestDTO)).thenReturn(company);
         when(mapper.companyTOCompanyResponseDTO(any(Company.class))).thenReturn(companyResponseDTO);
-        when(CompanyRepository.save(any(Company.class))).thenReturn(company);
+        when(companyRepository.save(any(Company.class))).thenReturn(company);
 
-        CompanyResponseDTO result = CompanyService.createCompany(companyRequestDTO);
+        CompanyResponseDTO result = companyService.createCompany(companyRequestDTO);
 
         assertEquals(companyResponseDTO.getName(), result.getName());
         assertEquals(companyResponseDTO.getImageUrl(), result.getImageUrl());
@@ -162,7 +162,7 @@ class CompanyServiceTest {
         verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
         verify(mapper, times(1)).companyRequestDTOTOCompany(companyRequestDTO);
         verify(mapper, times(1)).companyTOCompanyResponseDTO(any(Company.class));
-        verify(CompanyRepository, times(1)).save(any(Company.class));
+        verify(companyRepository, times(1)).save(any(Company.class));
 
     }
 
@@ -178,11 +178,11 @@ class CompanyServiceTest {
         CompanyRequestDTO invalidRequest = new CompanyRequestDTO("", null);
 
         assertThrows(NullPointerException.class, () -> {
-            CompanyService.createCompany(invalidRequest);
+            companyService.createCompany(invalidRequest);
         });
 
         verify(fileHelper, times(0)).uploadFileToFileSystem(any(MultipartFile.class));
-        verify(CompanyRepository, times(0)).save(any(Company.class));
+        verify(companyRepository, times(0)).save(any(Company.class));
     }
 
     /**
@@ -197,16 +197,16 @@ class CompanyServiceTest {
 
         when(fileHelper.uploadFileToFileSystem(any(MultipartFile.class))).thenReturn(imageUrl);
         when(mapper.companyRequestDTOTOCompany(companyRequestDTO)).thenReturn(company);
-        doThrow(new RuntimeException("Failed to save Company")).when(CompanyRepository).save(any(Company.class));
+        doThrow(new RuntimeException("Failed to save Company")).when(companyRepository).save(any(Company.class));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            CompanyService.createCompany(companyRequestDTO);
+            companyService.createCompany(companyRequestDTO);
         });
 
         assertEquals("Failed to save Company", exception.getMessage());
 
         verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
-        verify(CompanyRepository, times(1)).save(company);
+        verify(companyRepository, times(1)).save(company);
         verify(mapper, times(1)).companyRequestDTOTOCompany(companyRequestDTO);
         verify(mapper, times(0)).companyTOCompanyResponseDTO(any(Company.class));
 
@@ -227,13 +227,13 @@ class CompanyServiceTest {
                 .thenThrow(new IOException("File upload failed"));
 
         IOException exception = assertThrows(IOException.class, () -> {
-            CompanyService.createCompany(companyRequestDTO);
+            companyService.createCompany(companyRequestDTO);
         });
 
         assertEquals("File upload failed", exception.getMessage());
 
         verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
-        verify(CompanyRepository, times(0)).save(any(Company.class));
+        verify(companyRepository, times(0)).save(any(Company.class));
         verify(mapper, times(0)).companyRequestDTOTOCompany(any(CompanyRequestDTO.class));
         verify(mapper, times(0)).companyTOCompanyResponseDTO(any(Company.class));
 
@@ -254,7 +254,7 @@ class CompanyServiceTest {
                 .companyRequestDTOTOCompany(CompanyRequestDTO);
 
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
-            CompanyService.createCompany(CompanyRequestDTO);
+            companyService.createCompany(CompanyRequestDTO);
         });
 
         assertEquals("Mapping to Company failed", thrown.getMessage());
@@ -262,7 +262,7 @@ class CompanyServiceTest {
         verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
         verify(mapper, times(1)).companyRequestDTOTOCompany(CompanyRequestDTO);
         verify(mapper, times(0)).companyTOCompanyResponseDTO(any(Company.class));
-        verify(CompanyRepository, times(0)).save(any(Company.class));
+        verify(companyRepository, times(0)).save(any(Company.class));
     }
 
     /**
@@ -278,12 +278,12 @@ class CompanyServiceTest {
 
         when(fileHelper.uploadFileToFileSystem(any(MultipartFile.class))).thenReturn(imageUrl);
         when(mapper.companyRequestDTOTOCompany(CompanyRequestDTO)).thenReturn(company);
-        when(CompanyRepository.save(any(Company.class))).thenReturn(company);
+        when(companyRepository.save(any(Company.class))).thenReturn(company);
         doThrow(new RuntimeException("Mapping to ResponseDTO failed")).when(mapper)
                 .companyTOCompanyResponseDTO(company);
 
         RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
-            CompanyService.createCompany(CompanyRequestDTO);
+            companyService.createCompany(CompanyRequestDTO);
         });
 
         assertEquals("Mapping to ResponseDTO failed", thrown.getMessage());
@@ -291,7 +291,7 @@ class CompanyServiceTest {
         verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
         verify(mapper, times(1)).companyRequestDTOTOCompany(CompanyRequestDTO);
         verify(mapper, times(1)).companyTOCompanyResponseDTO(company);
-        verify(CompanyRepository, times(1)).save(any(Company.class));
+        verify(companyRepository, times(1)).save(any(Company.class));
 
     }
 
@@ -304,17 +304,17 @@ class CompanyServiceTest {
     @Test
     void shouldThrowNotFoundExceptionWhenCompanyNotFoundWhenDeletingCompany() throws IOException {
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.empty());
+        when(companyRepository.findCompanyWithProductsByName(companyName)).thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            CompanyService.deleteCompany(companyName);
+            companyService.deleteCompany(companyName);
         });
 
         assertEquals(NotFoundTypeException.COMPANY + " Not Found!", exception.getMessage());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findCompanyWithProductsByName(companyName);
         verify(fileHelper, times(0)).deleteImageFromFileSystem(anyString());
-        verify(CompanyRepository, times(0)).delete(any(Company.class));
+        verify(companyRepository, times(0)).delete(any(Company.class));
 
     }
 
@@ -327,19 +327,19 @@ class CompanyServiceTest {
     @Test
     void shouldHandleImageDeletionFailureWhenDeletingCompany() throws IOException {
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.of(company));
+        when(companyRepository.findCompanyWithProductsByName(companyName)).thenReturn(Optional.of(company));
         doThrow(new IOException("Failed to delete image")).when(fileHelper).deleteImageFromFileSystem(company.getImageUrl());
-        doNothing().when(CompanyRepository).delete(company);
+        doNothing().when(companyRepository).delete(company);
 
         IOException exception = assertThrows(IOException.class, () -> {
-            CompanyService.deleteCompany(companyName);
+            companyService.deleteCompany(companyName);
         });
 
         assertEquals("Failed to delete image", exception.getMessage());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findCompanyWithProductsByName(companyName);
         verify(fileHelper, times(1)).deleteImageFromFileSystem(company.getImageUrl());
-        verify(CompanyRepository, times(0)).delete(company);
+        verify(companyRepository, times(0)).delete(company);
 
     }
 
@@ -352,18 +352,18 @@ class CompanyServiceTest {
     @Test
     void shouldDeleteCompanySuccessfully() throws IOException {
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.of(company));
+        when(companyRepository.findCompanyWithProductsByName(companyName)).thenReturn(Optional.of(company));
         when(fileHelper.deleteImageFromFileSystem(company.getImageUrl())).thenReturn(true);
-        doNothing().when(CompanyRepository).delete(any(Company.class));
+        doNothing().when(companyRepository).delete(any(Company.class));
 
-        ResponseEntity<ApiResponseDTO> response = CompanyService.deleteCompany(companyName);
+        ResponseEntity<ApiResponseDTO> response = companyService.deleteCompany(companyName);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("Success Delete Company.", response.getBody().getMessage());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findCompanyWithProductsByName(companyName);
         verify(fileHelper, times(1)).deleteImageFromFileSystem(company.getImageUrl());
-        verify(CompanyRepository, times(1)).delete(company);
+        verify(companyRepository, times(1)).delete(company);
 
     }
 
@@ -376,65 +376,20 @@ class CompanyServiceTest {
     @Test
     void shouldHandleExceptionDuringDeleteWhenDeletingCompany() throws IOException {
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.of(company));
+        when(companyRepository.findCompanyWithProductsByName(companyName)).thenReturn(Optional.of(company));
         when(fileHelper.deleteImageFromFileSystem(company.getImageUrl())).thenReturn(true);
-        doThrow(new RuntimeException("Database error")).when(CompanyRepository).delete(company);
+        doThrow(new RuntimeException("COMPANY Not Found!")).when(companyRepository).delete(company);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            CompanyService.deleteCompany(companyName);
+            companyService.deleteCompany(companyName);
         });
 
-        assertEquals("Database error", exception.getMessage());
+        assertEquals("COMPANY Not Found!", exception.getMessage());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findCompanyWithProductsByName(companyName);
         verify(fileHelper, times(1)).deleteImageFromFileSystem(company.getImageUrl());
-        verify(CompanyRepository, times(1)).delete(company);
+        verify(companyRepository, times(1)).delete(company);
 
-    }
-
-    /**
-     * Test case to verify that the `existCompanyByName` method returns `true`
-     * when the Company exists.
-     *
-     * This test case sets up a mocked `CompanyRepository` to return `true` when
-     * `existsByName` is called with the specified `CompanyName`. Then it calls
-     * the `existCompanyByName` method with the same `CompanyName` and asserts
-     * that the returned value is `true`. Finally, it verifies that
-     * `existsByName` was called exactly once with the specified `CompanyName`.
-     *
-     * @throws Exception if an error occurs during the test execution
-     */
-    @Test
-    void shouldReturnTrueWhenCompanyExists() {
-
-        when(CompanyRepository.existsByName(companyName)).thenReturn(true);
-
-        Boolean result = CompanyService.existCompanyByName(companyName);
-
-        assertTrue(result);
-
-        verify(CompanyRepository, times(1)).existsByName(companyName);
-
-    }
-
-    /**
-     * Test case to verify that a NotFoundException is thrown when the Company
-     * does not exist.
-     *
-     * @throws NotFoundException if the Company is not found
-     */
-    @Test
-    void shouldThrowNotFoundExceptionWhenCompanyDoesNotExist() {
-
-        when(CompanyRepository.existsByName(companyName)).thenReturn(false);
-
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            CompanyService.existCompanyByName(companyName);
-        });
-
-        assertEquals(NotFoundTypeException.COMPANY + " Not Found!", exception.getMessage());
-
-        verify(CompanyRepository, times(1)).existsByName(companyName);
     }
 
     /**
@@ -448,20 +403,20 @@ class CompanyServiceTest {
         companyRequestDTO = getCompanyRequestDTO();
         companyResponseDTO = getCompanyResponseDTO();
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.of(company));
+        when(companyRepository.findByName(companyName)).thenReturn(Optional.of(company));
         when(fileHelper.uploadFileToFileSystem(any(MultipartFile.class))).thenReturn(imageUrl);
         when(mapper.companyTOCompanyResponseDTO(any(Company.class))).thenReturn(companyResponseDTO);
-        when(CompanyRepository.save(any(Company.class))).thenReturn(company);
+        when(companyRepository.save(any(Company.class))).thenReturn(company);
 
-        CompanyResponseDTO result = CompanyService.updateCompany(companyName, companyRequestDTO);
+        CompanyResponseDTO result = companyService.updateCompany(companyName, companyRequestDTO);
 
         assertEquals(companyResponseDTO.getName(), result.getName());
         assertEquals(companyResponseDTO.getImageUrl(), result.getImageUrl());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findByName(companyName);
         verify(fileHelper, times(1)).deleteImageFromFileSystem(company.getImageUrl());
         verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
-        verify(CompanyRepository, times(1)).save(any(Company.class));
+        verify(companyRepository, times(1)).save(any(Company.class));
         verify(mapper, times(1)).companyTOCompanyResponseDTO(any(Company.class));
     }
 
@@ -473,17 +428,17 @@ class CompanyServiceTest {
      */
     @Test
     void shouldThrowNotFoundExceptionWhenUpdateCompanyDoesNotExist() throws IOException {
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.empty());
+        when(companyRepository.findByName(companyName)).thenReturn(Optional.empty());
 
         NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            CompanyService.updateCompany(companyName, getCompanyRequestDTO());
+            companyService.updateCompany(companyName, getCompanyRequestDTO());
         });
 
         assertEquals(NotFoundTypeException.COMPANY + " Not Found!", exception.getMessage());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findByName(companyName);
         verify(fileHelper, times(0)).deleteImageFromFileSystem(anyString());
-        verify(CompanyRepository, times(0)).save(any(Company.class));
+        verify(companyRepository, times(0)).save(any(Company.class));
     }
 
     /**
@@ -496,20 +451,20 @@ class CompanyServiceTest {
     void shouldThrowIOExceptionWhenImageDeletionFailsWhenUpdateCompany() throws IOException {
         companyRequestDTO = getCompanyRequestDTO();
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.of(company));
+        when(companyRepository.findByName(companyName)).thenReturn(Optional.of(company));
         doThrow(new IOException("Failed to delete image")).when(fileHelper)
                 .deleteImageFromFileSystem(company.getImageUrl());
 
         IOException exception = assertThrows(IOException.class, () -> {
-            CompanyService.updateCompany(companyName, companyRequestDTO);
+            companyService.updateCompany(companyName, companyRequestDTO);
         });
 
         assertEquals("Failed to delete image", exception.getMessage());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findByName(companyName);
         verify(fileHelper, times(1)).deleteImageFromFileSystem(company.getImageUrl());
         verify(fileHelper, times(0)).uploadFileToFileSystem(any(MultipartFile.class));
-        verify(CompanyRepository, times(0)).save(any(Company.class));
+        verify(companyRepository, times(0)).save(any(Company.class));
     }
 
     /**
@@ -522,21 +477,21 @@ class CompanyServiceTest {
     void shouldThrowIOExceptionWhenImageUploadFailsWhenUpdateCompany() throws IOException {
         companyRequestDTO = getCompanyRequestDTO();
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.of(company));
+        when(companyRepository.findByName(companyName)).thenReturn(Optional.of(company));
         when(fileHelper.deleteImageFromFileSystem(company.getImageUrl())).thenReturn(true);
         when(fileHelper.uploadFileToFileSystem(any(MultipartFile.class)))
                 .thenThrow(new IOException("File upload failed"));
 
         IOException exception = assertThrows(IOException.class, () -> {
-            CompanyService.updateCompany(companyName, companyRequestDTO);
+            companyService.updateCompany(companyName, companyRequestDTO);
         });
 
         assertEquals("File upload failed", exception.getMessage());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findByName(companyName);
         verify(fileHelper, times(1)).deleteImageFromFileSystem(company.getImageUrl());
         verify(fileHelper, times(1)).uploadFileToFileSystem(any(MultipartFile.class));
-        verify(CompanyRepository, times(0)).save(any(Company.class));
+        verify(companyRepository, times(0)).save(any(Company.class));
     }
 
     /**
@@ -550,19 +505,19 @@ class CompanyServiceTest {
 
         CompanyRequestDTO emptyRequestDTO = new CompanyRequestDTO(null, null);
 
-        when(CompanyRepository.findByName(companyName)).thenReturn(Optional.of(company));
+        when(companyRepository.findByName(companyName)).thenReturn(Optional.of(company));
         when(mapper.companyTOCompanyResponseDTO(any(Company.class))).thenReturn(getCompanyResponseDTO());
-        when(CompanyRepository.save(any(Company.class))).thenReturn(company);
+        when(companyRepository.save(any(Company.class))).thenReturn(company);
 
-        CompanyResponseDTO result = CompanyService.updateCompany(companyName, emptyRequestDTO);
+        CompanyResponseDTO result = companyService.updateCompany(companyName, emptyRequestDTO);
 
         assertEquals(companyName, result.getName());
         assertEquals(imageUrl, result.getImageUrl());
 
-        verify(CompanyRepository, times(1)).findByName(companyName);
+        verify(companyRepository, times(1)).findByName(companyName);
         verify(fileHelper, times(0)).deleteImageFromFileSystem(anyString());
         verify(fileHelper, times(0)).uploadFileToFileSystem(any(MultipartFile.class));
-        verify(CompanyRepository, times(1)).save(any(Company.class));
+        verify(companyRepository, times(1)).save(any(Company.class));
         verify(mapper, times(1)).companyTOCompanyResponseDTO(any(Company.class));
 
     }

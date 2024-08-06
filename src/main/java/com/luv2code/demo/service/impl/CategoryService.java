@@ -20,8 +20,10 @@ import com.luv2code.demo.service.ICategoryService;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class CategoryService implements ICategoryService {
 
@@ -32,6 +34,8 @@ public class CategoryService implements ICategoryService {
     @Override
     public List<CategoryResponseDTO> getAllCategories() {
 
+        log.info("Fetching all categories");
+
         return categoryRepository.findAllCategories();
 
     }
@@ -39,14 +43,19 @@ public class CategoryService implements ICategoryService {
     @Override
     public ResponseEntity<ApiResponseDTO> deleteCategory(String name) throws IOException {
 
+        log.info("Attempting to delete category with name: {}", name);
+
         Optional<Category> category = categoryRepository.findByName(name);
 
         if (category.isEmpty()) {
+            log.warn("Category with name: {} not found", name);
             throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
         }
 
+        log.info("Deleting image from file system for category: {}", name);
         fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
 
+        log.info("Deleting category from repository: {}", name);
         categoryRepository.delete(category.get());
 
         return ResponseEntity.ok(new ApiResponseDTO("Success Delete Category."));
@@ -57,6 +66,8 @@ public class CategoryService implements ICategoryService {
     public CategoryResponseDTO createCategory(CategoryRequestDTO categoryRequestDTO)
             throws IllegalStateException, IOException {
 
+        log.info("Creating new category with name: {}", categoryRequestDTO.getName());
+
         String imageUrl = fileHelper.uploadFileToFileSystem(categoryRequestDTO.getImage());
 
         Category category = mapper.categoryRequestDTOTOCategory(categoryRequestDTO);
@@ -65,20 +76,9 @@ public class CategoryService implements ICategoryService {
 
         CategoryResponseDTO categoryDto = mapper.categoryTOCategoryResponseDTO(categoryRepository.save(category));
 
+        log.info("Category created successfully with name: {}", categoryDto.getName());
+
         return categoryDto;
-
-    }
-
-    @Override
-    public Boolean existCategoryByName(String name) {
-
-        Boolean categoryExist = categoryRepository.existsByName(name);
-
-        if (!categoryExist) {
-            throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
-        }
-
-        return categoryExist;
 
     }
 
@@ -87,17 +87,27 @@ public class CategoryService implements ICategoryService {
     public CategoryResponseDTO updateCategory(String name, CategoryRequestDTO categoryRequestDTO)
             throws IllegalStateException, IOException {
 
+        log.info("Updating category with name: {}", name);
+
         Optional<Category> category = categoryRepository.findByName(name);
 
         if (category.isEmpty()) {
+
+            log.warn("Category with name: {} not found", name);
+
             throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
         }
 
         if (categoryRequestDTO.getName() != null) {
+
+            log.info("Updating category name to: {}", categoryRequestDTO.getName());
+
             category.get().setName(categoryRequestDTO.getName());
         }
 
         if (categoryRequestDTO.getImage() != null) {
+
+            log.info("Updating category image for: {}", name);
 
             fileHelper.deleteImageFromFileSystem(category.get().getImageUrl());
 
@@ -107,6 +117,8 @@ public class CategoryService implements ICategoryService {
 
         }
 
+        log.info("Category updated successfully with ID: {}", category.get().getId());
+
         return mapper.categoryTOCategoryResponseDTO(categoryRepository.save(category.get()));
 
     }
@@ -114,11 +126,16 @@ public class CategoryService implements ICategoryService {
     @Override
     public Category getCategorySetter(String name) {
 
-        Optional<Category> category = Optional.ofNullable(mapper.categorySetterDTOTOcaCategory(categoryRepository.findCategorySetterDTOByName(name).get()));
+        log.info("Fetching category setter for name: {}", name);
+
+        Optional<Category> category = categoryRepository.findCategorySetterDTOByName(name).map(mapper::categorySetterDTOTOcaCategory);
 
         if (category.isEmpty()) {
+            log.warn("Category with name: {} not found", name);
             throw new NotFoundException(NotFoundTypeException.CATEGORY + " Not Found!");
         }
+
+        log.info("Category found with ID: {}", category.get().getId());
 
         return category.get();
 

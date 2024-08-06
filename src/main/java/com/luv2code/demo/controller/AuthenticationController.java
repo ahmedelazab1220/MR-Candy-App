@@ -19,10 +19,12 @@ import com.luv2code.demo.service.IRefreshTokenService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("api/v1/auth")
+@RequestMapping("${api.version}/auth")
 @AllArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
     private final IAuthenticationService authenticationService;
@@ -31,6 +33,8 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponseDTO> register(@Valid @ModelAttribute RegisterRequestDTO registerRequestDTO)
             throws IOException {
+
+        log.info(" - " + registerRequestDTO.getAddress().getStreet());
 
         return authenticationService.register(registerRequestDTO);
 

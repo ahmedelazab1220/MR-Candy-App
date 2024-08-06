@@ -7,9 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.ProductCartSetterDTO;
 import com.luv2code.demo.dto.ProductSetterDTO;
@@ -51,12 +53,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     @Query("SELECT new com.luv2code.demo.dto.ProductSetterDTO(p.id, p.name, p.imageUrl) " + "FROM Product p " + "WHERE p.id = :id")
     Optional<ProductSetterDTO> findProductSetterDTOById(@Param("id") Long id);
-    
+
     @Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.quantity) " + "FROM Product p " + "WHERE p.id = :id")
     Optional<ProductCartSetterDTO> findProductSetterCartDTOById(@Param("id") Long id);
 
     @EntityGraph(attributePaths = {"category", "company"})
     @Override
     Optional<Product> findById(@Param("id") Long id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Product p SET p.quantity = :quantity WHERE p.id = :id")
+    Integer updateProductQuantity(@Param("id") Long id, @Param("quantity") Integer quantity);
 
 }

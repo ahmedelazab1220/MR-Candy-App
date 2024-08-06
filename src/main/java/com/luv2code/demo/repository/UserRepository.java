@@ -2,6 +2,7 @@ package com.luv2code.demo.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,9 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "LEFT JOIN u.address a " + "LEFT JOIN u.role r " + "WHERE u.email = :email")
     Optional<UserTokenResponseDTO> findUserTokenDetailsByEmail(@Param("email") String email);
 
-    @Query("SELECT new com.luv2code.demo.dto.UserSetterDTO(u.id, u.email) FROM User u WHERE u.email = :email")
-    Optional<UserSetterDTO> findUserSetterByEmail(@Param("email") String email);
-
+    @EntityGraph(attributePaths = {"role", "address", "carts"})
     Optional<User> findByEmail(@Param("email") String email);
 
     Boolean existsByEmail(@Param("email") String email);
@@ -41,5 +40,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.password FROM User u WHERE u.email = :email")
     Optional<String> findUserPasswordByEmail(@Param("email") String email);
+
+    @Query("SELECT new com.luv2code.demo.dto.UserSetterDTO(u.id, u.email) FROM User u WHERE u.email = :email")
+    Optional<UserSetterDTO> findUserSetterByEmail(@Param("email") String email);
 
 }

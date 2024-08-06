@@ -24,8 +24,6 @@ public interface IProductService {
     ProductDetailsResponseDTO updateProductById(Long theId, ProductRequestDTO productRequestDTO)
             throws IllegalStateException, IOException;
 
-    Boolean existProductById(Long theId);
-
     Page<ProductCompanyResponseDTO> getAllProductsInCompany(String companyName, Integer page, Integer size);
 
     Page<ProductDetailsCompanyResponseDTO> getAllProductsDetailsInCompany(String companyName, Integer page, Integer size);
@@ -35,7 +33,9 @@ public interface IProductService {
     List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller();
 
     ProductDetailsResponseDTO getProductDetailsById(Long theId);
-    
+
     Product getProductCartSetter(Long theId);
+
+    Integer updateProductQuantityById(Long theId, Integer quantity);
 
 }

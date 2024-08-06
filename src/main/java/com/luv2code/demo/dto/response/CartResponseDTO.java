@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class CartResponseDTO {
 
-	private Long id;
-	
-	private String message;
-	
+    private Long id;
+
+    private String message;
+
 }

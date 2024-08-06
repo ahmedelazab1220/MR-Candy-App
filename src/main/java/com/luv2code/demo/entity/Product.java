@@ -1,6 +1,7 @@
 package com.luv2code.demo.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -24,10 +25,10 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "products")
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @DynamicInsert
 @DynamicUpdate
 public class Product {
@@ -40,7 +41,7 @@ public class Product {
     @NotBlank
     private String name;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", length = 500, nullable = false)
     @NotBlank
     private String description;
 
@@ -61,6 +62,9 @@ public class Product {
     @Column(name = "discount")
     private String discount;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     @Column(name = "sales_count", nullable = false)
     @NotNull
     private Long salesCount;
@@ -70,7 +74,7 @@ public class Product {
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

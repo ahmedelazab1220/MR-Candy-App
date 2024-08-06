@@ -1,7 +1,6 @@
 package com.luv2code.demo.service.impl;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,8 +26,10 @@ import com.luv2code.demo.service.IRefreshTokenService;
 import com.luv2code.demo.service.IUserService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class AuthenticationService implements IAuthenticationService {
 
@@ -44,22 +45,27 @@ public class AuthenticationService implements IAuthenticationService {
     @Override
     public JwtResponseDTO login(LoginRequestDTO loginRequestDTO) {
 
+        log.info("Attempting to authenticate user with email: {}", loginRequestDTO.getEmail());
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword()));
 
-        Optional<User> user = Optional.ofNullable(userService.getUserTokenDetails(loginRequestDTO.getEmail()));
+        User user = userService.getUserTokenDetails(loginRequestDTO.getEmail());
 
-        if (user.isEmpty()) {
+        if (user == null) {
+            log.warn("User not found for email: {}", loginRequestDTO.getEmail());
             throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
         }
 
-        String accessToken = jwtService.generateToken(loginRequestDTO.getEmail(), user.map(SecurityUser::new).get());
+        String accessToken = jwtService.generateToken(loginRequestDTO.getEmail(), new SecurityUser(user));
         String refreshToken = jwtService.generateRefreshToken(loginRequestDTO.getEmail());
 
-        RefreshToken refresh_token = RefreshToken.builder().token(refreshToken).user(user.get())
+        RefreshToken refresh_token = RefreshToken.builder().token(refreshToken).user(user)
                 .expireDate(jwtService.extractExpiration(refreshToken).toInstant()).build();
 
         refreshTokenService.save(refresh_token);
+
+        log.info("User with email: {} authenticated successfully", loginRequestDTO.getEmail());
 
         return createJwtResponse(accessToken, refreshToken);
 
@@ -67,6 +73,8 @@ public class AuthenticationService implements IAuthenticationService {
 
     @Override
     public ResponseEntity<ApiResponseDTO> register(RegisterRequestDTO registerRequestDTO) throws IOException {
+
+        log.info("Registering user with email: {}", registerRequestDTO.getEmail());
 
         registerRequestDTO.setRole(roleRepository
                 .findByRole(registerRequestDTO.getRole() == null ? "USER" : registerRequestDTO.getRole().getRole())
@@ -81,6 +89,8 @@ public class AuthenticationService implements IAuthenticationService {
         user.setImageUrl(imageUrl);
 
         userService.createUser(user);
+
+        log.info("User with email: {} registered successfully", registerRequestDTO.getEmail());
 
         return ResponseEntity.ok(new ApiResponseDTO("Registration successful! Welcome to Mr Candy App."));
 

@@ -14,8 +14,10 @@ import com.luv2code.demo.repository.UserRepository;
 import com.luv2code.demo.security.SecurityUser;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class UserDetailService implements UserDetailsService {
 
@@ -24,12 +26,18 @@ public class UserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        Optional<User> user = Optional.of(mapper.userAuthenticationResponseDTOTOUser(
-                userRepository.findUserAuthenticationDetailsByEmail(username).get()));
 
-        if (!user.isPresent()) {
+        log.info("Attempting to load user by username: {}", username);
+
+        Optional<User> user
+                = userRepository.findUserAuthenticationDetailsByEmail(username).map(mapper::userAuthenticationResponseDTOTOUser);
+
+        if (user.isEmpty()) {
+            log.error("User not found with username: {}", username);
             throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
         }
+
+        log.info("Successfully loaded user: {}", username);
 
         return user.map(SecurityUser::new).get();
     }

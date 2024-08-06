@@ -13,10 +13,11 @@ import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
 import com.luv2code.demo.service.IOtpService;
 
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/otps")
+@RequestMapping("${api.version}/otps")
 @AllArgsConstructor
 public class OtpController {
 
@@ -39,7 +40,7 @@ public class OtpController {
     }
 
     @PostMapping("/pass")
-    public ResponseEntity<?> forgetPasswordHandler(@RequestBody ChangePasswordRequestDTO changePasswordRequest) {
+    public ResponseEntity<?> forgetPasswordHandler(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest) {
 
         return otpService.forgetPasswordHandler(changePasswordRequest);
 

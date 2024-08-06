@@ -1,5 +1,15 @@
 {"properties": [
   {
+    "name": "api.version",
+    "type": "java.lang.String",
+    "description": "A description for 'api.version'"
+  },
+  {
+    "name": "file.path",
+    "type": "java.lang.String",
+    "description": "A description for 'file.path'"
+  },
+  {
     "name": "security.jwt.expiration-time",
     "type": "java.lang.String",
     "description": "A description for 'security.jwt.expiration-time'"
@@ -13,5 +23,15 @@
     "name": "security.jwt.secret-key",
     "type": "java.lang.String",
     "description": "A description for 'security.jwt.secret-key'"
+  },
+  {
+    "name": "application-description",
+    "type": "java.lang.String",
+    "description": "A description for 'application-description'"
+  },
+  {
+    "name": "application-version",
+    "type": "java.lang.String",
+    "description": "A description for 'application-version'"
   }
 ]}

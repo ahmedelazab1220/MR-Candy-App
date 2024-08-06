@@ -19,8 +19,10 @@ import com.luv2code.demo.repository.CompanyRepository;
 import com.luv2code.demo.service.ICompanyService;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @AllArgsConstructor
 public class CompanyService implements ICompanyService {
 
@@ -31,6 +33,8 @@ public class CompanyService implements ICompanyService {
     @Override
     public List<CompanyResponseDTO> getAllCompanies() {
 
+        log.info("Fetching all companies");
+
         return companyRepository.findAllCompanies();
 
     }
@@ -38,14 +42,19 @@ public class CompanyService implements ICompanyService {
     @Override
     public ResponseEntity<ApiResponseDTO> deleteCompany(String name) throws IOException {
 
+        log.info("Attempting to delete company with name: {}", name);
+
         Optional<Company> company = companyRepository.findCompanyWithProductsByName(name);
 
         if (company.isEmpty()) {
+            log.warn("Company with name: {} not found", name);
             throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
         }
 
+        log.info("Deleting image from file system for company: {}", name);
         fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
 
+        log.info("Deleting company from repository: {}", name);
         companyRepository.delete(company.get());
 
         return ResponseEntity.ok(new ApiResponseDTO("Success Delete Company."));
@@ -56,6 +65,8 @@ public class CompanyService implements ICompanyService {
     public CompanyResponseDTO createCompany(CompanyRequestDTO companyRequestDTO)
             throws IllegalStateException, IOException {
 
+        log.info("Creating new company with name: {}", companyRequestDTO.getName());
+
         String imageUrl = fileHelper.uploadFileToFileSystem(companyRequestDTO.getImage());
 
         Company company = mapper.companyRequestDTOTOCompany(companyRequestDTO);
@@ -64,37 +75,33 @@ public class CompanyService implements ICompanyService {
 
         CompanyResponseDTO companyDto = mapper.companyTOCompanyResponseDTO(companyRepository.save(company));
 
+        log.info("Company created successfully with name: {}", companyDto.getName());
+
         return companyDto;
 
-    }
-
-    @Override
-    public Boolean existCompanyByName(String name) {
-
-        Boolean companyExist = companyRepository.existsByName(name);
-
-        if (!companyExist) {
-            throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
-        }
-
-        return companyExist;
     }
 
     @Override
     public CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
             throws IllegalStateException, IOException {
 
+        log.info("Updating company with name: {}", name);
+
         Optional<Company> company = companyRepository.findByName(name);
 
         if (company.isEmpty()) {
+            log.warn("Company with name: {} not found", name);
             throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
         }
 
         if (companyRequestDTO.getName() != null) {
+            log.info("Updating company name to: {}", companyRequestDTO.getName());
             company.get().setName(companyRequestDTO.getName());
         }
 
         if (companyRequestDTO.getImage() != null) {
+
+            log.info("Updating company image for: {}", name);
 
             fileHelper.deleteImageFromFileSystem(company.get().getImageUrl());
 
@@ -104,6 +111,8 @@ public class CompanyService implements ICompanyService {
 
         }
 
+        log.info("Company updated successfully with ID: {}", company.get().getId());
+
         return mapper.companyTOCompanyResponseDTO(companyRepository.save(company.get()));
 
     }
@@ -111,11 +120,16 @@ public class CompanyService implements ICompanyService {
     @Override
     public Company getCompanySetter(String name) {
 
+        log.info("Fetching company setter for name: {}", name);
+
         Optional<Company> company = Optional.ofNullable(mapper.companySetterDTOTOCompany(companyRepository.findCompanySetterDTOByName(name).get()));
 
         if (company.isEmpty()) {
+            log.warn("Company with name: {} not found", name);
             throw new NotFoundException(NotFoundTypeException.COMPANY + " Not Found!");
         }
+
+        log.info("Company found with ID: {}", company.get().getId());
 
         return company.get();
 

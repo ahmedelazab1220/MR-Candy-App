@@ -14,6 +14,8 @@ public class StatusCode {
 
     public static final int INTERNAL_SERVER_ERROR = 500; // Server internal error
 
-    public static final int Conflict = 409; // Conflict parameters
+    public static final int CONFLICT = 409; // Conflict parameters
+    
+    public static final int METHOD_NOT_ALLOWED = 405; // for more accurate HTTP semantics.
 
 }

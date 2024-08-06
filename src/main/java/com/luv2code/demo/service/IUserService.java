@@ -15,4 +15,7 @@ public interface IUserService {
     User getUserSetterByEmail(String email);
 
     ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest);
+
+    ResponseEntity<ApiResponseDTO> deleteUser(String email);
+
 }

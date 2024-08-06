@@ -17,7 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -29,10 +28,10 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @DynamicInsert
 @DynamicUpdate
 public class User {
@@ -64,7 +63,7 @@ public class User {
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "imageUrl", length = 1000, nullable = false)
+    @Column(name = "image_url", length = 1000, nullable = false)
     private String imageUrl;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -82,9 +81,7 @@ public class User {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Cart> carts;
 
 }

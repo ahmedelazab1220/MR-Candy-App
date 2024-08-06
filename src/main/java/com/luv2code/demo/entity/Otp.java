@@ -20,11 +20,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@AllArgsConstructor
-@Getter
 @Setter
-@Builder
+@Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "otps")
 public class Otp {
 

@@ -3,6 +3,8 @@ package com.luv2code.demo.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,8 +18,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.ResponseEntity;
 
 import com.luv2code.demo.dto.SystemMapper;
+import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
 import com.luv2code.demo.entity.Address;
 import com.luv2code.demo.entity.Role;
@@ -298,6 +302,59 @@ public class UserServiceTest {
         userService.createUser(user);
 
         verify(userRepository, times(1)).save(user);
+
+    }
+
+    /**
+     * Test case to verify that the method `deleteUser` returns a successful
+     * response when the user exists.
+     *
+     * This test case mocks the `findByEmail` method of the `userRepository` to
+     * return an `Optional` containing the `user` object. Then, the `deleteUser`
+     * method is called with the email of the user.
+     *
+     * The test verifies that the `findByEmail` method is called exactly once
+     * with the email of the user as the parameter. It also verifies that the
+     * `delete` method is called exactly once with the user object as the
+     * parameter. Finally, it asserts that the response message is "Success
+     * Deleted User!" and the status code is 200.
+     *
+     * @throws None
+     * @return None
+     */
+    @Test
+    void shouldReturnSuccessWhenDeletingUserIsExist() {
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+        ResponseEntity<ApiResponseDTO> response = userService.deleteUser(user.getEmail());
+
+        verify(userRepository, times(1)).findByEmail(user.getEmail());
+        verify(userRepository, times(1)).delete(user);
+        assertEquals("Success Deleted User!", response.getBody().getMessage());
+        assertEquals(200, response.getStatusCode().value());
+
+    }
+
+    /**
+     * This test case verifies that a NotFoundException is thrown when
+     * attempting to delete a user that does not exist.
+     *
+     * @throws None
+     * @return None
+     */
+    @Test
+    void shouldThrowNotFoundExceptionWhenDeletingUserDoesNotExist() {
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            userService.deleteUser(user.getEmail());
+        });
+
+        verify(userRepository, times(1)).findByEmail(user.getEmail());
+        verify(userRepository, never()).delete(any(User.class));
+        assertEquals("USER Not Found!", exception.getMessage());
 
     }
 

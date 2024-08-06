@@ -2,6 +2,9 @@ package com.luv2code.demo.entity;
 
 import java.time.Instant;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -25,6 +28,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicInsert
+@DynamicUpdate
 public class RefreshToken {
 
     @Id
