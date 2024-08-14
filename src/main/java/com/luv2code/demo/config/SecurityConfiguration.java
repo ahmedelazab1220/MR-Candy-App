@@ -36,11 +36,12 @@ public class SecurityConfiguration {
 
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
-						request -> request.requestMatchers("/api/v1/**").permitAll().anyRequest().authenticated())
+						request -> request.requestMatchers("/api/v1/**" , "/favicon.ico").permitAll().anyRequest().authenticated())
 				.authenticationProvider(authenticationProvider())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-				.exceptionHandling(ex -> ex.authenticationEntryPoint(this.authEntry));
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(this.authEntry))
+				.logout(logout -> logout.logoutSuccessUrl("/api/v1/auth/logout"));
 
 		return http.build();
 

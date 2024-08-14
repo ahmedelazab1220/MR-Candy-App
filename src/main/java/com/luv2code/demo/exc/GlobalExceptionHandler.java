@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -44,9 +45,10 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(BadCredentialsException.class)
-    public ErrorResponse handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.UNAUTHORIZED, "BadCredentialsException", "Email or password is incorrect.",
-                ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
+    	
+    	return ResponseEntity.status(StatusCode.UNAUTHORIZED).body(buildErrorResponse(StatusCode.UNAUTHORIZED, "BadCredentialsException", "Email or password is incorrect.",
+                ex.getMessage(), request));
     }
 
     /**
@@ -60,10 +62,11 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(InternalAuthenticationServiceException.class)
-    public ErrorResponse handleInternalAuthenticationServiceException(InternalAuthenticationServiceException ex,
+    public ResponseEntity<ErrorResponse> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException ex,
             WebRequest request) {
-        return buildErrorResponse(StatusCode.UNAUTHORIZED, "InternalAuthenticationServiceException", "User Not Found!",
-                ex.getMessage(), request);
+        return ResponseEntity.status(StatusCode.UNAUTHORIZED).body(
+        		buildErrorResponse(StatusCode.UNAUTHORIZED, "InternalAuthenticationServiceException", "User Not Found!",
+                ex.getMessage(), request));
     }
 
     /**
@@ -238,8 +241,9 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.INVALID_ARGUMENT, "IllegalArgumentException", ex.getMessage(), ex.getClass(), request);
+    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        return  ResponseEntity.status(StatusCode.INVALID_ARGUMENT).body(
+        		buildErrorResponse(StatusCode.INVALID_ARGUMENT, "IllegalArgumentException", ex.getMessage(), ex.getClass(), request));
     }
 
     /**

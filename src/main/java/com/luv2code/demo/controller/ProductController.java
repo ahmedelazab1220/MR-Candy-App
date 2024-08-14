@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
+import com.luv2code.demo.dto.response.DiscountedProductsResponse;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
@@ -38,6 +39,13 @@ public class ProductController {
     public List<ProductBestSellerResponseDTO> getAllTopBestSellerProducts() {
 
         return productService.getTopSevenProductsWithBestSeller();
+
+    }
+    
+    @GetMapping("/discount")
+    public List<DiscountedProductsResponse> getAllProductsWithDiscount() {
+
+        return productService.getAllProductsWithDiscount();
 
     }
 

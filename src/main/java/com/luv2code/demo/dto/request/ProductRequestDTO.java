@@ -40,7 +40,7 @@ public class ProductRequestDTO {
 
     @NotNull
     private MultipartFile image;
-
+ 
     @NotBlank
     private String categoryName;
 

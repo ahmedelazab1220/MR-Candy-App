@@ -44,7 +44,7 @@ public class Cart {
     private BigDecimal totalPrice;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems;
+    private List<CartItem> cartItems;
 
     @PrePersist
     protected void onCreate() {

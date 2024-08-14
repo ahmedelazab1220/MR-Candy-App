@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItemRequestDTO {
+public class CartItemRequestDTO {
 
     @NotNull
     private Long productId;

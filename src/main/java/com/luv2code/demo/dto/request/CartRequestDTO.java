@@ -25,6 +25,6 @@ public class CartRequestDTO {
 
     @NotNull
     @Valid
-    private List<OrderItemRequestDTO> orderItems;
+    private List<CartItemRequestDTO> orderItems;
 
 }

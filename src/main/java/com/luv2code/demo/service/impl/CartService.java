@@ -1,4 +1,4 @@
-package com.luv2code.demo.service.impl;
+/*package com.luv2code.demo.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.CartRequestDTO;
-import com.luv2code.demo.dto.request.OrderItemRequestDTO;
+import com.luv2code.demo.dto.request.CartItemRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.CartResponseDTO;
 import com.luv2code.demo.entity.Cart;
-import com.luv2code.demo.entity.OrderItem;
+import com.luv2code.demo.entity.CartItem;
 import com.luv2code.demo.entity.Product;
 import com.luv2code.demo.exc.custom.QuantityNotAvailableException;
 import com.luv2code.demo.repository.CartRepository;
@@ -44,12 +44,12 @@ public class CartService implements ICartService {
 
         cart.setUser(userService.getUserSetterByEmail(cartRequestDTO.getEmail()));
 
-        List<OrderItemRequestDTO> orderItemsDto = cartRequestDTO.getOrderItems();
+        List<CartItemRequestDTO> orderItemsDto = cartRequestDTO.getOrderItems();
 
-        List<OrderItem> orders = new ArrayList<OrderItem>();
+        List<CartItem> orders = new ArrayList<CartItem>();
 
-        for (OrderItemRequestDTO tmp : orderItemsDto) {
-            OrderItem x = new OrderItem();
+        for (CartItemRequestDTO tmp : orderItemsDto) {
+            CartItem x = new CartItem();
             Product product = productService.getProductCartSetter(tmp.getProductId());
 
             if (tmp.getQuantity() > product.getQuantity()) {
@@ -68,7 +68,7 @@ public class CartService implements ICartService {
             orders.add(x);
         }
 
-        cart.setOrderItems(orders);
+        cart.setCartItems(orders);
 
         Cart savedCart = cartRepository.save(cart);
 
@@ -92,3 +92,4 @@ public class CartService implements ICartService {
     }
 
 }
+*/

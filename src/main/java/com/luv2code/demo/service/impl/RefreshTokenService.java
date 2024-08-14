@@ -90,4 +90,15 @@ public class RefreshTokenService implements IRefreshTokenService {
 
     }
 
+	@Override
+	public void deleteToken(String token) {
+
+	   RefreshToken refreshToken = findByToken(token);
+		
+       log.info("Delete Token :{} " + token + "for user with email: {}" + refreshToken.getUser().getEmail());
+		
+       refreshTokenRepository.delete(refreshToken);
+       
+	}
+
 }

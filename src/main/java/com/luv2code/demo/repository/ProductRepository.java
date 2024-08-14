@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.ProductCartSetterDTO;
 import com.luv2code.demo.dto.ProductSetterDTO;
+import com.luv2code.demo.dto.response.DiscountedProductsResponse;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
@@ -25,45 +26,52 @@ import com.luv2code.demo.entity.Product;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    @Query("SELECT new com.luv2code.demo.dto.response.ProductCompanyResponseDTO(p.id, p.name, p.imageUrl) "
-            + "FROM Product p " + "WHERE p.company.name = :companyName")
-    Page<ProductCompanyResponseDTO> findAllProducts(@Param("companyName") String companyName, Pageable pageable);
+	@Query("SELECT new com.luv2code.demo.dto.response.ProductCompanyResponseDTO(p.id, p.name, p.imageUrl) "
+			+ "FROM Product p " + "WHERE p.company.name = :companyName")
+	Page<ProductCompanyResponseDTO> findAllProducts(@Param("companyName") String companyName, Pageable pageable);
 
-    @Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsCompanyResponseDTO("
-            + "p.id, p.description, p.discount, p.imageUrl, p.price, p.quantity) " + "FROM Product p "
-            + "WHERE p.company.name = :companyName")
-    Page<ProductDetailsCompanyResponseDTO> findProductsByCompanyName(@Param("companyName") String companyName,
-            Pageable pageable);
+	@Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsCompanyResponseDTO("
+			+ "p.id, p.description, p.discount, p.imageUrl, p.price, p.quantity) " + "FROM Product p "
+			+ "WHERE p.company.name = :companyName")
+	Page<ProductDetailsCompanyResponseDTO> findProductsByCompanyName(@Param("companyName") String companyName,
+			Pageable pageable);
 
-    @Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO("
-            + "p.id, p.description, p.discount, p.imageUrl, p.price, p.company.name) " + "FROM Product p "
-            + "WHERE p.category.name = :categoryName")
-    Page<ProductDetailsCategoryResponseDTO> findProductsByCategoryName(@Param("categoryName") String categoryName,
-            Pageable pageable);
+	@Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO("
+			+ "p.id, p.description, p.discount, p.imageUrl, p.price, p.company.name) " + "FROM Product p "
+			+ "WHERE p.category.name = :categoryName")
+	Page<ProductDetailsCategoryResponseDTO> findProductsByCategoryName(@Param("categoryName") String categoryName,
+			Pageable pageable);
 
-    @Query("SELECT new com.luv2code.demo.dto.response.ProductBestSellerResponseDTO(p.id, p.name, p.description, p.discount, p.imageUrl) "
-            + "FROM Product p " + "ORDER BY p.salesCount DESC")
-    List<ProductBestSellerResponseDTO> findTopBestSellers(Pageable pageable);
+	@Query("SELECT new com.luv2code.demo.dto.response.ProductBestSellerResponseDTO(p.id, p.name, p.description, p.discount, p.imageUrl) "
+			+ "FROM Product p " + "ORDER BY p.salesCount DESC")
+	List<ProductBestSellerResponseDTO> findTopBestSellers(Pageable pageable);
 
-    @Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsResponseDTO("
-            + "p.id, p.type, p.imageUrl, p.description, p.size, p.price, p.quantity, "
-            + "p.category.name, p.company.name, p.company.imageUrl) " + "FROM Product p " + "JOIN p.company c "
-            + "WHERE p.id = :productId")
-    Optional<ProductDetailsResponseDTO> findProductDetailsById(@Param("productId") Long productId);
+	@Query("SELECT new com.luv2code.demo.dto.response.DiscountedProductsResponse("
+			+ "p.id, p.description, p.discount, p.imageUrl, p.price, c.name) " + "FROM Product p "
+			+ "JOIN p.company c " + "WHERE p.discount IS NOT NULL")
+	List<DiscountedProductsResponse> findAllProductsWithDiscount();
 
-    @Query("SELECT new com.luv2code.demo.dto.ProductSetterDTO(p.id, p.name, p.imageUrl) " + "FROM Product p " + "WHERE p.id = :id")
-    Optional<ProductSetterDTO> findProductSetterDTOById(@Param("id") Long id);
+	@Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsResponseDTO("
+			+ "p.id, p.type, p.imageUrl, p.description, p.size, p.price, p.quantity, "
+			+ "p.category.name, p.company.name, p.company.imageUrl) " + "FROM Product p " + "JOIN p.company c "
+			+ "WHERE p.id = :productId")
+	Optional<ProductDetailsResponseDTO> findProductDetailsById(@Param("productId") Long productId);
 
-    @Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.quantity) " + "FROM Product p " + "WHERE p.id = :id")
-    Optional<ProductCartSetterDTO> findProductSetterCartDTOById(@Param("id") Long id);
+	@Query("SELECT new com.luv2code.demo.dto.ProductSetterDTO(p.id, p.name, p.imageUrl) " + "FROM Product p "
+			+ "WHERE p.id = :id")
+	Optional<ProductSetterDTO> findProductSetterDTOById(@Param("id") Long id);
 
-    @EntityGraph(attributePaths = {"category", "company"})
-    @Override
-    Optional<Product> findById(@Param("id") Long id);
+	@Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.quantity) " + "FROM Product p "
+			+ "WHERE p.id = :id")
+	Optional<ProductCartSetterDTO> findProductSetterCartDTOById(@Param("id") Long id);
 
-    @Modifying
-    @Transactional
-    @Query("UPDATE Product p SET p.quantity = :quantity WHERE p.id = :id")
-    Integer updateProductQuantity(@Param("id") Long id, @Param("quantity") Integer quantity);
+	@EntityGraph(attributePaths = { "category", "company" })
+	@Override
+	Optional<Product> findById(@Param("id") Long id);
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE Product p SET p.quantity = :quantity WHERE p.id = :id")
+	Integer updateProductQuantity(@Param("id") Long id, @Param("quantity") Integer quantity);
 
 }

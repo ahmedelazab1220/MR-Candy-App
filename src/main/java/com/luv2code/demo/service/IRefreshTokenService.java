@@ -8,5 +8,7 @@ public interface IRefreshTokenService {
     RefreshToken save(RefreshToken refreshToken);
 
     JwtResponseDTO generateNewToken(String token);
+    
+    void deleteToken(String token);
 
 }

@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "LEFT JOIN u.address a " + "LEFT JOIN u.role r " + "WHERE u.email = :email")
     Optional<UserTokenResponseDTO> findUserTokenDetailsByEmail(@Param("email") String email);
 
-    @EntityGraph(attributePaths = {"role", "address", "carts"})
+    @EntityGraph(attributePaths = {"role", "address"})
     Optional<User> findByEmail(@Param("email") String email);
 
     Boolean existsByEmail(@Param("email") String email);
@@ -37,6 +37,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("UPDATE User u SET u.password = :password WHERE u.email = :email")
     Integer updatePasswordByEmail(@Param("email") String email, @Param("password") String password);
+    
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.imageUrl = :imageUrl WHERE u.email = :email")
+    Integer updateImageByEmail(@Param("email") String email, @Param("imageUrl") String imageUrl);
 
     @Query("SELECT u.password FROM User u WHERE u.email = :email")
     Optional<String> findUserPasswordByEmail(@Param("email") String email);
