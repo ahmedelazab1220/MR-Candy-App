@@ -23,7 +23,7 @@ public class FirebaseConfiguration {
 			   .build();
 	   
 	   FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-candy-app");
-	   
+	  
 	   return FirebaseMessaging.getInstance(app);
 	}
 	

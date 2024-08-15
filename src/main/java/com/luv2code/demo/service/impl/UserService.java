@@ -12,13 +12,14 @@ import org.springframework.stereotype.Service;
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
 import com.luv2code.demo.dto.request.UpdateUserImageRequest;
+import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
+import com.luv2code.demo.dto.response.UpdateUserProfileResponse;
 import com.luv2code.demo.entity.User;
 import com.luv2code.demo.exc.StatusCode;
 import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.exc.custom.NotFoundTypeException;
 import com.luv2code.demo.helper.IFileHelper;
-import com.luv2code.demo.helper.IUserPatcher;
 import com.luv2code.demo.repository.UserRepository;
 import com.luv2code.demo.service.IUserService;
 
@@ -33,7 +34,6 @@ public class UserService implements IUserService {
 
 	private final UserRepository userRepository;
 	private final IFileHelper fileHelper;
-	private final IUserPatcher userPatcher;
 	private final PasswordEncoder passwordEncoder;
 	private final SystemMapper mapper;
 
@@ -196,24 +196,28 @@ public class UserService implements IUserService {
 
 	@Transactional
 	@Override
-	public ResponseEntity<Map<String, String>> updateUserProfile(String email, Map<String, String> userUpdates) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	public UpdateUserProfileResponse updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 
-		Optional<User> user = userRepository.findByEmail(email);
+		Optional<User> user = userRepository.findByEmail(updateUserProfileRequest.getEmail());
 		
 		if(user.isEmpty()) {
-			log.error("User not found with email: {}", email);
+			log.error("User not found with email: {}", updateUserProfileRequest.getEmail());
 			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
 		}
 		
-		userPatcher.userPatcher(user.get(),userUpdates);
+		mapper.updateUserProfileRequestTOUser(updateUserProfileRequest, user.get());
 		
-		log.info("patch user success!");
+		user.get().getAddress().setCity(updateUserProfileRequest.getCity());
+		user.get().getAddress().setState(updateUserProfileRequest.getState());
+		user.get().getAddress().setStreet(updateUserProfileRequest.getStreet());
+		user.get().getAddress().setZipCode(updateUserProfileRequest.getZipCode());
 		
 		userRepository.save(user.get());
 		
 		log.info("update user success!");
 		
-		return ResponseEntity.status(StatusCode.SUCCESS).body(userUpdates);
+		return mapper.updateUserProfileRequestTOUpdateUserProfileResponse(updateUserProfileRequest);
+		
 	}
 
 }

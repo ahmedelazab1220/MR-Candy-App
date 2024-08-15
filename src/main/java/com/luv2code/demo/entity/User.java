@@ -41,8 +41,6 @@ public class User {
     private Long id;
 
     @Column(name = "full_name", length = 100)
-    @Size(min = 3, message = "Name lenght must greater than or equal 3")
-    @Pattern(regexp = "^[a-zA-Z]+$", message = "Name must contain only alphabetic characters")
     private String fullName;
 
     @Column(name = "email", nullable = false, unique = true, length = 35)

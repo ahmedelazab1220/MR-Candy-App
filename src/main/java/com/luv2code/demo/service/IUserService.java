@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 
 import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
 import com.luv2code.demo.dto.request.UpdateUserImageRequest;
+import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
+import com.luv2code.demo.dto.response.UpdateUserProfileResponse;
 import com.luv2code.demo.entity.User;
 
 public interface IUserService {
@@ -25,7 +27,7 @@ public interface IUserService {
 	ResponseEntity<Map<String, String>> updateUserImage(UpdateUserImageRequest updateUserImageRequest)
 			throws IOException;
 
-	ResponseEntity<Map<String, String>> updateUserProfile(String email, Map<String, String> userUpdates)
+	UpdateUserProfileResponse updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException;
 
 }
