@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
@@ -31,7 +32,6 @@ import com.luv2code.demo.service.ICategoryService;
 import com.luv2code.demo.service.ICompanyService;
 import com.luv2code.demo.service.IProductService;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -221,12 +221,12 @@ public class ProductService implements IProductService {
 
         log.info("Fetching product for cart with product ID: {}", theId);
 
-        Optional<Product> product = productRepository.findProductCartSetterDTOById(theId).map(mapper::productCartSetterDTOTOProduct);;
+        Optional<Product> product = productRepository.findProductCartSetterDTOById(theId).map(mapper::productCartSetterDTOTOProduct);
 
         if (product.isEmpty()) {
             log.warn("Product with ID {} not found", theId);
             throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
-        }
+        }        
 
         return product.get();
 

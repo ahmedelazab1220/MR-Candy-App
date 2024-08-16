@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.CompanyRequestDTO;
@@ -81,6 +82,7 @@ public class CompanyService implements ICompanyService {
 
     }
 
+    @Transactional
     @Override
     public CompanyResponseDTO updateCompany(String name, CompanyRequestDTO companyRequestDTO)
             throws IllegalStateException, IOException {
@@ -122,7 +124,7 @@ public class CompanyService implements ICompanyService {
 
         log.info("Fetching company setter for name: {}", name);
 
-        Optional<Company> company = Optional.ofNullable(mapper.companySetterDTOTOCompany(companyRepository.findCompanySetterDTOByName(name).get()));
+        Optional<Company> company = companyRepository.findCompanySetterDTOByName(name).map(mapper::companySetterDTOTOCompany);
 
         if (company.isEmpty()) {
             log.warn("Company with name: {} not found", name);

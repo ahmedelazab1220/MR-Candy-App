@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.response.JwtResponseDTO;
 import com.luv2code.demo.entity.RefreshToken;
@@ -16,7 +17,6 @@ import com.luv2code.demo.security.SecurityUser;
 import com.luv2code.demo.service.IJwtService;
 import com.luv2code.demo.service.IRefreshTokenService;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

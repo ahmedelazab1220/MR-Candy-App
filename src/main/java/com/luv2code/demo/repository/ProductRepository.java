@@ -61,8 +61,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			+ "WHERE p.id = :id")
 	Optional<ProductSetterDTO> findProductSetterDTOById(@Param("id") Long id);
 
-	@Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.description, c.name, p.quantity) "
-			+ "FROM Product p JOIN p.company c " + "WHERE p.id = :id")
+	@Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.description, c, p.quantity) " +
+		       "FROM Product p JOIN p.company c " +
+		       "WHERE p.id = :id")
 	Optional<ProductCartSetterDTO> findProductCartSetterDTOById(@Param("id") Long id);
 
 	@EntityGraph(attributePaths = { "category", "company" })

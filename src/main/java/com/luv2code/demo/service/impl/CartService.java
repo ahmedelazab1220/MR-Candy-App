@@ -1,21 +1,29 @@
 package com.luv2code.demo.service.impl;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.luv2code.demo.dto.ProductGetterDTO;
 import com.luv2code.demo.dto.request.CartItemRequestDTO;
 import com.luv2code.demo.dto.request.CartRequestDTO;
+import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.CartItemResponseDTO;
 import com.luv2code.demo.entity.Cart;
 import com.luv2code.demo.entity.CartItem;
 import com.luv2code.demo.entity.Product;
+import com.luv2code.demo.exc.custom.NotFoundException;
+import com.luv2code.demo.exc.custom.NotFoundTypeException;
 import com.luv2code.demo.exc.custom.QuantityNotAvailableException;
+import com.luv2code.demo.repository.CartItemRepository;
 import com.luv2code.demo.repository.CartRepository;
 import com.luv2code.demo.service.ICartService;
 import com.luv2code.demo.service.IProductService;
 import com.luv2code.demo.service.IUserService;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,12 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 public class CartService implements ICartService {
 
 	private final CartRepository cartRepository;
+	private final CartItemRepository cartItemRepository;
 	private final IUserService userService;
 	private final IProductService productService;
 
 	@Transactional
 	@Override
-	public ResponseEntity<CartItemResponseDTO> addCartItem(CartRequestDTO cartRequestDTO) {
+	public CartItemResponseDTO addCartItem(CartRequestDTO cartRequestDTO) {
 
 		CartItemRequestDTO cartItemDTO = cartRequestDTO.getCartItems();
 
@@ -61,9 +70,60 @@ public class CartService implements ICartService {
 
 		Cart savedCart = cartRepository.save(cart);
 
-		return ResponseEntity.ok(new CartItemResponseDTO(product.getId(), product.getName(), product.getDescription(),
-				product.getCompany().getName(), cartItem.getQuantity(), cartItem.getPrice(), savedCart.getId()));
+		return new CartItemResponseDTO(product.getId(), product.getName(), product.getDescription(),
+				product.getCompany().getName(), cartItem.getQuantity(), cartItem.getPrice(), savedCart.getId());
 
+	}
+
+	@Transactional
+	@Override
+	public ResponseEntity<ApiResponseDTO> deleteCartItem(Long theId) {
+
+		Optional<Cart> cart = cartRepository.findById(theId);
+		
+		if(cart.isEmpty()) {
+			throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
+		}
+		
+		cartRepository.updateProductQuantity(theId, cart.get().getCartItem().getQuantity());
+		
+        cartRepository.delete(cart.get());
+		
+		return ResponseEntity.ok(new ApiResponseDTO("Success Deleted For Item"));
+		
+	}
+
+	@Transactional
+	@Override
+	public ResponseEntity<Map<String, Integer>> updateCartItem(Integer newQuantity, Long theId) {
+        
+        Optional<ProductGetterDTO> productGetterDTO = cartRepository.findProductGetterDTO(theId);
+		
+		if(productGetterDTO.isEmpty()) {
+			throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
+		}
+		
+		Long productId = productGetterDTO.get().getId();
+		Integer productQuantity = productGetterDTO.get().getQuantity();
+		String productName = productGetterDTO.get().getName();
+		
+		Integer cartQuantity = productGetterDTO.get().getCartItemQuantity();
+		productQuantity += cartQuantity;
+		
+		if(newQuantity > productQuantity) {
+			log.warn("Quantity not available for product: {}", productName);
+			throw new QuantityNotAvailableException("Quantity Is Not Available For Product : " + productName);
+		}
+
+		cartItemRepository.updateCartItemQuantity(newQuantity, theId);
+		
+		log.info("Product: {} - Updating quantity from {} to {}", productName, productQuantity,
+				productQuantity - newQuantity);
+		
+		productService.updateProductQuantityById(productId, productQuantity - newQuantity);
+		
+		return ResponseEntity.ok(Map.of("qunatity",newQuantity));
+		
 	}
 
 }

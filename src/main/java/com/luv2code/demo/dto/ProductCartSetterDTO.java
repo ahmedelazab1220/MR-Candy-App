@@ -1,5 +1,7 @@
 package com.luv2code.demo.dto;
 
+import com.luv2code.demo.entity.Company;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +19,7 @@ public class ProductCartSetterDTO {
     
     private String description;
     
-    private String companyName;
+    private Company company;
 
     private Integer quantity;
 

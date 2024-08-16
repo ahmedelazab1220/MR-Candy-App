@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
@@ -22,7 +23,6 @@ import com.luv2code.demo.service.IOtpService;
 import com.luv2code.demo.service.IUserService;
 
 import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
