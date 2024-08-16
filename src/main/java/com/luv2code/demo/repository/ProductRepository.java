@@ -47,8 +47,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<ProductBestSellerResponseDTO> findTopBestSellers(Pageable pageable);
 
 	@Query("SELECT new com.luv2code.demo.dto.response.DiscountedProductsResponse("
-			+ "p.id, p.description, p.discount, p.imageUrl, p.price, c.name) " + "FROM Product p "
-			+ "JOIN p.company c " + "WHERE p.discount IS NOT NULL")
+			+ "p.id, p.description, p.discount, p.imageUrl, p.price, c.name) " + "FROM Product p " + "JOIN p.company c "
+			+ "WHERE p.discount IS NOT NULL")
 	List<DiscountedProductsResponse> findAllProductsWithDiscount();
 
 	@Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsResponseDTO("
@@ -61,9 +61,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			+ "WHERE p.id = :id")
 	Optional<ProductSetterDTO> findProductSetterDTOById(@Param("id") Long id);
 
-	@Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.quantity) " + "FROM Product p "
-			+ "WHERE p.id = :id")
-	Optional<ProductCartSetterDTO> findProductSetterCartDTOById(@Param("id") Long id);
+	@Query("SELECT new com.luv2code.demo.dto.ProductCartSetterDTO(p.id, p.name, p.description, c.name, p.quantity) "
+			+ "FROM Product p JOIN p.company c " + "WHERE p.id = :id")
+	Optional<ProductCartSetterDTO> findProductCartSetterDTOById(@Param("id") Long id);
 
 	@EntityGraph(attributePaths = { "category", "company" })
 	@Override

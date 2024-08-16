@@ -1,16 +1,18 @@
-/*package com.luv2code.demo.service;
+package com.luv2code.demo.service;
 
 import org.springframework.http.ResponseEntity;
 
 import com.luv2code.demo.dto.request.CartRequestDTO;
-import com.luv2code.demo.dto.response.ApiResponseDTO;
-import com.luv2code.demo.dto.response.CartResponseDTO;
+import com.luv2code.demo.dto.response.CartItemResponseDTO;
 
 public interface ICartService {
 
-    ResponseEntity<CartResponseDTO> createOrder(CartRequestDTO cartRequestDTO);
-
-    ResponseEntity<ApiResponseDTO> deleteOrder(Long theId);
-
-}
+    ResponseEntity<CartItemResponseDTO> addCartItem(CartRequestDTO cartRequestDTO);
+/*
+    ResponseEntity<ApiResponseDTO> deleteCartItem(Long theId);
+    
+    ResponseEntity<Map<String,Integer>> updateCartItem(Integer newQuantity,Long theId);
+    
+    List<CartItemResponseDTO> getAllCartItems();
 */
+}

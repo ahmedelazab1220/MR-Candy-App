@@ -1,4 +1,6 @@
-package com.luv2code.demo.dto;
+package com.luv2code.demo.dto.response;
+
+import java.math.BigDecimal;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductCartSetterDTO {
+public class CartItemResponseDTO {
 
-    private Long id;
+	private Long productId;
 
     private String name;
     
@@ -20,5 +22,9 @@ public class ProductCartSetterDTO {
     private String companyName;
 
     private Integer quantity;
-
+    
+    private BigDecimal totalPrice;
+    
+    private Long cartId;
+	
 }

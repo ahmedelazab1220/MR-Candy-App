@@ -1,8 +1,6 @@
 package com.luv2code.demo.entity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,7 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -40,11 +38,8 @@ public class Cart {
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "total_price", nullable = false, precision = 30, scale = 2)
-    private BigDecimal totalPrice;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<CartItem> cartItems;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.ALL)
+    private CartItem cartItem;
 
     @PrePersist
     protected void onCreate() {

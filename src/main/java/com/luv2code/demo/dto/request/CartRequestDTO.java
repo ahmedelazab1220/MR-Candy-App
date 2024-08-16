@@ -1,8 +1,5 @@
 package com.luv2code.demo.dto.request;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,10 +18,7 @@ public class CartRequestDTO {
     private String email;
 
     @NotNull
-    private BigDecimal totalPrice;
-
-    @NotNull
     @Valid
-    private List<CartItemRequestDTO> orderItems;
+    private CartItemRequestDTO cartItems;
 
 }

@@ -221,7 +221,7 @@ public class ProductService implements IProductService {
 
         log.info("Fetching product for cart with product ID: {}", theId);
 
-        Optional<Product> product = productRepository.findProductSetterCartDTOById(theId).map(mapper::productCartSetterDTOTOProduct);;
+        Optional<Product> product = productRepository.findProductCartSetterDTOById(theId).map(mapper::productCartSetterDTOTOProduct);;
 
         if (product.isEmpty()) {
             log.warn("Product with ID {} not found", theId);
