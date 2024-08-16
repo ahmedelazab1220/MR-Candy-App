@@ -1,5 +1,7 @@
 package com.luv2code.demo.service.impl;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -80,50 +82,65 @@ public class CartService implements ICartService {
 	public ResponseEntity<ApiResponseDTO> deleteCartItem(Long theId) {
 
 		Optional<Cart> cart = cartRepository.findById(theId);
-		
-		if(cart.isEmpty()) {
+
+		if (cart.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
 		}
-		
+
 		cartRepository.updateProductQuantity(theId, cart.get().getCartItem().getQuantity());
-		
-        cartRepository.delete(cart.get());
-		
+
+		cartRepository.delete(cart.get());
+
 		return ResponseEntity.ok(new ApiResponseDTO("Success Deleted For Item"));
-		
+
 	}
 
 	@Transactional
 	@Override
 	public ResponseEntity<Map<String, Integer>> updateCartItem(Integer newQuantity, Long theId) {
-        
-        Optional<ProductGetterDTO> productGetterDTO = cartRepository.findProductGetterDTO(theId);
-		
-		if(productGetterDTO.isEmpty()) {
+
+		Optional<ProductGetterDTO> productGetterDTO = cartRepository.findProductGetterDTO(theId);
+
+		if (productGetterDTO.isEmpty()) {
 			throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
 		}
-		
+
 		Long productId = productGetterDTO.get().getId();
 		Integer productQuantity = productGetterDTO.get().getQuantity();
 		String productName = productGetterDTO.get().getName();
-		
+
 		Integer cartQuantity = productGetterDTO.get().getCartItemQuantity();
 		productQuantity += cartQuantity;
-		
-		if(newQuantity > productQuantity) {
+
+		if (newQuantity > productQuantity) {
 			log.warn("Quantity not available for product: {}", productName);
 			throw new QuantityNotAvailableException("Quantity Is Not Available For Product : " + productName);
 		}
 
 		cartItemRepository.updateCartItemQuantity(newQuantity, theId);
-		
+
 		log.info("Product: {} - Updating quantity from {} to {}", productName, productQuantity,
 				productQuantity - newQuantity);
-		
+
 		productService.updateProductQuantityById(productId, productQuantity - newQuantity);
-		
-		return ResponseEntity.ok(Map.of("qunatity",newQuantity));
-		
+
+		return ResponseEntity.ok(Map.of("qunatity", newQuantity));
+
+	}
+
+	@Override
+	public ResponseEntity<Map<String, Object>> getAllCartItems(Long userId) {
+
+		List<CartItemResponseDTO> cartItemResponseDTO = cartRepository.findAllCartItemsWithUserID(userId);
+
+		BigDecimal totalPrice = new BigDecimal(0);
+
+		for (CartItemResponseDTO tmp : cartItemResponseDTO) {
+			totalPrice = totalPrice.add(tmp.getPrice());
+		}
+
+		return ResponseEntity.ok(Map.of("total_price", totalPrice, "cartItems", cartItemResponseDTO));
+
 	}
 
 }

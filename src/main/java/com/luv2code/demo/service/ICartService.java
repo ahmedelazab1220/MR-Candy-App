@@ -15,7 +15,7 @@ public interface ICartService {
     ResponseEntity<ApiResponseDTO> deleteCartItem(Long theId);
     
     ResponseEntity<Map<String,Integer>> updateCartItem(Integer newQuantity,Long theId);
-/*    
-    List<CartItemResponseDTO> getAllCartItems();
-*/
+    
+    ResponseEntity<Map<String,Object>> getAllCartItems(Long userId);
+
 }

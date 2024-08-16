@@ -1,5 +1,6 @@
 package com.luv2code.demo.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.ProductGetterDTO;
+import com.luv2code.demo.dto.response.CartItemResponseDTO;
 import com.luv2code.demo.entity.Cart;
 
 @Repository
@@ -35,7 +37,13 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
             "JOIN ci.product p " +
             "WHERE c.id = :cartId")
     Optional<ProductGetterDTO> findProductGetterDTO(@Param("cartId") Long cartId);
-		
 	
+	@Query(value = "SELECT new com.luv2code.demo.dto.response.CartItemResponseDTO(p.id, p.name, p.description, cp.name, ci.quantity, ci.price, c.id) " +
+            "FROM Cart c " +
+            "JOIN c.cartItem ci " +
+            "JOIN ci.product p " +
+            "JOIN p.company cp " +
+            "WHERE c.user.id = :userId")
+	List<CartItemResponseDTO> findAllCartItemsWithUserID(@Param("userId") Long userId);
 	
 }

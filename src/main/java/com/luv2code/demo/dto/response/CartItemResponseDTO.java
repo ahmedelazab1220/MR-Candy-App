@@ -23,7 +23,7 @@ public class CartItemResponseDTO {
 
     private Integer quantity;
     
-    private BigDecimal totalPrice;
+    private BigDecimal price;
     
     private Long cartId;
 	
