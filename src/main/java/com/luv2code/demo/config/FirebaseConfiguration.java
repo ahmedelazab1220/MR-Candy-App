@@ -22,7 +22,7 @@ public class FirebaseConfiguration {
 	   FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(googelCredentials)
 			   .build();
 	   
-	   FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "mr-candy-app");
+	   FirebaseApp app = FirebaseApp.initializeApp(firebaseOptions, "my-app");
 	  
 	   return FirebaseMessaging.getInstance(app);
 	}

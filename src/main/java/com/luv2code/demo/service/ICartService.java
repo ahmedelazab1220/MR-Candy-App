@@ -16,6 +16,6 @@ public interface ICartService {
     
     ResponseEntity<Map<String,Integer>> updateCartItem(Integer newQuantity,Long theId);
     
-    ResponseEntity<Map<String,Object>> getAllCartItems(Long userId);
+    ResponseEntity<Map<String,Object>> getAllCartItemsForUserEmail(String userEmail);
 
 }

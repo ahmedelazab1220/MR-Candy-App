@@ -43,16 +43,16 @@ public class CartController {
 	}
 	
 	@PutMapping("")
-	public ResponseEntity<Map<String, Integer>> updateCartItemQuantity(@RequestParam(required = true) Integer newQuantity ,@RequestParam(required = true) Long theId){
+	public ResponseEntity<Map<String, Integer>> updateCartItemQuantity(@RequestParam(required = true) Integer newQuantity ,@RequestParam(required = true) Long cartId){
 		
-		return cartService.updateCartItem(newQuantity, theId);
+		return cartService.updateCartItem(newQuantity, cartId);
 		
 	}
 	
 	@GetMapping("")
-	public ResponseEntity<Map<String, Object>> getAllCartItem(@RequestParam(required = true) Long userId){
+	public ResponseEntity<Map<String, Object>> getAllCartItem(@RequestParam(required = true) String userEmail){
 		
-		return cartService.getAllCartItems(userId);
+		return cartService.getAllCartItemsForUserEmail(userEmail);
 		
 	}
 	

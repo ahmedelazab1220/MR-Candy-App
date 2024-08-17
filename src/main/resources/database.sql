@@ -5,6 +5,8 @@ USE mr_candy_app;
 
 -- Drop all existing tables if they exist
 DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS cart_items;
+DROP TABLE IF EXISTS orders_items;
 DROP TABLE IF EXISTS carts;
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS categories;
@@ -86,7 +88,7 @@ CREATE TABLE products (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     sales_count BIGINT NOT NULL,
     image_url VARCHAR(1000) NOT NULL,
-    category_id BIGINT NOT NULL,
+    category_id BIGINT,
     company_id BIGINT NOT NULL,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL,
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE
@@ -106,6 +108,24 @@ CREATE TABLE carts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+)ENGINE=InnoDB;
+
+-- Create cart_items table
+CREATE TABLE cart_items (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    cart_id BIGINT UNIQUE NOT NULL,
+    product_id BIGINT,
+    quantity INT NOT NULL,
+    price DECIMAL(15, 2) NOT NULL,
+    FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+)ENGINE=InnoDB;
+
+CREATE TABLE orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total_price DECIMAL(30, 2) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 )ENGINE=InnoDB;
@@ -113,11 +133,11 @@ CREATE TABLE carts (
 -- Create order_items table
 CREATE TABLE order_items (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    cart_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
     product_id BIGINT,
     quantity INT NOT NULL,
     price DECIMAL(15, 2) NOT NULL,
-    FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 )ENGINE=InnoDB;
 
@@ -126,11 +146,15 @@ CREATE INDEX idx_product_id ON products(id);
 CREATE INDEX idx_product_sales_count ON products(sales_count);
 CREATE INDEX idx_user_email ON users(email);
 CREATE INDEX idx_user_id ON users(id);
-CREATE INDEX idx_otp_user_id ON otps(user_id);
+-- Add a composite index on otp and user_id columns in the otps table
+CREATE INDEX idx_otps_otp ON otps (otp);
 CREATE INDEX idx_address_id ON addresses(id);
 CREATE INDEX idx_order_item_id ON order_items(id);
+CREATE INDEX idx_cart_item_id ON cart_items(id);
 CREATE INDEX idx_cart_id ON carts(id);
-CREATE INDEX idx_order_item_cart_id ON order_items(cart_id);
+CREATE INDEX idx_order_id ON orders(id);
+CREATE INDEX idx_order_item_cart_id ON order_items(order_id);
+CREATE INDEX idx_cart_item_cart_id ON cart_items(cart_id);
 CREATE INDEX idx_order_item_product_id ON order_items(product_id);
 CREATE INDEX idx_products_company_id ON products(company_id);
 CREATE INDEX idx_products_category_id ON products(category_id);
@@ -142,6 +166,7 @@ CREATE INDEX idx_refresh_token_user_id ON refresh_token(user_id);
 CREATE INDEX idx_products_sales_count ON products(sales_count);
 CREATE INDEX idx_user_address_id ON users(address_id);
 CREATE INDEX idx_user_role_id ON users(role_id);
+CREATE INDEX idx_role_id ON roles(id);
 
 -- Drop procedure if exists
 DROP PROCEDURE IF EXISTS delete_expired_entries;

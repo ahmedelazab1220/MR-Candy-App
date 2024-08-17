@@ -15,7 +15,7 @@ import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
 import com.luv2code.demo.dto.request.UpdateUserImageRequest;
 import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
-import com.luv2code.demo.dto.response.UpdateUserProfileResponse;
+import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.entity.User;
 import com.luv2code.demo.exc.StatusCode;
 import com.luv2code.demo.exc.custom.NotFoundException;
@@ -39,8 +39,7 @@ public class UserService implements IUserService {
 
 	@Override
 	public User getUserTokenDetails(String email) {
-
-		log.info("Fetching user token details for email: {}", email);
+		log.info("Entering getUserTokenDetails method with email: {}", email);
 
 		if (email.isEmpty()) {
 			log.error("Email is empty");
@@ -55,15 +54,12 @@ public class UserService implements IUserService {
 		}
 
 		log.info("Successfully fetched user token details for email: {}", email);
-
 		return user.get();
-
 	}
 
 	@Override
 	public void createUser(User user) {
-
-		log.info("Creating user with email: {}", user.getEmail());
+		log.info("Entering createUser method with email: {}", user.getEmail());
 
 		if (user.getEmail() == null || user.getPassword() == null || user.getImageUrl() == null
 				|| user.getPhoneNumber() == null || user.getRole() == null || user.getAddress() == null) {
@@ -79,15 +75,12 @@ public class UserService implements IUserService {
 		}
 
 		log.info("User successfully created with email: {}", user.getEmail());
-
 		userRepository.save(user);
-
 	}
 
 	@Override
 	public User getUserSetterByEmail(String email) {
-
-		log.info("Fetching user setter by email: {}", email);
+		log.info("Entering getUserSetterByEmail method with email: {}", email);
 
 		Optional<User> user = userRepository.findUserSetterByEmail(email).map(mapper::userSetterDTOTOUser);
 
@@ -97,16 +90,13 @@ public class UserService implements IUserService {
 		}
 
 		log.info("Successfully fetched user setter by email: {}", email);
-
 		return user.get();
-
 	}
 
 	@Transactional
 	@Override
 	public ResponseEntity<ApiResponseDTO> UpdatePassword(ChangePasswordRequestDTO changePasswordRequest) {
-
-		log.info("Updating password for email: {}", changePasswordRequest.getEmail());
+		log.info("Entering UpdatePassword method for email: {}", changePasswordRequest.getEmail());
 
 		if (changePasswordRequest.getOldPassword() != null) {
 			Optional<String> pass = userRepository.findUserPasswordByEmail(changePasswordRequest.getEmail());
@@ -120,7 +110,6 @@ public class UserService implements IUserService {
 				log.error("Old password is incorrect for email: {}", changePasswordRequest.getEmail());
 				throw new IllegalArgumentException("Old password is incorrect!");
 			}
-
 		}
 
 		if (!Objects.equals(changePasswordRequest.getNewPassword(), changePasswordRequest.getNewRepeatedPassword())) {
@@ -140,13 +129,11 @@ public class UserService implements IUserService {
 
 		log.info("Password successfully changed for email: {}", changePasswordRequest.getEmail());
 		return ResponseEntity.ok(new ApiResponseDTO("Password has been changed!"));
-
 	}
 
 	@Override
 	public ResponseEntity<ApiResponseDTO> deleteUser(String email) {
-
-		log.info("Deleting user with email: {}", email);
+		log.info("Entering deleteUser method with email: {}", email);
 
 		Optional<User> user = userRepository.findByEmail(email);
 
@@ -156,68 +143,60 @@ public class UserService implements IUserService {
 		}
 
 		userRepository.delete(user.get());
-
 		log.info("User successfully deleted with email: {}", email);
 
 		return ResponseEntity.ok(new ApiResponseDTO("Success Deleted User!"));
-
 	}
 
 	@Transactional
 	@Override
 	public ResponseEntity<Map<String, String>> updateUserImage(UpdateUserImageRequest updateUserImageRequest)
 			throws IOException {
+		log.info("Entering updateUserImage method with email: {}", updateUserImageRequest.getEmail());
 
 		String newImageUrl = null;
 
 		if (updateUserImageRequest.getImage() != null) {
-
-			log.info("delete image from File System for user: {}", updateUserImageRequest.getEmail());
-
+			log.info("Deleting old image from File System for user: {}", updateUserImageRequest.getEmail());
 			fileHelper.deleteImageFromFileSystem(updateUserImageRequest.getOldImageUrl());
 
 			newImageUrl = fileHelper.uploadFileToFileSystem(updateUserImageRequest.getImage());
-
 		}
 
 		if (newImageUrl != null) {
-
-			log.info("update image for user: {}", updateUserImageRequest.getEmail());
-
+			log.info("Updating image URL for user: {}", updateUserImageRequest.getEmail());
 			userRepository.updateImageByEmail(updateUserImageRequest.getEmail(), newImageUrl);
-
 		}
 
 		log.info("Update User Image successfully with email: {}", updateUserImageRequest.getEmail());
-		
 		return ResponseEntity.status(StatusCode.SUCCESS).body(Map.of("imageUrl", newImageUrl));
-
 	}
 
 	@Transactional
 	@Override
-	public UpdateUserProfileResponse updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	public UpdateUserProfileResponseDTO updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest)
+			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		log.info("Entering updateUserProfile method with email: {}", updateUserProfileRequest.getEmail());
 
 		Optional<User> user = userRepository.findByEmail(updateUserProfileRequest.getEmail());
-		
-		if(user.isEmpty()) {
+
+		if (user.isEmpty()) {
 			log.error("User not found with email: {}", updateUserProfileRequest.getEmail());
 			throw new NotFoundException(NotFoundTypeException.USER + " Not Found!");
 		}
-		
+
+		log.info("Updating user profile for email: {}", updateUserProfileRequest.getEmail());
 		mapper.updateUserProfileRequestTOUser(updateUserProfileRequest, user.get());
-		
+
 		user.get().getAddress().setCity(updateUserProfileRequest.getCity());
 		user.get().getAddress().setState(updateUserProfileRequest.getState());
 		user.get().getAddress().setStreet(updateUserProfileRequest.getStreet());
 		user.get().getAddress().setZipCode(updateUserProfileRequest.getZipCode());
-		
+
 		userRepository.save(user.get());
-		
-		log.info("update user success!");
-		
+		log.info("User profile successfully updated for email: {}", updateUserProfileRequest.getEmail());
+
 		return mapper.updateUserProfileRequestTOUpdateUserProfileResponse(updateUserProfileRequest);
-		
 	}
 
 }

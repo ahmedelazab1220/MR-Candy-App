@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateUserProfileResponse {
+public class UpdateUserProfileResponseDTO {
 
     private String fullName;
 	

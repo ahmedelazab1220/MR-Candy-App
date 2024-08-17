@@ -9,7 +9,7 @@ import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
 import com.luv2code.demo.dto.request.UpdateUserImageRequest;
 import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
-import com.luv2code.demo.dto.response.UpdateUserProfileResponse;
+import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.entity.User;
 
 public interface IUserService {
@@ -27,7 +27,7 @@ public interface IUserService {
 	ResponseEntity<Map<String, String>> updateUserImage(UpdateUserImageRequest updateUserImageRequest)
 			throws IOException;
 
-	UpdateUserProfileResponse updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest)
+	UpdateUserProfileResponseDTO updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException;
 
 }

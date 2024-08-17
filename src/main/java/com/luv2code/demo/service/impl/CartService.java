@@ -20,7 +20,6 @@ import com.luv2code.demo.entity.Product;
 import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.exc.custom.NotFoundTypeException;
 import com.luv2code.demo.exc.custom.QuantityNotAvailableException;
-import com.luv2code.demo.repository.CartItemRepository;
 import com.luv2code.demo.repository.CartRepository;
 import com.luv2code.demo.service.ICartService;
 import com.luv2code.demo.service.IProductService;
@@ -34,113 +33,116 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class CartService implements ICartService {
 
-	private final CartRepository cartRepository;
-	private final CartItemRepository cartItemRepository;
-	private final IUserService userService;
-	private final IProductService productService;
+    private final CartRepository cartRepository;
+    private final IUserService userService;
+    private final IProductService productService;
 
-	@Transactional
-	@Override
-	public CartItemResponseDTO addCartItem(CartRequestDTO cartRequestDTO) {
+    @Transactional
+    @Override
+    public CartItemResponseDTO addCartItem(CartRequestDTO cartRequestDTO) {
 
-		CartItemRequestDTO cartItemDTO = cartRequestDTO.getCartItems();
+        CartItemRequestDTO cartItemDTO = cartRequestDTO.getCartItems();
+        Cart cart = new Cart();
+        cart.setUser(userService.getUserSetterByEmail(cartRequestDTO.getEmail()));
 
-		Cart cart = new Cart();
+        Product product = productService.getProductCartSetter(cartItemDTO.getProductId());
 
-		cart.setUser(userService.getUserSetterByEmail(cartRequestDTO.getEmail()));
+        if (cartItemDTO.getQuantity() > product.getQuantity()) {
+            log.warn("Quantity not available for product: {}", product.getName());
+            throw new QuantityNotAvailableException("Quantity Is Not Available For Product: " + product.getName());
+        }
 
-		CartItem cartItem = new CartItem();
+        log.info("Product: {} - Reducing quantity from {} to {}", product.getName(), product.getQuantity(),
+                product.getQuantity() - cartItemDTO.getQuantity());
 
-		Product product = productService.getProductCartSetter(cartItemDTO.getProductId());
+        productService.updateProductQuantityById(product.getId(), product.getQuantity() - cartItemDTO.getQuantity());
 
-		if (cartItemDTO.getQuantity() > product.getQuantity()) {
-			log.warn("Quantity not available for product: {}", product.getName());
-			throw new QuantityNotAvailableException("Quantity Is Not Available For Product : " + product.getName());
-		}
+        CartItem cartItem = new CartItem();
+        cartItem.setCart(cart);
+        cartItem.setProduct(product);
+        BigDecimal cartItemPrice = cartItemDTO.getPrice().multiply(BigDecimal.valueOf(cartItemDTO.getQuantity()));
+        cartItem.setPrice(cartItemPrice);
+        cartItem.setQuantity(cartItemDTO.getQuantity());
 
-		log.info("Product: {} - Reducing quantity from {} to {}", product.getName(), product.getQuantity(),
-				product.getQuantity() - cartItemDTO.getQuantity());
+        cart.setCartItem(cartItem);
 
-		productService.updateProductQuantityById(product.getId(), product.getQuantity() - cartItemDTO.getQuantity());
+        Cart savedCart = cartRepository.save(cart);
 
-		cartItem.setCart(cart);
-		cartItem.setProduct(product);
-		cartItem.setPrice(cartItemDTO.getPrice());
-		cartItem.setQuantity(cartItemDTO.getQuantity());
+        log.info("Cart item added successfully with ID: {}", savedCart.getId());
 
-		cart.setCartItem(cartItem);
+        return new CartItemResponseDTO(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getCompany().getName(),
+                cartItem.getQuantity(),
+                cartItem.getPrice(),
+                savedCart.getId()
+        );
+    }
 
-		Cart savedCart = cartRepository.save(cart);
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponseDTO> deleteCartItem(Long theId) {
 
-		return new CartItemResponseDTO(product.getId(), product.getName(), product.getDescription(),
-				product.getCompany().getName(), cartItem.getQuantity(), cartItem.getPrice(), savedCart.getId());
+        Optional<Cart> cart = cartRepository.findById(theId);
 
-	}
+        if (cart.isEmpty()) {
+            log.error("Cart item with ID: {} not found", theId);
+            throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
+        }
 
-	@Transactional
-	@Override
-	public ResponseEntity<ApiResponseDTO> deleteCartItem(Long theId) {
+        cartRepository.updateProductQuantity(theId, cart.get().getCartItem().getQuantity());
+        cartRepository.delete(cart.get());
 
-		Optional<Cart> cart = cartRepository.findById(theId);
+        log.info("Cart item with ID: {} deleted successfully", theId);
 
-		if (cart.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
-		}
+        return ResponseEntity.ok(new ApiResponseDTO("Success Deleted For Item"));
+    }
 
-		cartRepository.updateProductQuantity(theId, cart.get().getCartItem().getQuantity());
+    @Transactional
+    @Override
+    public ResponseEntity<Map<String, Integer>> updateCartItem(Integer newQuantity, Long theId) {
 
-		cartRepository.delete(cart.get());
+        Optional<ProductGetterDTO> productGetterDTO = cartRepository.findProductGetterDTO(theId);
 
-		return ResponseEntity.ok(new ApiResponseDTO("Success Deleted For Item"));
+        if (productGetterDTO.isEmpty()) {
+            log.error("Cart item with ID: {} not found", theId);
+            throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
+        }
 
-	}
+        ProductGetterDTO dto = productGetterDTO.get();
+        Long productId = dto.getId();
+        Integer productQuantity = dto.getQuantity();
+        String productName = dto.getName();
+        Integer cartQuantity = dto.getCartItemQuantity();
+        productQuantity += cartQuantity;
 
-	@Transactional
-	@Override
-	public ResponseEntity<Map<String, Integer>> updateCartItem(Integer newQuantity, Long theId) {
+        if (newQuantity > productQuantity) {
+            log.warn("Requested quantity {} exceeds available quantity for product: {}", newQuantity, productName);
+            throw new QuantityNotAvailableException("Quantity Is Not Available For Product: " + productName);
+        }
 
-		Optional<ProductGetterDTO> productGetterDTO = cartRepository.findProductGetterDTO(theId);
+        cartRepository.updateCartItemQuantity(theId, newQuantity);
 
-		if (productGetterDTO.isEmpty()) {
-			throw new NotFoundException(NotFoundTypeException.CARTITEM + " Not Found!");
-		}
+        log.info("Product: {} - Updating quantity from {} to {}", productName, productQuantity, productQuantity - newQuantity);
 
-		Long productId = productGetterDTO.get().getId();
-		Integer productQuantity = productGetterDTO.get().getQuantity();
-		String productName = productGetterDTO.get().getName();
+        productService.updateProductQuantityById(productId, productQuantity - newQuantity);
 
-		Integer cartQuantity = productGetterDTO.get().getCartItemQuantity();
-		productQuantity += cartQuantity;
+        return ResponseEntity.ok(Map.of("quantity", newQuantity));
+    }
 
-		if (newQuantity > productQuantity) {
-			log.warn("Quantity not available for product: {}", productName);
-			throw new QuantityNotAvailableException("Quantity Is Not Available For Product : " + productName);
-		}
+    @Override
+    public ResponseEntity<Map<String, Object>> getAllCartItemsForUserEmail(String userEmail) {
 
-		cartItemRepository.updateCartItemQuantity(newQuantity, theId);
+        List<CartItemResponseDTO> cartItemResponseDTO = cartRepository.findAllCartItemsWithUserEmail(userEmail);
 
-		log.info("Product: {} - Updating quantity from {} to {}", productName, productQuantity,
-				productQuantity - newQuantity);
+        BigDecimal totalPrice = cartItemResponseDTO.stream()
+                .map(CartItemResponseDTO::getCartItemPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-		productService.updateProductQuantityById(productId, productQuantity - newQuantity);
+        log.info("Retrieved cart items for user email: {}. Total price: {}", userEmail, totalPrice);
 
-		return ResponseEntity.ok(Map.of("qunatity", newQuantity));
-
-	}
-
-	@Override
-	public ResponseEntity<Map<String, Object>> getAllCartItems(Long userId) {
-
-		List<CartItemResponseDTO> cartItemResponseDTO = cartRepository.findAllCartItemsWithUserID(userId);
-
-		BigDecimal totalPrice = new BigDecimal(0);
-
-		for (CartItemResponseDTO tmp : cartItemResponseDTO) {
-			totalPrice = totalPrice.add(tmp.getPrice());
-		}
-
-		return ResponseEntity.ok(Map.of("total_price", totalPrice, "cartItems", cartItemResponseDTO));
-
-	}
-
+        return ResponseEntity.ok(Map.of("total_price", totalPrice, "cartItems", cartItemResponseDTO));
+    }
 }

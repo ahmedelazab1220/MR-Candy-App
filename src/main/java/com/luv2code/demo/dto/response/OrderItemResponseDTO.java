@@ -1,7 +1,6 @@
 package com.luv2code.demo.dto.response;
 
 import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,18 +10,14 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DiscountedProductsResponse {
+public class OrderItemResponseDTO {
 
-	private Long id;
-
-    private String description;
-
-    private String discount;
-
-    private String imageUrl;
-
-    private BigDecimal price;
-    
-    private String companyName;
+	private String productName;
+	
+	private String productCompanyName;
+	
+	private Integer orderItemQuantity;
+	
+	private BigDecimal OrderItemPrice;
 	
 }

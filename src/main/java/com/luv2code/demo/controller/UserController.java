@@ -16,7 +16,7 @@ import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
 import com.luv2code.demo.dto.request.UpdateUserImageRequest;
 import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
-import com.luv2code.demo.dto.response.UpdateUserProfileResponse;
+import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.service.IUserService;
 
 import jakarta.validation.Valid;
@@ -37,7 +37,7 @@ public class UserController {
 	}
 	
 	@PutMapping("")
-	public UpdateUserProfileResponse updateUserProfile(@Valid @RequestBody UpdateUserProfileRequest updateUserProfileRequest) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
+	public UpdateUserProfileResponseDTO updateUserProfile(@Valid @RequestBody UpdateUserProfileRequest updateUserProfileRequest) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
 		
 		 return userService.updateUserProfile(updateUserProfileRequest);
 		 
@@ -50,7 +50,7 @@ public class UserController {
 		
 	}
 	
-	@PutMapping("/password")
+	@PutMapping("/pass")
 	public ResponseEntity<ApiResponseDTO> updateUserPassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
 		
 		if(changePasswordRequestDTO.getOldPassword() == null) {

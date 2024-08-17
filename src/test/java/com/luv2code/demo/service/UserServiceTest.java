@@ -4,34 +4,51 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.luv2code.demo.dto.SystemMapper;
+import com.luv2code.demo.dto.request.UpdateUserImageRequest;
+import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
+import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
 import com.luv2code.demo.entity.Address;
 import com.luv2code.demo.entity.Role;
 import com.luv2code.demo.entity.User;
 import com.luv2code.demo.exc.custom.NotFoundException;
-import com.luv2code.demo.exc.custom.NotFoundTypeException;
+import com.luv2code.demo.helper.IFileHelper;
 import com.luv2code.demo.repository.UserRepository;
 import com.luv2code.demo.service.impl.UserService;
 
 public class UserServiceTest {
+
+    private static final String USER_NOT_FOUND_MSG = "USER Not Found!";
+    private static final String EMAIL_EMPTY_MSG = "Email must not be empty";
+    private static final String EMAIL_IN_USE_MSG = "Email is already in use!";
+    private static final String REQUIRED_FIELDS_MISSING_MSG = "Required fields are missing!";
+    private static final String SUCCESS_DELETED_USER_MSG = "Success Deleted User!";
+    private static final String UPLOAD_FAILED_MSG = "Upload failed";
+    private static final String DELETE_FAILED_MSG = "Delete failed";
+    private static final String MAPPING_FAILED_MSG = "Mapping failed";
 
     @InjectMocks
     private UserService userService;
@@ -42,24 +59,25 @@ public class UserServiceTest {
     @Mock
     private SystemMapper mapper;
 
+    @Mock
+    private IFileHelper fileHelper;
+
     private Role role;
-
     private User user;
-
     private Address address;
+    private String imageUrl;
+    private MultipartFile multipartFile;
 
-    /**
-     * Sets up the necessary mocks and initializes the role and user objects
-     * before each test case.
-     *
-     * @throws Exception if there is an error with the mocks initialization.
-     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        setUpTestData();
+    }
 
+    private void setUpTestData() {
+        multipartFile = new MockMultipartFile("image", "image.png", "image/png", "imageContent".getBytes());
+        imageUrl = "http://example.com/image.png";
         role = new Role(1L, "USER", LocalDateTime.now());
-
         address = new Address(1L, "Mostafa Kamel", "Tanta", "Egypt", "606165");
 
         user = new User();
@@ -68,294 +86,239 @@ public class UserServiceTest {
         user.setEmail("ahmed@gmail.com");
         user.setPassword("12345678");
         user.setPhoneNumber("01021045629");
-        user.setImageUrl("http://example.com/image.png");
+        user.setImageUrl(imageUrl);
         user.setAddress(address);
         user.setRole(role);
     }
 
-    UserTokenResponseDTO getUserTokenResponseDTO() {
-
-        return new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629", "http://example.com/image.png",
-                address, role);
+    private UserTokenResponseDTO getUserTokenResponseDTO() {
+        return new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629", imageUrl, address, role);
     }
 
-    /**
-     * Test case to verify that the method `getUserTokenDetails` successfully
-     * retrieves the user token details.
-     *
-     * @throws None
-     * @return None
-     */
     @Test
-    public void shouldGetUserTokenDetailsSuccessfully() {
-
+    void shouldGetUserTokenDetailsSuccessfully() {
         String email = "ahmed@gmail.com";
-
         UserTokenResponseDTO dto = getUserTokenResponseDTO();
 
-        when(userRepository.findUserTokenDetailsByEmail(Mockito.anyString())).thenReturn(Optional.of(dto));
-
+        when(userRepository.findUserTokenDetailsByEmail(email)).thenReturn(Optional.of(dto));
         when(mapper.userTokenResponseDTOTOUser(dto)).thenReturn(user);
 
-        Optional<User> result = Optional.of(userService.getUserTokenDetails(email));
+        User result = userService.getUserTokenDetails(email);
 
-        // Assert
-        assertEquals(true, result.isPresent());
-        // assertEquals(false, result.isPresent()); // This Give Failure If Do Uncomment
-        assertNotNull(result.get());
-        assertEquals("ahmed", result.get().getFullName());
-        assertEquals("ahmed@gmail.com", result.get().getEmail());
-        assertEquals("01021045629", result.get().getPhoneNumber());
-        assertEquals("http://example.com/image.png", result.get().getImageUrl());
-        assertEquals(role, result.get().getRole());
-
+        assertNotNull(result);
+        assertEquals("ahmed", result.getFullName());
+        assertEquals("ahmed@gmail.com", result.getEmail());
+        assertEquals("01021045629", result.getPhoneNumber());
+        assertEquals(imageUrl, result.getImageUrl());
+        assertEquals(role, result.getRole());
     }
 
-    /**
-     * Test case to verify that the method `getUserTokenDetails` throws a
-     * `NotFoundException` when the user token details are not found.
-     *
-     * @throws NotFoundException if the user token details are not found
-     */
     @Test
-    public void shouldGetUserTokenDetailsNotFound() {
-
+    void shouldThrowNotFoundExceptionWhenUserTokenDetailsNotFound() {
         String email = "sara@gmail.com";
 
-        when(userRepository.findUserTokenDetailsByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+        when(userRepository.findUserTokenDetailsByEmail(email)).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> userService.getUserTokenDetails(email));
-
-        assertEquals(NotFoundTypeException.USER + " Not Found!", exception.getMessage());
-
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getUserTokenDetails(email));
+        assertEquals(USER_NOT_FOUND_MSG, exception.getMessage());
     }
 
-    /**
-     * Test case to verify that the method `getUserTokenDetails` throws a
-     * `RuntimeException` when mapping fails.
-     *
-     * @throws RuntimeException if mapping fails
-     */
     @Test
-    public void shouldThrowExceptionWhenMappingFailsInGetUserTokenDetails() {
-
+    void shouldThrowExceptionWhenMappingFailsInGetUserTokenDetails() {
         String email = "ahmed@gmail.com";
-
         UserTokenResponseDTO dto = getUserTokenResponseDTO();
 
-        when(userRepository.findUserTokenDetailsByEmail(Mockito.anyString())).thenReturn(Optional.of(dto));
-
-        when(mapper.userTokenResponseDTOTOUser(dto)).thenThrow(new RuntimeException("Mapping failed"));
+        when(userRepository.findUserTokenDetailsByEmail(email)).thenReturn(Optional.of(dto));
+        when(mapper.userTokenResponseDTOTOUser(dto)).thenThrow(new RuntimeException(MAPPING_FAILED_MSG));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.getUserTokenDetails(email));
-
-        assertEquals("Mapping failed", exception.getMessage());
-
+        assertEquals(MAPPING_FAILED_MSG, exception.getMessage());
     }
 
-    /**
-     * Test case to verify that the method `getUserTokenDetails` handles null
-     * values correctly.
-     *
-     * @throws NotFoundException if the user token details are not found
-     */
     @Test
-    public void shouldHandleNullValuesWhenGetUserTokenDetails() {
-
+    void shouldHandleNullValuesWhenGetUserTokenDetails() {
         String email = "ahmed@gmail.com";
 
-        when(userRepository.findUserTokenDetailsByEmail(Mockito.anyString())).thenReturn(Optional.ofNullable(null));
+        when(userRepository.findUserTokenDetailsByEmail(email)).thenReturn(Optional.ofNullable(null));
 
-        NotFoundException exception = assertThrows(NotFoundException.class,
-                () -> userService.getUserTokenDetails(email));
-
-        assertEquals(NotFoundTypeException.USER + " Not Found!", exception.getMessage());
-
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.getUserTokenDetails(email));
+        assertEquals(USER_NOT_FOUND_MSG, exception.getMessage());
     }
 
-    /**
-     * Test case to verify that the method `getUserTokenDetails` handles an
-     * invalid email input correctly.
-     *
-     * This test case verifies that when an empty string is passed as the email
-     * parameter to the `getUserTokenDetails` method, an
-     * `IllegalArgumentException` is thrown with the message "Email must not be
-     * empty".
-     *
-     * @throws IllegalArgumentException if the email parameter is empty
-     */
     @Test
-    public void shouldHandleInvalidEmailInputWhenGetUserTokenDetails() {
-
+    void shouldHandleInvalidEmailInputWhenGetUserTokenDetails() {
         String email = "";
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> userService.getUserTokenDetails(email));
-
-        assertEquals("Email must not be empty", exception.getMessage());
-
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.getUserTokenDetails(email));
+        assertEquals(EMAIL_EMPTY_MSG, exception.getMessage());
     }
 
-    /**
-     * Test case to verify that the method `createUser` successfully creates a
-     * user.
-     *
-     * This test case creates a new `Role` object with an ID of 1 and the role
-     * name "USER". It then creates a new `User` object with an ID of 1, a full
-     * name of "ahmed", an email of "ahmed@gmail.com", a phone number of
-     * "01021045629", an image URL of "http://example.com/image.png", and the
-     * previously created `Role` object.
-     *
-     * The `createUser` method is then called with the newly created `User`
-     * object as the parameter.
-     *
-     * Finally, the `verify` method is called on the `userRepository` mock,
-     * passing in the `save` method and the `user` object as parameters. This
-     * verifies that the `save` method was called exactly once with the `user`
-     * object as the parameter.
-     *
-     * @throws None
-     * @return None
-     */
     @Test
-    public void shouldCreateUserSuccessfully() {
-
+    void shouldCreateUserSuccessfully() {
         userService.createUser(user);
-
         verify(userRepository, times(1)).save(user);
-
     }
 
-    /**
-     * Test case to verify that the method `createUser` throws a
-     * `DataIntegrityViolationException` when the email already exists in the
-     * database.
-     *
-     * @throws IllegalArgumentException if the email already exists in the
-     * database
-     */
     @Test
-    public void shouldThrowExceptionWhenEmailAlreadyExistsWhenCreateUser() {
-
-        when(userRepository.existsByEmail(user.getEmail())).thenThrow(new IllegalArgumentException("Email is already in use!"));
+    void shouldThrowExceptionWhenEmailAlreadyExistsWhenCreateUser() {
+        when(userRepository.existsByEmail(user.getEmail())).thenThrow(new IllegalArgumentException(EMAIL_IN_USE_MSG));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.createUser(user));
-
-        assertEquals("Email is already in use!", exception.getMessage());
+        assertEquals(EMAIL_IN_USE_MSG, exception.getMessage());
 
         verify(userRepository, times(0)).save(user);
-
     }
 
-    /**
-     * Test case to verify that the method `createUser` throws an
-     * `IllegalArgumentException` when creating a user with null fields.
-     *
-     * @throws IllegalArgumentException if any of the required fields (email,
-     * password, imageUrl, phoneNumber, role) is null
-     */
     @Test
-    public void shouldThrowExceptionWhenCreatingUserWithNullFields() {
-
+    void shouldThrowExceptionWhenCreatingUserWithNullFields() {
         User invalidUser = new User();
 
         assertThrows(IllegalArgumentException.class, () -> {
             if (invalidUser.getEmail() == null || invalidUser.getPassword() == null || invalidUser.getImageUrl() == null
                     || invalidUser.getPhoneNumber() == null || invalidUser.getRole() == null
                     || invalidUser.getAddress() == null) {
-                throw new IllegalArgumentException("Required fields are missing!");
+                throw new IllegalArgumentException(REQUIRED_FIELDS_MISSING_MSG);
             }
             userService.createUser(invalidUser);
         });
 
         verify(userRepository, times(0)).save(user);
-
     }
 
-    /**
-     * Test case to verify that the method `createUser` successfully saves a
-     * user with optional null fields.
-     *
-     * This test case creates a new `Role` object with an ID of 1 and the role
-     * name "USER". It then creates a new `User` object with an ID of 1, an
-     * email of "ahmed@gmail.com", a password of "12345678", a phone number of
-     * "01021545629", an image URL of "http://example.com/image.png", and the
-     * previously created `Role` object.
-     *
-     * The `createUser` method is then called with the newly created `User`
-     * object as the parameter.
-     *
-     * Finally, the `verify` method is called on the `userRepository` mock,
-     * passing in the `save` method and the `user` object as parameters. This
-     * verifies that the `save` method was called exactly once with the `user`
-     * object as the parameter.
-     *
-     * @throws None
-     * @return None
-     */
     @Test
-    public void shouldSaveUserWithOptionalNullFields() {
-
+    void shouldSaveUserWithOptionalNullFields() {
         user.setFullName(null);
-
         userService.createUser(user);
-
         verify(userRepository, times(1)).save(user);
-
     }
 
-    /**
-     * Test case to verify that the method `deleteUser` returns a successful
-     * response when the user exists.
-     *
-     * This test case mocks the `findByEmail` method of the `userRepository` to
-     * return an `Optional` containing the `user` object. Then, the `deleteUser`
-     * method is called with the email of the user.
-     *
-     * The test verifies that the `findByEmail` method is called exactly once
-     * with the email of the user as the parameter. It also verifies that the
-     * `delete` method is called exactly once with the user object as the
-     * parameter. Finally, it asserts that the response message is "Success
-     * Deleted User!" and the status code is 200.
-     *
-     * @throws None
-     * @return None
-     */
     @Test
-    void shouldReturnSuccessWhenDeletingUserIsExist() {
-
+    void shouldReturnSuccessWhenDeletingUserExists() {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         ResponseEntity<ApiResponseDTO> response = userService.deleteUser(user.getEmail());
 
         verify(userRepository, times(1)).findByEmail(user.getEmail());
         verify(userRepository, times(1)).delete(user);
-        assertEquals("Success Deleted User!", response.getBody().getMessage());
-        assertEquals(200, response.getStatusCode().value());
-
+        assertEquals(SUCCESS_DELETED_USER_MSG, response.getBody().getMessage());
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
     }
 
-    /**
-     * This test case verifies that a NotFoundException is thrown when
-     * attempting to delete a user that does not exist.
-     *
-     * @throws None
-     * @return None
-     */
     @Test
     void shouldThrowNotFoundExceptionWhenDeletingUserDoesNotExist() {
-
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
 
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
-            userService.deleteUser(user.getEmail());
-        });
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.deleteUser(user.getEmail()));
+        assertEquals(USER_NOT_FOUND_MSG, exception.getMessage());
 
         verify(userRepository, times(1)).findByEmail(user.getEmail());
         verify(userRepository, never()).delete(any(User.class));
-        assertEquals("USER Not Found!", exception.getMessage());
-
     }
 
+    @Test
+    void shouldUpdateUserImageSuccessfully() throws IOException {
+        UpdateUserImageRequest request = new UpdateUserImageRequest();
+        request.setEmail("ahmed@gmail.com");
+        request.setOldImageUrl(imageUrl);
+        request.setImage(multipartFile);
+
+        when(fileHelper.uploadFileToFileSystem(request.getImage())).thenReturn(imageUrl);
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+
+        ResponseEntity<Map<String, String>> response = userService.updateUserImage(request);
+
+        verify(fileHelper, times(1)).deleteImageFromFileSystem(request.getOldImageUrl());
+        verify(fileHelper, times(1)).uploadFileToFileSystem(request.getImage());
+        verify(userRepository, times(1)).updateImageByEmail(request.getEmail(), imageUrl);
+
+        assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
+        assertEquals(imageUrl, response.getBody().get("imageUrl"));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenImageUploadFails() throws IOException {
+        UpdateUserImageRequest request = new UpdateUserImageRequest();
+        request.setEmail("ahmed@gmail.com");
+        request.setOldImageUrl(imageUrl);
+        request.setImage(multipartFile);
+
+        when(fileHelper.uploadFileToFileSystem(request.getImage())).thenThrow(new IOException(UPLOAD_FAILED_MSG));
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+
+        IOException exception = assertThrows(IOException.class, () -> userService.updateUserImage(request));
+        assertEquals(UPLOAD_FAILED_MSG, exception.getMessage());
+
+        verify(fileHelper, times(1)).deleteImageFromFileSystem(request.getOldImageUrl());
+        verify(userRepository, times(0)).updateImageByEmail(request.getEmail(), null);
+    }
+
+    @Test
+    void shouldHandleExceptionWhenDeletingOldImageFails() throws IOException {
+        UpdateUserImageRequest request = new UpdateUserImageRequest();
+        request.setEmail("ahmed@gmail.com");
+        request.setOldImageUrl(imageUrl);
+        request.setImage(multipartFile);
+
+        when(fileHelper.deleteImageFromFileSystem(request.getOldImageUrl())).thenThrow(new IOException(DELETE_FAILED_MSG));
+        when(fileHelper.uploadFileToFileSystem(request.getImage())).thenReturn(imageUrl);
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+
+        IOException exception = assertThrows(IOException.class, () -> userService.updateUserImage(request));
+        assertEquals(DELETE_FAILED_MSG, exception.getMessage());
+
+        verify(userRepository, times(0)).updateImageByEmail(request.getEmail(), null);
+    }
+
+    @Test
+    void shouldUpdateUserProfileSuccessfully() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        UpdateUserProfileRequest request = new UpdateUserProfileRequest();
+        request.setEmail("ahmed@gmail.com");
+        request.setCity("Los Angeles");
+        request.setState("California");
+        request.setStreet("Main St");
+        request.setZipCode("90001");
+
+        UpdateUserProfileResponseDTO expectedResponse = new UpdateUserProfileResponseDTO(
+                user.getFullName(), user.getPhoneNumber(), request.getState(),
+                request.getCity(), request.getStreet(), request.getZipCode()
+        );
+
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+        when(mapper.updateUserProfileRequestTOUser(request, user)).thenReturn(user);
+        when(mapper.updateUserProfileRequestTOUpdateUserProfileResponse(request)).thenReturn(expectedResponse);
+
+        UpdateUserProfileResponseDTO response = userService.updateUserProfile(request);
+
+        verify(userRepository, times(1)).findByEmail(request.getEmail());
+        verify(mapper, times(1)).updateUserProfileRequestTOUser(request, user);
+        verify(userRepository, times(1)).save(user);
+
+        assertEquals(expectedResponse, response);
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenUserProfileUpdateUserNotFound() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        UpdateUserProfileRequest request = new UpdateUserProfileRequest();
+        request.setEmail("notfound@gmail.com");
+
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
+
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.updateUserProfile(request));
+        assertEquals(USER_NOT_FOUND_MSG, exception.getMessage());
+    }
+
+    @Test
+    void shouldHandleExceptionWhenUpdatingUserProfileFails() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        UpdateUserProfileRequest request = new UpdateUserProfileRequest();
+        request.setEmail("ahmed@gmail.com");
+
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
+        doThrow(new IllegalArgumentException(MAPPING_FAILED_MSG)).when(mapper).updateUserProfileRequestTOUser(request, user);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> userService.updateUserProfile(request));
+        assertEquals(MAPPING_FAILED_MSG, exception.getMessage());
+
+        verify(userRepository, times(1)).findByEmail(request.getEmail());
+        verify(userRepository, never()).save(user);
+    }
 }

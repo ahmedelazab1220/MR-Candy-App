@@ -13,7 +13,7 @@ import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
 import com.luv2code.demo.dto.response.CategoryResponseDTO;
 import com.luv2code.demo.dto.response.CompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
-import com.luv2code.demo.dto.response.UpdateUserProfileResponse;
+import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.dto.response.UserAuthenticationResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
 import com.luv2code.demo.entity.Cart;
@@ -37,7 +37,7 @@ public interface SystemMapper {
     
     User updateUserProfileRequestTOUser(UpdateUserProfileRequest updateUserProfileRequest, @MappingTarget User user);
 
-    UpdateUserProfileResponse updateUserProfileRequestTOUpdateUserProfileResponse(UpdateUserProfileRequest updateUserProfileRequest);
+    UpdateUserProfileResponseDTO updateUserProfileRequestTOUpdateUserProfileResponse(UpdateUserProfileRequest updateUserProfileRequest);
     
     Category categoryRequestDTOTOCategory(CategoryRequestDTO categoryRequestDTO);
 

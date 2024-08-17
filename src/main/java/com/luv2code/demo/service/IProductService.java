@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
-import com.luv2code.demo.dto.response.DiscountedProductsResponse;
+import com.luv2code.demo.dto.response.DiscountedProductsResponseDTO;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
@@ -33,7 +33,7 @@ public interface IProductService {
 
     List<ProductBestSellerResponseDTO> getTopSevenProductsWithBestSeller();
     
-    List<DiscountedProductsResponse> getAllProductsWithDiscount();
+    List<DiscountedProductsResponseDTO> getAllDiscountedProduct();
 
     ProductDetailsResponseDTO getProductDetailsById(Long theId);
 

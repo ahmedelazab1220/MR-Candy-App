@@ -25,6 +25,7 @@ import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
+import com.luv2code.demo.dto.response.DiscountedProductsResponseDTO;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
@@ -772,6 +773,51 @@ class ProductServiceTest {
 
         verify(productRepository, times(1)).updateProductQuantity(productId, newQuantity);
 
+    }
+    
+    @Test
+    void shouldReturnAllDiscountedProducts() {
+
+        DiscountedProductsResponseDTO discountedProductDTO = new DiscountedProductsResponseDTO();
+        List<DiscountedProductsResponseDTO> discountedProductsList = List.of(discountedProductDTO);
+
+        when(productRepository.findAllProductsWithDiscount()).thenReturn(discountedProductsList);
+
+        List<DiscountedProductsResponseDTO> result = productService.getAllDiscountedProduct();
+
+        assertNotNull(result);
+        assertEquals(discountedProductsList, result);
+        verify(productRepository, times(1)).findAllProductsWithDiscount();
+        
+    }
+    
+    @Test
+    void shouldReturnEmptyListWhenNoDiscountedProducts() {
+        
+    	List<DiscountedProductsResponseDTO> emptyDiscountedProductsList = List.of();
+
+        when(productRepository.findAllProductsWithDiscount()).thenReturn(emptyDiscountedProductsList);
+
+        List<DiscountedProductsResponseDTO> result = productService.getAllDiscountedProduct();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(productRepository, times(1)).findAllProductsWithDiscount();
+        
+    }
+    
+    @Test
+    void shouldHandleExceptionWhenFetchingDiscountedProducts() {
+        
+    	when(productRepository.findAllProductsWithDiscount()).thenThrow(new RuntimeException("Database error"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            productService.getAllDiscountedProduct();
+        });
+
+        assertEquals("Database error", exception.getMessage());
+        verify(productRepository, times(1)).findAllProductsWithDiscount();
+        
     }
 
 }

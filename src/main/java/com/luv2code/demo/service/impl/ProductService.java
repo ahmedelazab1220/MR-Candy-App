@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
-import com.luv2code.demo.dto.response.DiscountedProductsResponse;
+import com.luv2code.demo.dto.response.DiscountedProductsResponseDTO;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
@@ -250,7 +250,7 @@ public class ProductService implements IProductService {
     }
 
 	@Override
-	public List<DiscountedProductsResponse> getAllProductsWithDiscount() {
+	public List<DiscountedProductsResponseDTO> getAllDiscountedProduct() {
 		
 		log.info("Fetching All Products With Discount.");
 		

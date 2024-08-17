@@ -19,31 +19,33 @@ import com.luv2code.demo.entity.Cart;
 public interface CartRepository extends JpaRepository<Cart, Long> {
 
 	@Override
-	@EntityGraph(attributePaths = {"cartItem"})
-	Optional<Cart> findById(Long id);
+	@EntityGraph(attributePaths = { "cartItem" })
+	Optional<Cart> findById(@Param("id") Long id);
+
+	@Override
+	@EntityGraph(attributePaths = { "cartItem" })
+	List<Cart> findAllById(@Param("id") Iterable<Long> id);
 	
 	@Modifying
-    @Transactional
-    @Query(value = "UPDATE products p " +
-            "JOIN cart_items ci ON p.id = ci.product_id " +
-            "SET p.quantity = COALESCE(p.quantity, 0) + :quantity " +
-            "WHERE ci.cart_id = :cartId", nativeQuery = true)
-    Integer updateProductQuantity(@Param("cartId") Long cartId , @Param("quantity") Integer quantity);
-	
-	
-	@Query(value = "SELECT new com.luv2code.demo.dto.ProductGetterDTO(p.id, p.name, p.quantity, ci.quantity) " +
-            "FROM Cart c " +
-            "JOIN c.cartItem ci " +
-            "JOIN ci.product p " +
-            "WHERE c.id = :cartId")
-    Optional<ProductGetterDTO> findProductGetterDTO(@Param("cartId") Long cartId);
-	
-	@Query(value = "SELECT new com.luv2code.demo.dto.response.CartItemResponseDTO(p.id, p.name, p.description, cp.name, ci.quantity, ci.price, c.id) " +
-            "FROM Cart c " +
-            "JOIN c.cartItem ci " +
-            "JOIN ci.product p " +
-            "JOIN p.company cp " +
-            "WHERE c.user.id = :userId")
-	List<CartItemResponseDTO> findAllCartItemsWithUserID(@Param("userId") Long userId);
-	
+	@Transactional
+	@Query(value = "UPDATE products p " + "JOIN cart_items ci ON p.id = ci.product_id "
+			+ "SET p.quantity = COALESCE(p.quantity, 0) + :quantity "
+			+ "WHERE ci.cart_id = :cartId", nativeQuery = true)
+	Integer updateProductQuantity(@Param("cartId") Long cartId, @Param("quantity") Integer quantity);
+
+	@Modifying
+	@Transactional
+	@Query(value = "UPDATE cart_items ci " + "SET ci.quantity = :quantity "
+			+ "WHERE ci.cart_id = :cartId", nativeQuery = true)
+	Integer updateCartItemQuantity(@Param("cartId") Long cartId, @Param("quantity") Integer quantity);
+
+	@Query(value = "SELECT new com.luv2code.demo.dto.ProductGetterDTO(p.id, p.name, p.quantity, ci.quantity) "
+			+ "FROM Cart c " + "JOIN c.cartItem ci " + "JOIN ci.product p " + "WHERE c.id = :cartId")
+	Optional<ProductGetterDTO> findProductGetterDTO(@Param("cartId") Long cartId);
+
+	@Query(value = "SELECT new com.luv2code.demo.dto.response.CartItemResponseDTO(p.id, p.name, p.description, cp.name, ci.quantity, ci.price, c.id) "
+			+ "FROM Cart c " + "JOIN c.user u " + "JOIN c.cartItem ci " + "JOIN ci.product p " + "JOIN p.company cp "
+			+ "WHERE u.email = :userEmail")
+	List<CartItemResponseDTO> findAllCartItemsWithUserEmail(@Param("userEmail") String userEmail);
+
 }

@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.ProductCartSetterDTO;
 import com.luv2code.demo.dto.ProductSetterDTO;
-import com.luv2code.demo.dto.response.DiscountedProductsResponse;
+import com.luv2code.demo.dto.response.DiscountedProductsResponseDTO;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
@@ -46,10 +46,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 			+ "FROM Product p " + "ORDER BY p.salesCount DESC")
 	List<ProductBestSellerResponseDTO> findTopBestSellers(Pageable pageable);
 
-	@Query("SELECT new com.luv2code.demo.dto.response.DiscountedProductsResponse("
+	@Query("SELECT new com.luv2code.demo.dto.response.DiscountedProductsResponseDTO("
 			+ "p.id, p.description, p.discount, p.imageUrl, p.price, c.name) " + "FROM Product p " + "JOIN p.company c "
 			+ "WHERE p.discount IS NOT NULL")
-	List<DiscountedProductsResponse> findAllProductsWithDiscount();
+	List<DiscountedProductsResponseDTO> findAllProductsWithDiscount();
 
 	@Query("SELECT new com.luv2code.demo.dto.response.ProductDetailsResponseDTO("
 			+ "p.id, p.type, p.imageUrl, p.description, p.size, p.price, p.quantity, "

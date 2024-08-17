@@ -15,15 +15,15 @@ public class CartItemResponseDTO {
 
 	private Long productId;
 
-    private String name;
+    private String productName;
     
-    private String description;
+    private String productDescription;
     
-    private String companyName;
+    private String productCompanyName;
 
-    private Integer quantity;
+    private Integer cartItemQuantity;
     
-    private BigDecimal price;
+    private BigDecimal cartItemPrice;
     
     private Long cartId;
 	

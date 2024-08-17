@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,12 +55,15 @@ public class Product {
     private Integer quantity;
 
     @Column(name = "size")
+    @Size(min=4 , message = "length of size must be greater then or equal four")
     private String size;
 
     @Column(name = "type")
+    @Size(min=3 , message = "length of type must be greater then or equal three")
     private String type;
 
     @Column(name = "discount")
+    @Size(min=5 , message = "length of type must be greater then or equal five")
     private String discount;
 
     @Column(name = "created_at", nullable = false)
