@@ -6,45 +6,46 @@ This project is a comprehensive application built using Spring Boot. It integrat
 
 ## Technologies Used
 
-- **`Spring Boot (lastest version 3.3.2)`**: A powerful, feature-rich framework for building Java applications.
-- **`Spring Data JPA`**: Simplifies database interactions by providing a robust data access layer.
-- **`Spring Security`**: Utilized along with JSON Web Tokens (`JWT`) for secure access to the application's endpoints.
-- **`JUnit & Mockito`**: Testing frameworks for unit and integration tests.
-- **`Firebase`**: Integration for notifications and additional services.
-- **`Logging`**: For application-level logging.
-- **`HikariCP`**: High-performance JDBC connection pool.
-- **`Spring Batch`**: Handles batch processing tasks efficiently.
-- **`MySQL`**: A reliable relational database management system used for storing the application's data.
-- **`Java 21`**: The latest long-term support (LTS) version of Java, offering new features and improvements.
-- **`MapStruct`**: Simplifies mapping between layers.
-- **`Spring DevTools`**: Enhances development experience by providing hot reloading and other useful features.
-- **`Lombok`**: Reduces boilerplate code by providing annotations to automatically generate getters, setters, constructors, and other common methods.
-- **`Hibernate ORM`**: An object-relational mapping (ORM) framework for Java applications, simplifying database interactions by mapping Java objects to database tables.
-- **`SOLID Principles`**: For clean and maintainable code.
-- **`Spring Validation`**: For validating user inputs.
-- **`DTO (Data Transfer Objects)`**: For data transfer between layers.
-- **`Projection`**: For retrieving specific data from repositories.
-- **`SQL Injection Protection`**: Safeguarding against SQL injection attacks.
-- **`Pagination`**: Efficiently handles large data sets by retrieving data in chunks.
+- **`Spring Boot (lastest version 3.3.2)`** : A powerful, feature-rich framework for building Java applications.
+- **`Spring Data JPA`** : Simplifies database interactions by providing a robust data access layer.
+- **`Spring Security`** : Utilized along with JSON Web Tokens (`JWT`) for secure access to the application's endpoints.
+- **`JUnit & Mockito`** : Testing frameworks for unit and integration tests.
+- **`Firebase`** : Integration for notifications and additional services.
+- **`Logging`** : For application-level logging.
+- **`HikariCP`** : High-performance JDBC connection pool.
+- **`Spring Batch`** : Handles batch processing tasks efficiently.
+- **`MySQL`** : A reliable relational database management system used for storing the application's data.
+- **`Java 21`** : The latest long-term support (LTS) version of Java, offering new features and improvements.
+- **`MapStruct`** : Simplifies mapping between layers.
+- **`Spring DevTools`** : Enhances development experience by providing hot reloading and other useful features.
+- **`Lombok`** : Reduces boilerplate code by providing annotations to automatically generate getters, setters, constructors, and other common methods.
+- **`Hibernate ORM`** : An object-relational mapping (ORM) framework for Java applications, simplifying database interactions by mapping Java objects to database tables.
+- **`SOLID Principles`** : For clean and maintainable code.
+- **`Spring Validation`** : For validating user inputs.
+- **`DTO (Data Transfer Objects)`** : For data transfer between layers.
+- **`Projection`** : For retrieving specific data from repositories.
+- **`SQL Injection Protection`** : Safeguarding against SQL injection attacks.
+- **`Pagination`** : Efficiently handles large data sets by retrieving data in chunks.
 
 ## Features
 
-- **`User Authentication`**: Secure login with JWT and refresh tokens.
-- **`Email Verification`**: Sends verification emails and confirms user addresses.
-- **`Firebase Integration`**: Utilize Firebase for additional features.
-- **`Batch Processing`**: Handle large data sets and processing tasks.
-- **`Bulk Operations`**: Efficiently manage bulk delete operations.
-- **`Logical Operations`**: For complex business logic.
-- **`Role-Based Access Control`**: Provides different levels of access based on user roles.
-- **`Secure Data Handling`**: Ensures protection against SQL injection and other security threats.
-- **`Pagination`**: Handles data retrieval efficiently in chunks to improve performance.
-- **`Database Indexs`**: Enhance database query performance by creating indexes on frequently searched columns.
-- **`Stored Procedures`**: Predefined SQL procedures stored in the database to encapsulate complex logic and improve performance.
+- **`User Authentication`** : Secure login with JWT and refresh tokens.
+- **`Email Verification`** : Sends verification emails and confirms user addresses.
+- **`Firebase Integration`** : Utilize Firebase for additional features.
+- **`Batch Processing`** : Handle large data sets and processing tasks.
+- **`Bulk Operations`** : Efficiently manage bulk delete operations.
+- **`Logical Operations`** : For complex business logic.
+- **`Role-Based Access Control`** : Provides different levels of access based on user roles.
+- **`Secure Data Handling`** : Ensures protection against SQL injection and other security threats.
+- **`Pagination`** : Handles data retrieval efficiently in chunks to improve performance.
+- **`Database Indexs`** : Enhance database query performance by creating indexes on frequently searched columns.
+- **`Stored Procedures`** : Predefined SQL procedures stored in the database to encapsulate complex logic and improve performance.
 
 ## Project Structure
 
 ```
 
+MR-Candy-App
 │
 ├── src
 │ ├── main
@@ -185,7 +186,7 @@ This project is a comprehensive application built using Spring Boot. It integrat
 - **`Clone the repository`**:
 
   - git clone https://github.com/ahmedelazab1220/MR-Candy-App
-  - you can also download Zip file and extract.
+  - you can also download Zip file and extract it.
 
 - **`Set up the MySQL database`**:
 
