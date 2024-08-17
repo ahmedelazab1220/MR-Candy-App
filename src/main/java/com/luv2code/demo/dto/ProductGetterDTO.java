@@ -11,12 +11,12 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ProductGetterDTO {
 
-	private Long id;
-	
-	private String name;
-	
-	private Integer quantity;
-	
-	private Integer cartItemQuantity;
-	
+    private Long id;
+
+    private String name;
+
+    private Integer quantity;
+
+    private Integer cartItemQuantity;
+
 }

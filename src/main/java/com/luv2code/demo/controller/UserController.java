@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,38 +28,42 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class UserController {
 
-	private final IUserService userService;
-	
-	@PutMapping("/image")
-	public ResponseEntity<Map<String,String>> updateUserImage(@Valid @ModelAttribute UpdateUserImageRequest upadImageRequest) throws IOException{
-		
-		return userService.updateUserImage(upadImageRequest);
-		
-	}
-	
-	@PutMapping("")
-	public UpdateUserProfileResponseDTO updateUserProfile(@Valid @RequestBody UpdateUserProfileRequest updateUserProfileRequest) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException{
-		
-		 return userService.updateUserProfile(updateUserProfileRequest);
-		 
-	}
-	
-	@DeleteMapping("")
-	public ResponseEntity<ApiResponseDTO> deleteUserAccount(@RequestParam String email){
-		
-		return userService.deleteUser(email);
-		
-	}
-	
-	@PutMapping("/pass")
-	public ResponseEntity<ApiResponseDTO> updateUserPassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO){
-		
-		if(changePasswordRequestDTO.getOldPassword() == null) {
-			throw new IllegalArgumentException("Old password must not be null");
-		}
-		
-		return userService.UpdatePassword(changePasswordRequestDTO);
-		
-	}
-	
+    private final IUserService userService;
+
+    @PutMapping("/image")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Map<String, String>> updateUserImage(@Valid @ModelAttribute UpdateUserImageRequest upadImageRequest) throws IOException {
+
+        return userService.updateUserImage(upadImageRequest);
+
+    }
+
+    @PutMapping("")
+    @PreAuthorize("hasRole('USER')")
+    public UpdateUserProfileResponseDTO updateUserProfile(@Valid @RequestBody UpdateUserProfileRequest updateUserProfileRequest) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+
+        return userService.updateUserProfile(updateUserProfileRequest);
+
+    }
+
+    @DeleteMapping("")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ApiResponseDTO> deleteUserAccount(@RequestParam String email) {
+
+        return userService.deleteUser(email);
+
+    }
+
+    @PutMapping("/pass")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<ApiResponseDTO> updateUserPassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequestDTO) {
+
+        if (changePasswordRequestDTO.getOldPassword() == null) {
+            throw new IllegalArgumentException("Old password must not be null");
+        }
+
+        return userService.UpdatePassword(changePasswordRequestDTO);
+
+    }
+
 }

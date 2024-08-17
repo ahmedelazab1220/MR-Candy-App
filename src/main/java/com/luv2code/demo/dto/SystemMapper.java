@@ -34,11 +34,11 @@ public interface SystemMapper {
     UserSetterDTO userTOUserSetterDTO(User user);
 
     User userSetterDTOTOUser(UserSetterDTO userSetterDTO);
-    
+
     User updateUserProfileRequestTOUser(UpdateUserProfileRequest updateUserProfileRequest, @MappingTarget User user);
 
     UpdateUserProfileResponseDTO updateUserProfileRequestTOUpdateUserProfileResponse(UpdateUserProfileRequest updateUserProfileRequest);
-    
+
     Category categoryRequestDTOTOCategory(CategoryRequestDTO categoryRequestDTO);
 
     CategoryResponseDTO categoryTOCategoryResponseDTO(Category category);

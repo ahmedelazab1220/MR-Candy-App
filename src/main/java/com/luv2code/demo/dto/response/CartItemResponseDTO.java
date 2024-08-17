@@ -13,18 +13,18 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CartItemResponseDTO {
 
-	private Long productId;
+    private Long productId;
 
     private String productName;
-    
+
     private String productDescription;
-    
+
     private String productCompanyName;
 
     private Integer cartItemQuantity;
-    
+
     private BigDecimal cartItemPrice;
-    
+
     private Long cartId;
-	
+
 }

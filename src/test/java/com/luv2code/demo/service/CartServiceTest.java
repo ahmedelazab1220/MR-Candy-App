@@ -59,7 +59,13 @@ class CartServiceTest {
     private static final int CART_ITEM_QUANTITY = 5;
     private static final Long PRODUCT_ID = 1L;
     private static final Long CART_ITEM_ID = 1L;
-    
+
+    /**
+     * Sets up the necessary mocks for the test class before each test method is
+     * executed.
+     *
+     * @return none
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -80,6 +86,12 @@ class CartServiceTest {
         return new CartRequestDTO(TEST_EMAIL, new CartItemRequestDTO(productId, quantity, PRODUCT_PRICE));
     }
 
+    /**
+     * Verifies that adding a cart item is successful by asserting the response
+     * DTO values.
+     *
+     * @return void
+     */
     @Test
     void shouldAddCartItemSuccessfully() {
         CartRequestDTO cartRequestDTO = createCartRequestDTO(PRODUCT_ID, CART_ITEM_QUANTITY);
@@ -97,19 +109,25 @@ class CartServiceTest {
         CartItemResponseDTO responseDTO = cartService.addCartItem(cartRequestDTO);
 
         assertAll("Verify response DTO",
-            () -> assertEquals(product.getId(), responseDTO.getProductId()),
-            () -> assertEquals(product.getName(), responseDTO.getProductName()),
-            () -> assertEquals(product.getDescription(), responseDTO.getProductDescription()),
-            () -> assertEquals(product.getCompany().getName(), responseDTO.getProductCompanyName()),
-            () -> assertEquals(cartRequestDTO.getCartItems().getQuantity(), responseDTO.getCartItemQuantity()),
-            () -> assertEquals(cartRequestDTO.getCartItems().getPrice(), responseDTO.getCartItemPrice()),
-            () -> assertEquals(cart.getId(), responseDTO.getCartId())
+                () -> assertEquals(product.getId(), responseDTO.getProductId()),
+                () -> assertEquals(product.getName(), responseDTO.getProductName()),
+                () -> assertEquals(product.getDescription(), responseDTO.getProductDescription()),
+                () -> assertEquals(product.getCompany().getName(), responseDTO.getProductCompanyName()),
+                () -> assertEquals(cartRequestDTO.getCartItems().getQuantity(), responseDTO.getCartItemQuantity()),
+                () -> assertEquals(cartRequestDTO.getCartItems().getPrice(), responseDTO.getCartItemPrice()),
+                () -> assertEquals(cart.getId(), responseDTO.getCartId())
         );
 
         verify(productService).updateProductQuantityById(product.getId(), product.getQuantity() - cartRequestDTO.getCartItems().getQuantity());
         verify(cartRepository).save(any(Cart.class));
     }
 
+    /**
+     * Verifies that adding a cart item throws a QuantityNotAvailableException
+     * when the requested quantity exceeds the available stock.
+     *
+     * @return void
+     */
     @Test
     void shouldThrowQuantityNotAvailableExceptionWhenQuantityExceedsAvailableStock() {
         CartRequestDTO cartRequestDTO = createCartRequestDTO(PRODUCT_ID, PRODUCT_QUANTITY + 5);
@@ -123,6 +141,12 @@ class CartServiceTest {
         verify(cartRepository, never()).save(any(Cart.class));
     }
 
+    /**
+     * Verifies that the cart service handles exceptions properly when the
+     * product service fails.
+     *
+     * @return void
+     */
     @Test
     void shouldHandleExceptionWhenProductServiceFails() {
         CartRequestDTO cartRequestDTO = createCartRequestDTO(PRODUCT_ID, CART_ITEM_QUANTITY);
@@ -136,6 +160,11 @@ class CartServiceTest {
         verify(cartRepository, never()).save(any(Cart.class));
     }
 
+    /**
+     * Verifies that deleting a cart item is successful.
+     *
+     * @return void
+     */
     @Test
     void shouldDeleteCartItemSuccessfully() {
         Cart cart = new Cart();
@@ -155,6 +184,12 @@ class CartServiceTest {
         verify(cartRepository).delete(cart);
     }
 
+    /**
+     * Verifies that a NotFoundException is thrown when attempting to delete a
+     * cart item that does not exist.
+     *
+     * @return void
+     */
     @Test
     void shouldThrowNotFoundExceptionWhenCartItemNotFoundWhenDeletingCart() {
         when(cartRepository.findById(CART_ITEM_ID)).thenReturn(Optional.empty());
@@ -167,6 +202,12 @@ class CartServiceTest {
         verify(cartRepository, never()).delete(any());
     }
 
+    /**
+     * Verifies that a RuntimeException is thrown when attempting to delete a
+     * cart item and the deletion operation fails.
+     *
+     * @return void
+     */
     @Test
     void shouldHandleExceptionWhenDeletingCartItemFails() {
         Cart cart = new Cart();
@@ -183,6 +224,11 @@ class CartServiceTest {
         verify(cartRepository).delete(cart);
     }
 
+    /**
+     * Test case for updating the quantity of a cart item successfully.
+     *
+     * @return void
+     */
     @Test
     void shouldUpdateCartItemQuantitySuccessfully() {
 
@@ -204,9 +250,15 @@ class CartServiceTest {
         verify(cartRepository).findProductGetterDTO(PRODUCT_ID);
         verify(cartRepository).updateCartItemQuantity(PRODUCT_ID, newQuantity);
         verify(productService).updateProductQuantityById(PRODUCT_ID, updatedQuantity);
-        
+
     }
 
+    /**
+     * Verifies that updating a cart item throws a QuantityNotAvailableException
+     * when the requested quantity exceeds the available quantity.
+     *
+     * @return void
+     */
     @Test
     void shouldThrowQuantityNotAvailableExceptionWhenRequestedQuantityExceedsAvailableQuantity() {
         Integer newQuantity = 15;
@@ -222,6 +274,12 @@ class CartServiceTest {
         verify(productService, never()).updateProductQuantityById(anyLong(), anyInt());
     }
 
+    /**
+     * Verifies that updating a cart item handles exceptions when updating the
+     * cart item quantity fails.
+     *
+     * @return void
+     */
     @Test
     void shouldHandleExceptionWhenUpdatingCartItemQuantityFails() {
         Integer newQuantity = 5;
@@ -238,6 +296,11 @@ class CartServiceTest {
         verify(productService, never()).updateProductQuantityById(anyLong(), anyInt());
     }
 
+    /**
+     * Verifies that retrieving all cart items for a user email is successful.
+     *
+     * @return void
+     */
     @Test
     void shouldGetAllCartItemsForUserEmailSuccessfully() {
         CartItemResponseDTO item1 = new CartItemResponseDTO(1L, "Product1", "Description1", "Company1", 2, BigDecimal.valueOf(10.0), 101L);
@@ -249,12 +312,17 @@ class CartServiceTest {
         ResponseEntity<Map<String, Object>> response = cartService.getAllCartItemsForUserEmail(TEST_EMAIL);
 
         assertAll("Verify response",
-            () -> assertEquals(200, response.getStatusCode().value()),
-            () -> assertEquals(BigDecimal.valueOf(30.0), response.getBody().get("total_price")),
-            () -> assertEquals(cartItems, response.getBody().get("cartItems"))
+                () -> assertEquals(200, response.getStatusCode().value()),
+                () -> assertEquals(BigDecimal.valueOf(30.0), response.getBody().get("total_price")),
+                () -> assertEquals(cartItems, response.getBody().get("cartItems"))
         );
     }
 
+    /**
+     * Verifies that the cart service handles an empty cart correctly.
+     *
+     * @return void
+     */
     @Test
     void shouldHandleEmptyCart() {
         when(cartRepository.findAllCartItemsWithUserEmail(TEST_EMAIL)).thenReturn(List.of());
@@ -262,12 +330,18 @@ class CartServiceTest {
         ResponseEntity<Map<String, Object>> response = cartService.getAllCartItemsForUserEmail(TEST_EMAIL);
 
         assertAll("Verify response",
-            () -> assertEquals(200, response.getStatusCode().value()),
-            () -> assertEquals(BigDecimal.ZERO, response.getBody().get("total_price")),
-            () -> assertEquals(List.of(), response.getBody().get("cartItems"))
+                () -> assertEquals(200, response.getStatusCode().value()),
+                () -> assertEquals(BigDecimal.ZERO, response.getBody().get("total_price")),
+                () -> assertEquals(List.of(), response.getBody().get("cartItems"))
         );
     }
 
+    /**
+     * Verifies that the cart service handles exceptions thrown by the
+     * repository correctly.
+     *
+     * @return void
+     */
     @Test
     void shouldHandleExceptionFromRepository() {
         when(cartRepository.findAllCartItemsWithUserEmail(anyString())).thenThrow(new RuntimeException("Database error"));
@@ -276,12 +350,19 @@ class CartServiceTest {
         assertEquals("Database error", thrown.getMessage());
     }
 
+    /**
+     * Test case to verify that the cart service handles a null user email
+     * correctly.
+     *
+     * @return void
+     */
     @Test
     void shouldHandleNullUserEmail() {
-    	try {
+        try {
             cartService.getAllCartItemsForUserEmail(null);
         } catch (IllegalArgumentException e) {
             assertEquals("User email cannot be null", e.getMessage());
         }
     }
+
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,6 +37,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<ApiResponseDTO> deleteCategory(@RequestParam(required = true) String name)
             throws IOException {
 
@@ -44,6 +46,7 @@ public class CategoryController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public CategoryResponseDTO createCategory(@Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO)
             throws IllegalStateException, IOException {
 
@@ -52,6 +55,7 @@ public class CategoryController {
     }
 
     @PutMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public CategoryResponseDTO updateCategory(@RequestParam(required = true) String categoryName,
             @Valid @ModelAttribute CategoryRequestDTO categoryRequestDTO) throws IllegalStateException, IOException {
 

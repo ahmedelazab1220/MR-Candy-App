@@ -33,7 +33,7 @@ CREATE TABLE roles (
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 )ENGINE=InnoDB;
 
-INSERT INTO roles (role) VALUES ('USER'), ('ADMIN');
+INSERT INTO roles (role) VALUES ('USER'), ('ADMIN'), ('MANAGER');
 
 -- Create users table
 CREATE TABLE users (

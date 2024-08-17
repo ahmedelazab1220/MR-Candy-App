@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DiscountedProductsResponseDTO {
 
-	private Long id;
+    private Long id;
 
     private String description;
 
@@ -22,7 +22,7 @@ public class DiscountedProductsResponseDTO {
     private String imageUrl;
 
     private BigDecimal price;
-    
+
     private String companyName;
-	
+
 }

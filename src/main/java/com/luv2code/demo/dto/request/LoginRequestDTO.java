@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LoginRequestDTO {
 
-	@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Invalid email address")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Invalid email address")
     @NotBlank
     private String email;
 

@@ -16,9 +16,9 @@ public class ProductCartSetterDTO {
     private Long id;
 
     private String name;
-    
+
     private String description;
-    
+
     private Company company;
 
     private Integer quantity;

@@ -58,14 +58,14 @@ public class AuthenticationController {
         return refreshTokenService.generateNewToken(refreshToken);
 
     }
-    
+
     @PostMapping("/logout")
-	public ResponseEntity<ApiResponseDTO> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<ApiResponseDTO> logout(HttpServletRequest request, HttpServletResponse response) {
 
-		logoutService.logout(request, response, null);
+        logoutService.logout(request, response, null);
 
-		return ResponseEntity.status(StatusCode.SUCCESS).body(new ApiResponseDTO("Successfully logged out."));
-		
-	}
+        return ResponseEntity.status(StatusCode.SUCCESS).body(new ApiResponseDTO("Successfully logged out."));
+
+    }
 
 }

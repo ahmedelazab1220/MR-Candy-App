@@ -68,12 +68,26 @@ public class UserServiceTest {
     private String imageUrl;
     private MultipartFile multipartFile;
 
+    /**
+     * This method is used to set up the test environment before each test. It
+     * initializes the Mockito annotations and sets up the test data.
+     *
+     * @return void
+     */
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
         setUpTestData();
     }
 
+    /**
+     * Sets up the test data for the UserServiceTest class.
+     *
+     * Initializes the multipartFile, imageUrl, role, address, and user objects
+     * with test data.
+     *
+     * @return void
+     */
     private void setUpTestData() {
         multipartFile = new MockMultipartFile("image", "image.png", "image/png", "imageContent".getBytes());
         imageUrl = "http://example.com/image.png";
@@ -91,10 +105,22 @@ public class UserServiceTest {
         user.setRole(role);
     }
 
+    /**
+     * Returns a UserTokenResponseDTO object with test data.
+     *
+     * @return a UserTokenResponseDTO object with test data
+     */
     private UserTokenResponseDTO getUserTokenResponseDTO() {
         return new UserTokenResponseDTO(1L, "ahmed", "ahmed@gmail.com", "01021045629", imageUrl, address, role);
     }
 
+    /**
+     * Test case to verify that the getUserTokenDetails method of the
+     * UserService returns the expected User object when given a valid email.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldGetUserTokenDetailsSuccessfully() {
         String email = "ahmed@gmail.com";
@@ -113,6 +139,14 @@ public class UserServiceTest {
         assertEquals(role, result.getRole());
     }
 
+    /**
+     * Test case to verify that the getUserTokenDetails method of the
+     * UserService throws a NotFoundException when the user token details are
+     * not found in the database.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldThrowNotFoundExceptionWhenUserTokenDetailsNotFound() {
         String email = "sara@gmail.com";
@@ -123,6 +157,14 @@ public class UserServiceTest {
         assertEquals(USER_NOT_FOUND_MSG, exception.getMessage());
     }
 
+    /**
+     * Test case to verify that the getUserTokenDetails method of the
+     * UserService throws a RuntimeException when the mapping from
+     * UserTokenResponseDTO to User fails.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldThrowExceptionWhenMappingFailsInGetUserTokenDetails() {
         String email = "ahmed@gmail.com";
@@ -135,6 +177,13 @@ public class UserServiceTest {
         assertEquals(MAPPING_FAILED_MSG, exception.getMessage());
     }
 
+    /**
+     * Test case to verify that the getUserTokenDetails method of the
+     * UserService handles null values correctly.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldHandleNullValuesWhenGetUserTokenDetails() {
         String email = "ahmed@gmail.com";
@@ -145,6 +194,14 @@ public class UserServiceTest {
         assertEquals(USER_NOT_FOUND_MSG, exception.getMessage());
     }
 
+    /**
+     * Test case to verify that the getUserTokenDetails method of the
+     * UserService handles invalid email input correctly and throws an
+     * IllegalArgumentException.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldHandleInvalidEmailInputWhenGetUserTokenDetails() {
         String email = "";
@@ -153,12 +210,27 @@ public class UserServiceTest {
         assertEquals(EMAIL_EMPTY_MSG, exception.getMessage());
     }
 
+    /**
+     * Test case to verify that the createUser method of the UserService is
+     * called successfully.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldCreateUserSuccessfully() {
         userService.createUser(user);
         verify(userRepository, times(1)).save(user);
     }
 
+    /**
+     * Test case to verify that the createUser method of the UserService throws
+     * an IllegalArgumentException when attempting to create a user with an
+     * email that already exists in the system.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldThrowExceptionWhenEmailAlreadyExistsWhenCreateUser() {
         when(userRepository.existsByEmail(user.getEmail())).thenThrow(new IllegalArgumentException(EMAIL_IN_USE_MSG));
@@ -169,6 +241,14 @@ public class UserServiceTest {
         verify(userRepository, times(0)).save(user);
     }
 
+    /**
+     * Test case to verify that the createUser method of the UserService throws
+     * an IllegalArgumentException when attempting to create a user with null
+     * fields.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldThrowExceptionWhenCreatingUserWithNullFields() {
         User invalidUser = new User();
@@ -185,6 +265,13 @@ public class UserServiceTest {
         verify(userRepository, times(0)).save(user);
     }
 
+    /**
+     * Test case to verify that the createUser method of the UserService saves a
+     * user successfully even when optional fields are null.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldSaveUserWithOptionalNullFields() {
         user.setFullName(null);
@@ -192,6 +279,13 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(user);
     }
 
+    /**
+     * Test case to verify that the deleteUser method of the UserService returns
+     * a successful response when attempting to delete a user that exists.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldReturnSuccessWhenDeletingUserExists() {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
@@ -204,6 +298,13 @@ public class UserServiceTest {
         assertEquals(HttpStatus.OK.value(), response.getStatusCode().value());
     }
 
+    /**
+     * Test case to verify that the deleteUser method of the UserService throws
+     * a NotFoundException when attempting to delete a user that does not exist.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldThrowNotFoundExceptionWhenDeletingUserDoesNotExist() {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
@@ -215,6 +316,13 @@ public class UserServiceTest {
         verify(userRepository, never()).delete(any(User.class));
     }
 
+    /**
+     * Test case to verify that the updateUserImage method of the UserService
+     * returns a successful response when attempting to update a user's image.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldUpdateUserImageSuccessfully() throws IOException {
         UpdateUserImageRequest request = new UpdateUserImageRequest();
@@ -235,6 +343,13 @@ public class UserServiceTest {
         assertEquals(imageUrl, response.getBody().get("imageUrl"));
     }
 
+    /**
+     * Test case to verify that the updateUserImage method of the UserService
+     * throws an IOException when attempting to upload a user's image fails.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldThrowExceptionWhenImageUploadFails() throws IOException {
         UpdateUserImageRequest request = new UpdateUserImageRequest();
@@ -252,6 +367,13 @@ public class UserServiceTest {
         verify(userRepository, times(0)).updateImageByEmail(request.getEmail(), null);
     }
 
+    /**
+     * Test case to verify that the updateUserImage method of the UserService
+     * handles an exception when deleting an old image fails.
+     *
+     * @param None
+     * @return None
+     */
     @Test
     void shouldHandleExceptionWhenDeletingOldImageFails() throws IOException {
         UpdateUserImageRequest request = new UpdateUserImageRequest();
@@ -269,6 +391,12 @@ public class UserServiceTest {
         verify(userRepository, times(0)).updateImageByEmail(request.getEmail(), null);
     }
 
+    /**
+     * Test case to verify that the updateUserProfile method of the UserService
+     * updates a user's profile successfully.
+     *
+     * @return None
+     */
     @Test
     void shouldUpdateUserProfileSuccessfully() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         UpdateUserProfileRequest request = new UpdateUserProfileRequest();
@@ -296,6 +424,18 @@ public class UserServiceTest {
         assertEquals(expectedResponse, response);
     }
 
+    /**
+     * Test case to verify that the updateUserProfile method of the UserService
+     * throws a NotFoundException when the user to be updated is not found.
+     *
+     * @throws NoSuchFieldException if a specified field is not found
+     * @throws SecurityException if a security manager exists and its
+     * checkPermission method denies access to the reflection
+     * @throws IllegalArgumentException if any argument is null or if the
+     * underlying constructor is an instance or static initializer
+     * @throws IllegalAccessException if this Method object is enforcing Java
+     * language access control and the underlying method is inaccessible
+     */
     @Test
     void shouldThrowNotFoundExceptionWhenUserProfileUpdateUserNotFound() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         UpdateUserProfileRequest request = new UpdateUserProfileRequest();
@@ -307,6 +447,18 @@ public class UserServiceTest {
         assertEquals(USER_NOT_FOUND_MSG, exception.getMessage());
     }
 
+    /**
+     * Test case to verify that the updateUserProfile method of the UserService
+     * handles exceptions when updating a user's profile fails.
+     *
+     * @throws NoSuchFieldException if a specified field is not found
+     * @throws SecurityException if a security manager exists and its
+     * checkPermission method denies access to the reflection
+     * @throws IllegalArgumentException if any argument is null or if the
+     * underlying constructor is an instance or static initializer
+     * @throws IllegalAccessException if this Method object is enforcing Java
+     * language access control and the underlying method is inaccessible
+     */
     @Test
     void shouldHandleExceptionWhenUpdatingUserProfileFails() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         UpdateUserProfileRequest request = new UpdateUserProfileRequest();

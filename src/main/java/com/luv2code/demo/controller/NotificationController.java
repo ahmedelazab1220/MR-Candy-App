@@ -16,13 +16,13 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class NotificationController {
 
-	private final IFirebaseMessagingService firebaseMessagingService;
-	
-	@PostMapping("")
-	public ResponseEntity<String> sendNotificationByToken(@RequestBody NotificationMessage notificationMessage){
-		
-		return firebaseMessagingService.sendNotificationByToken(notificationMessage);
-		
-	}
-	
+    private final IFirebaseMessagingService firebaseMessagingService;
+
+    @PostMapping("")
+    public ResponseEntity<String> sendNotificationByToken(@RequestBody NotificationMessage notificationMessage) {
+
+        return firebaseMessagingService.sendNotificationByToken(notificationMessage);
+
+    }
+
 }

@@ -14,20 +14,20 @@ import lombok.Setter;
 public class UpdateUserProfileResponseDTO {
 
     private String fullName;
-	
-	@NotBlank
-	@Pattern(regexp = "^01[0-2,5]{1}[0-9]{8}$", message = "Invalid phone number")
-	private String phoneNumber;
-	
-	@NotBlank
-	private String state;
-	
-	@NotBlank
-	private String city;
-	
-	@NotBlank
-	private String street;
-	
-	private String zipCode;
-	
+
+    @NotBlank
+    @Pattern(regexp = "^01[0-2,5]{1}[0-9]{8}$", message = "Invalid phone number")
+    private String phoneNumber;
+
+    @NotBlank
+    private String state;
+
+    @NotBlank
+    private String city;
+
+    @NotBlank
+    private String street;
+
+    private String zipCode;
+
 }

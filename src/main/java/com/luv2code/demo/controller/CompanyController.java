@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -36,6 +37,7 @@ public class CompanyController {
     }
 
     @DeleteMapping("")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<ApiResponseDTO> deleteCompany(@RequestParam(required = true) String name) throws IOException {
 
         return companyService.deleteCompany(name);
@@ -43,6 +45,7 @@ public class CompanyController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public CompanyResponseDTO createCompany(@Valid @ModelAttribute CompanyRequestDTO CompanyRequestDTO)
             throws IllegalStateException, IOException {
 
@@ -51,6 +54,7 @@ public class CompanyController {
     }
 
     @PutMapping("")
+    @PreAuthorize("hasRole('ADMIN')")
     public CompanyResponseDTO updateCompany(@RequestParam(required = true) String companyName,
             @Valid @ModelAttribute CompanyRequestDTO companyRequestDTO) throws IllegalStateException, IOException {
 

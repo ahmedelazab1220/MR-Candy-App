@@ -226,7 +226,7 @@ public class ProductService implements IProductService {
         if (product.isEmpty()) {
             log.warn("Product with ID {} not found", theId);
             throw new NotFoundException(NotFoundTypeException.PRODUCT + " Not Found!");
-        }        
+        }
 
         return product.get();
 
@@ -249,12 +249,12 @@ public class ProductService implements IProductService {
         return updateProduct;
     }
 
-	@Override
-	public List<DiscountedProductsResponseDTO> getAllDiscountedProduct() {
-		
-		log.info("Fetching All Products With Discount.");
-		
-		return productRepository.findAllProductsWithDiscount();
-	}
+    @Override
+    public List<DiscountedProductsResponseDTO> getAllDiscountedProduct() {
+
+        log.info("Fetching All Products With Discount.");
+
+        return productRepository.findAllProductsWithDiscount();
+    }
 
 }

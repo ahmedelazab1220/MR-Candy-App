@@ -16,14 +16,13 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-	@Override
-	@EntityGraph(attributePaths = { "orderItems" })
-	Optional<Order> findById(@Param("id") Long id);
+    @Override
+    @EntityGraph(attributePaths = {"orderItems"})
+    Optional<Order> findById(@Param("id") Long id);
 
-	@Modifying
+    @Modifying
     @Transactional
     @Query("DELETE FROM Order o WHERE o.id = :orderId")
-	void deleteOrderById(@Param("orderId") Long orderId);	
-	
+    void deleteOrderById(@Param("orderId") Long orderId);
 
 }

@@ -18,6 +18,7 @@ import com.luv2code.demo.entity.Cart;
 import com.luv2code.demo.entity.Order;
 import com.luv2code.demo.entity.OrderItem;
 import com.luv2code.demo.entity.Product;
+import com.luv2code.demo.exc.custom.CalculationException;
 import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.exc.custom.NotFoundTypeException;
 import com.luv2code.demo.repository.CartRepository;
@@ -34,108 +35,113 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 public class OrderService implements IOrderService {
 
-	private final OrderRepository orderRepository;
-	private final OrderItemRepository orderItemRepository;
-	private final CartRepository cartRepository;
-	private final IUserService userService;
-	
-	@Transactional
-	@Override
-	public ResponseEntity<Map<String, Object>> createOrder(String userEmail) {
-		log.info("Entering createOrder method for userEmail: {}", userEmail);
+    private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final CartRepository cartRepository;
+    private final IUserService userService;
 
-		List<CartItemResponseDTO> cartItemResponseDTOs = cartRepository.findAllCartItemsWithUserEmail(userEmail);
+    @Transactional
+    @Override
+    public ResponseEntity<Map<String, Object>> createOrder(String userEmail) {
+        log.info("Entering createOrder method for userEmail: {}", userEmail);
 
-		if (cartItemResponseDTOs.isEmpty()) {
-			log.error("No cart items found for userEmail: {}", userEmail);
-			throw new NotFoundException(NotFoundTypeException.CARTITEM + "S Not Found!");
-		}
+        List<CartItemResponseDTO> cartItemResponseDTOs = cartRepository.findAllCartItemsWithUserEmail(userEmail);
 
-		Order order = new Order();
-		List<OrderItemResponseDTO> orderItemResponseDTOs = new ArrayList<>();
-		List<OrderItem> orderItems = processOrderItems(cartItemResponseDTOs, orderItemResponseDTOs, order);
+        if (cartItemResponseDTOs.isEmpty()) {
+            log.error("No cart items found for userEmail: {}", userEmail);
+            throw new NotFoundException(NotFoundTypeException.CARTITEM + "S Not Found!");
+        }
 
-		order.setOrderItems(orderItems);
-		order.setTotalPrice(calculateOrderTotalPrice(orderItems));
-		order.setUser(userService.getUserSetterByEmail(userEmail));
-		
-		Order savedOrder = orderRepository.save(order);
+        Order order = new Order();
+        List<OrderItemResponseDTO> orderItemResponseDTOs = new ArrayList<>();
+        List<OrderItem> orderItems = processOrderItems(cartItemResponseDTOs, orderItemResponseDTOs, order);
 
-		deleteCarts(cartItemResponseDTOs);
+        order.setOrderItems(orderItems);
+        order.setTotalPrice(calculateOrderTotalPrice(orderItems));
+        order.setUser(userService.getUserSetterByEmail(userEmail));
 
-		log.info("Order created successfully with ID: {}", savedOrder.getId());
-		return ResponseEntity.ok(Map.of(
-				"orderId", savedOrder.getId(),
-				"orderRequestedAt", savedOrder.getCreatedAt(),
-				"OrderTotalPrice", order.getTotalPrice(),
-				"userOrders", orderItemResponseDTOs
-		));
-	}
+        if (order.getTotalPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new CalculationException("Total Price Is Negative, Please Make sure Of Product Price and retry!");
+        }
 
-	private List<OrderItem> processOrderItems(List<CartItemResponseDTO> cartItems,
-			List<OrderItemResponseDTO> orderItemResponseDTOs, Order order) {
-		log.info("Processing order items");
+        Order savedOrder = orderRepository.save(order);
 
-		List<OrderItem> orderItems = cartItems.stream().map(cartItemResponseDTO -> {
-			Product product = new Product();
-			product.setId(cartItemResponseDTO.getProductId());
-			product.setName(cartItemResponseDTO.getProductName());
+        deleteCarts(cartItemResponseDTOs);
 
-			OrderItem orderItem = new OrderItem();
-			orderItem.setProduct(product);
-			orderItem.setPrice(cartItemResponseDTO.getCartItemPrice());
-			orderItem.setQuantity(cartItemResponseDTO.getCartItemQuantity());
-			orderItem.setOrder(order);
+        log.info("Order created successfully with ID: {}", savedOrder.getId());
+        return ResponseEntity.ok(Map.of(
+                "orderId", savedOrder.getId(),
+                "orderRequestedAt", savedOrder.getCreatedAt(),
+                "OrderTotalPrice", order.getTotalPrice(),
+                "userOrders", orderItemResponseDTOs
+        ));
+    }
 
-			OrderItemResponseDTO orderItemResponseDTO = new OrderItemResponseDTO();
-			orderItemResponseDTO.setOrderItemPrice(orderItem.getPrice());
-			orderItemResponseDTO.setOrderItemQuantity(orderItem.getQuantity());
-			orderItemResponseDTO.setProductName(cartItemResponseDTO.getProductName());
-			orderItemResponseDTO.setProductCompanyName(cartItemResponseDTO.getProductCompanyName());
+    private List<OrderItem> processOrderItems(List<CartItemResponseDTO> cartItems,
+            List<OrderItemResponseDTO> orderItemResponseDTOs, Order order) {
+        log.info("Processing order items");
 
-			orderItemResponseDTOs.add(orderItemResponseDTO);
+        List<OrderItem> orderItems = cartItems.stream().map(cartItemResponseDTO -> {
+            Product product = new Product();
+            product.setId(cartItemResponseDTO.getProductId());
+            product.setName(cartItemResponseDTO.getProductName());
 
-			return orderItem;
-		}).collect(Collectors.toList());
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(product);
+            orderItem.setPrice(cartItemResponseDTO.getCartItemPrice());
+            orderItem.setQuantity(cartItemResponseDTO.getCartItemQuantity());
+            orderItem.setOrder(order);
 
-		log.info("Processed {} order items", orderItems.size());
-		return orderItems;
-	}
+            OrderItemResponseDTO orderItemResponseDTO = new OrderItemResponseDTO();
+            orderItemResponseDTO.setOrderItemPrice(orderItem.getPrice());
+            orderItemResponseDTO.setOrderItemQuantity(orderItem.getQuantity());
+            orderItemResponseDTO.setProductName(cartItemResponseDTO.getProductName());
+            orderItemResponseDTO.setProductCompanyName(cartItemResponseDTO.getProductCompanyName());
 
-	private BigDecimal calculateOrderTotalPrice(List<OrderItem> orderItems) {
-		log.info("Calculating order total price");
+            orderItemResponseDTOs.add(orderItemResponseDTO);
 
-		BigDecimal totalPrice = orderItems.stream().map(OrderItem::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
-		log.info("Calculated total price: {}", totalPrice);
-		return totalPrice;
-	}
+            return orderItem;
+        }).collect(Collectors.toList());
 
-	private void deleteCarts(List<CartItemResponseDTO> cartItems) {
-		log.info("Deleting carts for cartItem IDs: {}", cartItems.stream().map(CartItemResponseDTO::getCartId).collect(Collectors.toList()));
+        log.info("Processed {} order items", orderItems.size());
+        return orderItems;
+    }
 
-		List<Cart> cartsToDelete = cartRepository
-				.findAllById(cartItems.stream().map(CartItemResponseDTO::getCartId).toList());
+    private BigDecimal calculateOrderTotalPrice(List<OrderItem> orderItems) {
+        log.info("Calculating order total price");
 
-		cartRepository.deleteAll(cartsToDelete);
-		log.info("Deleted {} carts", cartsToDelete.size());
-	}
+        BigDecimal totalPrice = orderItems.stream().map(OrderItem::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        log.info("Calculated total price: {}", totalPrice);
+        return totalPrice;
+    }
 
-	@Transactional
-	@Override
-	public ResponseEntity<ApiResponseDTO> deleteOrder(Long orderId) {
-		log.info("Entering deleteOrder method for orderId: {}", orderId);
+    private void deleteCarts(List<CartItemResponseDTO> cartItems) {
+        log.info("Deleting carts for cartItem IDs: {}", cartItems.stream().map(CartItemResponseDTO::getCartId).collect(Collectors.toList()));
 
-		Optional<Order> order = orderRepository.findById(orderId);
+        List<Cart> cartsToDelete = cartRepository
+                .findAllById(cartItems.stream().map(CartItemResponseDTO::getCartId).toList());
 
-		if (order.isEmpty()) {
-			log.error("Order not found with ID: {}", orderId);
-			throw new NotFoundException(NotFoundTypeException.ORDER + " Not Found!");
-		}
+        cartRepository.deleteAll(cartsToDelete);
+        log.info("Deleted {} carts", cartsToDelete.size());
+    }
 
-		orderItemRepository.deleteOrderItemsByOrderId(orderId);
-		orderRepository.deleteOrderById(order.get().getId());
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponseDTO> deleteOrder(Long orderId) {
+        log.info("Entering deleteOrder method for orderId: {}", orderId);
 
-		log.info("Order with ID: {} successfully deleted", orderId);
-		return ResponseEntity.ok(new ApiResponseDTO("Success Delete Order."));
-	}
+        Optional<Order> order = orderRepository.findById(orderId);
+
+        if (order.isEmpty()) {
+            log.error("Order not found with ID: {}", orderId);
+            throw new NotFoundException(NotFoundTypeException.ORDER + " Not Found!");
+        }
+
+        orderItemRepository.deleteOrderItemsByOrderId(orderId);
+        orderRepository.deleteOrderById(order.get().getId());
+
+        log.info("Order with ID: {} successfully deleted", orderId);
+        return ResponseEntity.ok(new ApiResponseDTO("Success Delete Order."));
+    }
+
 }

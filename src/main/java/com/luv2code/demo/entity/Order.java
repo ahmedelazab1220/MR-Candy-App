@@ -22,30 +22,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name="orders")
+@Table(name = "orders")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class Order {
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    private Long id;
+
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-	
-	@Column(name = "createdAt", nullable = false)
+
+    @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "total_price", nullable = false, precision = 30, scale = 2)
     private BigDecimal totalPrice;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.REFRESH,CascadeType.PERSIST} ,orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, orphanRemoval = true)
     private List<OrderItem> orderItems;
-    
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

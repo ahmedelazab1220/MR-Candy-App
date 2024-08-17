@@ -12,25 +12,25 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class LogoutService implements LogoutHandler {
 
-	private final RefreshTokenService refreshTokenService;
-	
-	@Override
-	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    private final RefreshTokenService refreshTokenService;
 
-		String authHeader = request.getHeader("Authorization");
-		String jwt = null;
-		if (authHeader != null && authHeader.startsWith("Bearer ")) {
-			jwt = authHeader.substring(7);
-		}
+    @Override
+    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
-		refreshTokenService.deleteToken(jwt);
+        String authHeader = request.getHeader("Authorization");
+        String jwt = null;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            jwt = authHeader.substring(7);
+        }
 
-		handleLogoutSuccess(request, response);
+        refreshTokenService.deleteToken(jwt);
 
-	}
-	
-	private void handleLogoutSuccess(HttpServletRequest request, HttpServletResponse response) {
-		response.setStatus(HttpServletResponse.SC_OK);
-	}
+        handleLogoutSuccess(request, response);
+
+    }
+
+    private void handleLogoutSuccess(HttpServletRequest request, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_OK);
+    }
 
 }

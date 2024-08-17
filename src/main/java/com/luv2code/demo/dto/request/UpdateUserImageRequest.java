@@ -16,14 +16,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UpdateUserImageRequest {
 
-	@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Invalid email address")
-	@NotBlank
-	private String email;
-	
-	@NotBlank
-	private String oldImageUrl;
-	
-	@NotNull
-	private MultipartFile image;
-	
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@gmail\\.com$", message = "Invalid email address")
+    @NotBlank
+    private String email;
+
+    @NotBlank
+    private String oldImageUrl;
+
+    @NotNull
+    private MultipartFile image;
+
 }

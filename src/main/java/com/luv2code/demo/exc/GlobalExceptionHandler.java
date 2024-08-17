@@ -18,6 +18,7 @@ import org.springframework.web.context.request.WebRequest;
 
 import com.luv2code.demo.exc.custom.NotFoundException;
 import com.luv2code.demo.exc.custom.QuantityNotAvailableException;
+import com.luv2code.demo.exc.custom.CalculationException;
 import com.luv2code.demo.exc.custom.ExpiredException;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -46,8 +47,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException ex, WebRequest request) {
-    	
-    	return ResponseEntity.status(StatusCode.UNAUTHORIZED).body(buildErrorResponse(StatusCode.UNAUTHORIZED, "BadCredentialsException", "Email or password is incorrect.",
+
+        return ResponseEntity.status(StatusCode.UNAUTHORIZED).body(buildErrorResponse(StatusCode.UNAUTHORIZED, "BadCredentialsException", "Email or password is incorrect.",
                 ex.getMessage(), request));
     }
 
@@ -65,8 +66,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleInternalAuthenticationServiceException(InternalAuthenticationServiceException ex,
             WebRequest request) {
         return ResponseEntity.status(StatusCode.UNAUTHORIZED).body(
-        		buildErrorResponse(StatusCode.UNAUTHORIZED, "InternalAuthenticationServiceException", "User Not Found!",
-                ex.getMessage(), request));
+                buildErrorResponse(StatusCode.UNAUTHORIZED, "InternalAuthenticationServiceException", "User Not Found!",
+                        ex.getMessage(), request));
     }
 
     /**
@@ -80,8 +81,9 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(NotFoundException.class)
-    public ErrorResponse handleNotFoundException(NotFoundException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.NOT_FOUND, "NotFoundException", ex.getMessage(), ex.getClass(), request);
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.NOT_FOUND).body(
+                buildErrorResponse(StatusCode.NOT_FOUND, "NotFoundException", ex.getMessage(), ex.getClass(), request));
     }
 
     /**
@@ -95,9 +97,10 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(IOException.class)
-    public ErrorResponse handleIOException(IOException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, "IOException", "File upload failed",
-                ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> handleIOException(IOException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.INTERNAL_SERVER_ERROR).body(
+                buildErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, "IOException", "File upload failed",
+                        ex.getMessage(), request));
     }
 
     /**
@@ -112,7 +115,7 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
 
         Pattern pattern = Pattern.compile("\\[(.*?)\\]");
         Matcher matcher = pattern.matcher(ex.getMessage());
@@ -122,8 +125,9 @@ public class GlobalExceptionHandler {
             message = matcher.group(1);
         }
 
-        return buildErrorResponse(StatusCode.CONFLICT, "DataIntegrityViolationException", message, ex.getClass(),
-                request);
+        return ResponseEntity.status(StatusCode.CONFLICT).body(
+                buildErrorResponse(StatusCode.CONFLICT, "DataIntegrityViolationException", message, ex.getClass(),
+                        request));
     }
 
     /**
@@ -138,15 +142,16 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
 
         String message = ex.getBindingResult().getFieldError().getField();
         String defaultMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
 
         String customMessage = "Validation failed on field '" + message + "': " + defaultMessage;
 
-        return buildErrorResponse(StatusCode.CONFLICT, "MethodArgumentNotValidException", customMessage, ex.getClass(),
-                request);
+        return ResponseEntity.status(StatusCode.CONFLICT).body(
+                buildErrorResponse(StatusCode.CONFLICT, "MethodArgumentNotValidException", customMessage, ex.getClass(),
+                        request));
     }
 
     /**
@@ -160,9 +165,10 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(SignatureException.class)
-    public ErrorResponse handleSignatureException(SignatureException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.FORBIDDEN, "SignatureException", "The JWT signature is invalid.",
-                ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> handleSignatureException(SignatureException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.FORBIDDEN).body(
+                buildErrorResponse(StatusCode.FORBIDDEN, "SignatureException", "The JWT signature is invalid.",
+                        ex.getMessage(), request));
     }
 
     /**
@@ -176,9 +182,10 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(MalformedJwtException.class)
-    public ErrorResponse handleMalformedJwtException(MalformedJwtException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.UNAUTHORIZED, "MalformedJwtException", "Invalid Jwt token.",
-                ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> handleMalformedJwtException(MalformedJwtException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.UNAUTHORIZED).body(
+                buildErrorResponse(StatusCode.UNAUTHORIZED, "MalformedJwtException", "Invalid Jwt token.",
+                        ex.getMessage(), request));
     }
 
     /**
@@ -192,9 +199,10 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(ExpiredJwtException.class)
-    public ErrorResponse handleExpiredJwtxception(ExpiredJwtException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredJwtException", "The JWT token has expired.",
-                ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> handleExpiredJwtxception(ExpiredJwtException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.FORBIDDEN).body(
+                buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredJwtException", "The JWT token has expired.",
+                        ex.getMessage(), request));
     }
 
     /**
@@ -208,9 +216,10 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(AccessDeniedException.class)
-    ErrorResponse handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.FORBIDDEN, "AccessDeniedException", "No Permission.", ex.getMessage(),
-                request);
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.FORBIDDEN).body(
+                buildErrorResponse(StatusCode.FORBIDDEN, "AccessDeniedException", "No Permission.", ex.getMessage(),
+                        request));
     }
 
     /**
@@ -224,10 +233,11 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(InsufficientAuthenticationException.class)
-    public ErrorResponse handleInsufficientAuthenticationException(InsufficientAuthenticationException ex,
+    public ResponseEntity<ErrorResponse> handleInsufficientAuthenticationException(InsufficientAuthenticationException ex,
             WebRequest request) {
-        return buildErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, "InsufficientAuthenticationException",
-                "Login credentials are missing.", ex.getMessage(), request);
+        return ResponseEntity.status(StatusCode.INTERNAL_SERVER_ERROR).body(
+                buildErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, "InsufficientAuthenticationException",
+                        "Login credentials are missing.", ex.getMessage(), request));
     }
 
     /**
@@ -242,8 +252,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        return  ResponseEntity.status(StatusCode.INVALID_ARGUMENT).body(
-        		buildErrorResponse(StatusCode.INVALID_ARGUMENT, "IllegalArgumentException", ex.getMessage(), ex.getClass(), request));
+        return ResponseEntity.status(StatusCode.INVALID_ARGUMENT).body(
+                buildErrorResponse(StatusCode.INVALID_ARGUMENT, "IllegalArgumentException", ex.getMessage(), ex.getClass(), request));
     }
 
     /**
@@ -257,8 +267,9 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ErrorResponse handleMissingServletRequestParameterExceptio(MissingServletRequestParameterException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.INVALID_ARGUMENT, "MissingServletRequestParameterException", ex.getMessage(), ex.getClass(), request);
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterExceptio(MissingServletRequestParameterException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.INVALID_ARGUMENT).body(
+                buildErrorResponse(StatusCode.INVALID_ARGUMENT, "MissingServletRequestParameterException", ex.getMessage(), ex.getClass(), request));
     }
 
     /**
@@ -272,8 +283,9 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(QuantityNotAvailableException.class)
-    public ErrorResponse handleMissingServletRequestParameterExceptio(QuantityNotAvailableException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.INVALID_ARGUMENT, "QuantityNotAvailableException", ex.getMessage(), ex.getClass(), request);
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterExceptio(QuantityNotAvailableException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.INVALID_ARGUMENT).body(
+                buildErrorResponse(StatusCode.INVALID_ARGUMENT, "QuantityNotAvailableException", ex.getMessage(), ex.getClass(), request));
     }
 
     /**
@@ -286,8 +298,9 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(ExpiredException.class)
-    public ErrorResponse handleTokenExpiredException(ExpiredException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredException", ex.getMessage(), ex.getClass(), request);
+    public ResponseEntity<ErrorResponse> handleTokenExpiredException(ExpiredException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.FORBIDDEN).body(
+                buildErrorResponse(StatusCode.FORBIDDEN, "ExpiredException", ex.getMessage(), ex.getClass(), request));
     }
 
     /**
@@ -301,8 +314,25 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(UnexpectedTypeException.class)
-    public ErrorResponse handleUnexpectedTypeException(UnexpectedTypeException ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.FORBIDDEN, "UnexpectedTypeException", ex.getMessage(), ex.getClass(), request);
+    public ResponseEntity<ErrorResponse> handleUnexpectedTypeException(UnexpectedTypeException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.FORBIDDEN).body(
+                buildErrorResponse(StatusCode.FORBIDDEN, "UnexpectedTypeException", ex.getMessage(), ex.getClass(), request));
+    }
+
+    /**
+     * Handles the CalculationException by building an ErrorResponse object with
+     * the appropriate status code, error type, message, and request
+     * information.
+     *
+     * @param ex the CalculationException that was thrown
+     * @param request the WebRequest object containing information about the
+     * request
+     * @return the ErrorResponse object with the appropriate information
+     */
+    @ExceptionHandler(CalculationException.class)
+    public ResponseEntity<ErrorResponse> handleCalculationException(CalculationException ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.INVALID_ARGUMENT).body(
+                buildErrorResponse(StatusCode.INVALID_ARGUMENT, "CalculationException", ex.getMessage(), ex.getClass(), request));
     }
 
     /**
@@ -315,9 +345,10 @@ public class GlobalExceptionHandler {
      * @return the ErrorResponse object with the appropriate information
      */
     @ExceptionHandler(Exception.class)
-    public ErrorResponse handleException(Exception ex, WebRequest request) {
-        return buildErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, "Exception", "An unknown error occurred.",
-                ex.getMessage(), request);
+    public ResponseEntity<ErrorResponse> handleException(Exception ex, WebRequest request) {
+        return ResponseEntity.status(StatusCode.INTERNAL_SERVER_ERROR).body(
+                buildErrorResponse(StatusCode.INTERNAL_SERVER_ERROR, "Exception", "An unknown error occurred.",
+                        ex.getMessage(), request));
     }
 
 }

@@ -774,7 +774,13 @@ class ProductServiceTest {
         verify(productRepository, times(1)).updateProductQuantity(productId, newQuantity);
 
     }
-    
+
+    /**
+     * Tests the getAllDiscountedProduct method of the ProductService class to
+     * ensure it returns a list of all discounted products.
+     *
+     * @return void
+     */
     @Test
     void shouldReturnAllDiscountedProducts() {
 
@@ -788,13 +794,19 @@ class ProductServiceTest {
         assertNotNull(result);
         assertEquals(discountedProductsList, result);
         verify(productRepository, times(1)).findAllProductsWithDiscount();
-        
+
     }
-    
+
+    /**
+     * Tests the getAllDiscountedProduct method of the ProductService class to
+     * ensure it returns an empty list when there are no discounted products.
+     *
+     * @return void
+     */
     @Test
     void shouldReturnEmptyListWhenNoDiscountedProducts() {
-        
-    	List<DiscountedProductsResponseDTO> emptyDiscountedProductsList = List.of();
+
+        List<DiscountedProductsResponseDTO> emptyDiscountedProductsList = List.of();
 
         when(productRepository.findAllProductsWithDiscount()).thenReturn(emptyDiscountedProductsList);
 
@@ -803,13 +815,21 @@ class ProductServiceTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(productRepository, times(1)).findAllProductsWithDiscount();
-        
+
     }
-    
+
+    /**
+     * Test case to verify that the ProductService class handles an exception
+     * when fetching discounted products.
+     *
+     * @return void
+     * @throws RuntimeException if an error occurs while fetching discounted
+     * products
+     */
     @Test
     void shouldHandleExceptionWhenFetchingDiscountedProducts() {
-        
-    	when(productRepository.findAllProductsWithDiscount()).thenThrow(new RuntimeException("Database error"));
+
+        when(productRepository.findAllProductsWithDiscount()).thenThrow(new RuntimeException("Database error"));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             productService.getAllDiscountedProduct();
@@ -817,7 +837,7 @@ class ProductServiceTest {
 
         assertEquals("Database error", exception.getMessage());
         verify(productRepository, times(1)).findAllProductsWithDiscount();
-        
+
     }
 
 }

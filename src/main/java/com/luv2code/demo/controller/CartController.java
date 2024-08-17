@@ -26,34 +26,34 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CartController {
 
-	private final ICartService cartService;
-	
-	@PostMapping("")
-	public CartItemResponseDTO addCartItem(@Valid @RequestBody CartRequestDTO cartRequestDTO) {
-		
-		return cartService.addCartItem(cartRequestDTO);
-		
-	}
-	
-	@DeleteMapping("/{cartId}")
-	public ResponseEntity<ApiResponseDTO> deleteCartItem(@PathVariable(name="cartId" , required = true) Long cartId){
-		
-		return cartService.deleteCartItem(cartId);
-		
-	}
-	
-	@PutMapping("")
-	public ResponseEntity<Map<String, Integer>> updateCartItemQuantity(@RequestParam(required = true) Integer newQuantity ,@RequestParam(required = true) Long cartId){
-		
-		return cartService.updateCartItem(newQuantity, cartId);
-		
-	}
-	
-	@GetMapping("")
-	public ResponseEntity<Map<String, Object>> getAllCartItem(@RequestParam(required = true) String userEmail){
-		
-		return cartService.getAllCartItemsForUserEmail(userEmail);
-		
-	}
-	
+    private final ICartService cartService;
+
+    @PostMapping("")
+    public CartItemResponseDTO addCartItem(@Valid @RequestBody CartRequestDTO cartRequestDTO) {
+
+        return cartService.addCartItem(cartRequestDTO);
+
+    }
+
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<ApiResponseDTO> deleteCartItem(@PathVariable(name = "cartId", required = true) Long cartId) {
+
+        return cartService.deleteCartItem(cartId);
+
+    }
+
+    @PutMapping("")
+    public ResponseEntity<Map<String, Integer>> updateCartItemQuantity(@RequestParam(required = true) Integer newQuantity, @RequestParam(required = true) Long cartId) {
+
+        return cartService.updateCartItem(newQuantity, cartId);
+
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Map<String, Object>> getAllCartItem(@RequestParam(required = true) String userEmail) {
+
+        return cartService.getAllCartItemsForUserEmail(userEmail);
+
+    }
+
 }

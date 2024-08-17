@@ -9,14 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.entity.OrderItem;
 
-
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-	@Modifying
-	@Transactional
+    @Modifying
+    @Transactional
     @Query("DELETE FROM OrderItem oi WHERE oi.order.id = :orderId")
     void deleteOrderItemsByOrderId(@Param("orderId") Long orderId);
-		
-	
+
 }

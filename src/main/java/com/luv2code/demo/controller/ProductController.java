@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -41,7 +42,7 @@ public class ProductController {
         return productService.getTopSevenProductsWithBestSeller();
 
     }
-    
+
     @GetMapping("/discount")
     public List<DiscountedProductsResponseDTO> getAllDiscountedProduct() {
 
@@ -83,6 +84,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{theId}")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<ApiResponseDTO> deleteProduct(@PathVariable(name = "theId", required = true) Long theId) throws IOException {
 
         return productService.deleteProductById(theId);
@@ -90,6 +92,7 @@ public class ProductController {
     }
 
     @PostMapping("")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ProductDetailsResponseDTO createProduct(@Valid @ModelAttribute ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException {
 
         return productService.createProduct(productRequestDTO);
@@ -97,6 +100,7 @@ public class ProductController {
     }
 
     @PutMapping("/{theId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ProductDetailsResponseDTO updateProduct(@PathVariable(name = "theId", required = true) Long theId, @Valid @ModelAttribute ProductRequestDTO productRequestDTO) throws IllegalStateException, IOException {
 
         return productService.updateProductById(theId, productRequestDTO);
