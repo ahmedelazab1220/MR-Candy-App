@@ -10,9 +10,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.luv2code.demo.dto.UserSetterDTO;
 import com.luv2code.demo.dto.response.UserAuthenticationResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
+import com.luv2code.demo.dto.setter.UserSetterDTO;
 import com.luv2code.demo.entity.User;
 
 @Repository

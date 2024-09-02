@@ -6,8 +6,8 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 
 import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
-import com.luv2code.demo.dto.request.UpdateUserImageRequest;
-import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
+import com.luv2code.demo.dto.request.UpdateUserImageRequestDTO;
+import com.luv2code.demo.dto.request.UpdateUserProfileRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.entity.User;
@@ -24,10 +24,10 @@ public interface IUserService {
 
 	ResponseEntity<ApiResponseDTO> deleteUser(String email);
 
-	ResponseEntity<Map<String, String>> updateUserImage(UpdateUserImageRequest updateUserImageRequest)
+	ResponseEntity<Map<String, String>> updateUserImage(UpdateUserImageRequestDTO updateUserImageRequest)
 			throws IOException;
 
-	UpdateUserProfileResponseDTO updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest)
+	UpdateUserProfileResponseDTO updateUserProfile(UpdateUserProfileRequestDTO updateUserProfileRequest)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException;
 
 }

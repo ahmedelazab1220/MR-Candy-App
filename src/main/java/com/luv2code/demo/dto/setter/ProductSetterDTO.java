@@ -1,6 +1,4 @@
-package com.luv2code.demo.dto;
-
-import com.luv2code.demo.entity.Company;
+package com.luv2code.demo.dto.setter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,16 +9,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductCartSetterDTO {
+public class ProductSetterDTO {
 
     private Long id;
 
     private String name;
 
-    private String description;
-
-    private Company company;
-
-    private Integer quantity;
+    private String imageUrl;
 
 }

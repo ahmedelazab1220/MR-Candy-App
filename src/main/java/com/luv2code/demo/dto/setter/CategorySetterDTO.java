@@ -1,4 +1,4 @@
-package com.luv2code.demo.dto;
+package com.luv2code.demo.dto.setter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

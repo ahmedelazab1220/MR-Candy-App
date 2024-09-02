@@ -37,6 +37,7 @@ This project is a comprehensive application built using Spring Boot. It integrat
 - **`Logical Operations`** : For complex business logic.
 - **`Role-Based Access Control`** : Provides different levels of access based on user roles.
 - **`Secure Data Handling`** : Ensures protection against SQL injection and other security threats.
+- **`TOTP Algorithm`** : To Generate Secured Otp.
 - **`Pagination`** : Handles data retrieval efficiently in chunks to improve performance.
 - **`Database Indexs`** : Enhance database query performance by creating indexes on frequently searched columns.
 - **`Stored Procedures`** : Predefined SQL procedures stored in the database to encapsulate complex logic and improve performance.

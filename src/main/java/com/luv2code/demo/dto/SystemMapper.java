@@ -9,13 +9,18 @@ import com.luv2code.demo.dto.request.CategoryRequestDTO;
 import com.luv2code.demo.dto.request.CompanyRequestDTO;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.request.RegisterRequestDTO;
-import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
+import com.luv2code.demo.dto.request.UpdateUserProfileRequestDTO;
 import com.luv2code.demo.dto.response.CategoryResponseDTO;
 import com.luv2code.demo.dto.response.CompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
 import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.dto.response.UserAuthenticationResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
+import com.luv2code.demo.dto.setter.CategorySetterDTO;
+import com.luv2code.demo.dto.setter.CompanySetterDTO;
+import com.luv2code.demo.dto.setter.ProductCartSetterDTO;
+import com.luv2code.demo.dto.setter.ProductSetterDTO;
+import com.luv2code.demo.dto.setter.UserSetterDTO;
 import com.luv2code.demo.entity.Cart;
 import com.luv2code.demo.entity.Category;
 import com.luv2code.demo.entity.Company;
@@ -35,9 +40,9 @@ public interface SystemMapper {
 
     User userSetterDTOTOUser(UserSetterDTO userSetterDTO);
 
-    User updateUserProfileRequestTOUser(UpdateUserProfileRequest updateUserProfileRequest, @MappingTarget User user);
+    User updateUserProfileRequestTOUser(UpdateUserProfileRequestDTO updateUserProfileRequest, @MappingTarget User user);
 
-    UpdateUserProfileResponseDTO updateUserProfileRequestTOUpdateUserProfileResponse(UpdateUserProfileRequest updateUserProfileRequest);
+    UpdateUserProfileResponseDTO updateUserProfileRequestTOUpdateUserProfileResponse(UpdateUserProfileRequestDTO updateUserProfileRequest);
 
     Category categoryRequestDTOTOCategory(CategoryRequestDTO categoryRequestDTO);
 

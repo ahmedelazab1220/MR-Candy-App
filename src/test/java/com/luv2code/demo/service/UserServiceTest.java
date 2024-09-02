@@ -26,8 +26,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.luv2code.demo.dto.SystemMapper;
-import com.luv2code.demo.dto.request.UpdateUserImageRequest;
-import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
+import com.luv2code.demo.dto.request.UpdateUserImageRequestDTO;
+import com.luv2code.demo.dto.request.UpdateUserProfileRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.dto.response.UserTokenResponseDTO;
@@ -325,7 +325,7 @@ public class UserServiceTest {
      */
     @Test
     void shouldUpdateUserImageSuccessfully() throws IOException {
-        UpdateUserImageRequest request = new UpdateUserImageRequest();
+        UpdateUserImageRequestDTO request = new UpdateUserImageRequestDTO();
         request.setEmail("ahmed@gmail.com");
         request.setOldImageUrl(imageUrl);
         request.setImage(multipartFile);
@@ -352,7 +352,7 @@ public class UserServiceTest {
      */
     @Test
     void shouldThrowExceptionWhenImageUploadFails() throws IOException {
-        UpdateUserImageRequest request = new UpdateUserImageRequest();
+        UpdateUserImageRequestDTO request = new UpdateUserImageRequestDTO();
         request.setEmail("ahmed@gmail.com");
         request.setOldImageUrl(imageUrl);
         request.setImage(multipartFile);
@@ -376,7 +376,7 @@ public class UserServiceTest {
      */
     @Test
     void shouldHandleExceptionWhenDeletingOldImageFails() throws IOException {
-        UpdateUserImageRequest request = new UpdateUserImageRequest();
+        UpdateUserImageRequestDTO request = new UpdateUserImageRequestDTO();
         request.setEmail("ahmed@gmail.com");
         request.setOldImageUrl(imageUrl);
         request.setImage(multipartFile);
@@ -399,7 +399,7 @@ public class UserServiceTest {
      */
     @Test
     void shouldUpdateUserProfileSuccessfully() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        UpdateUserProfileRequest request = new UpdateUserProfileRequest();
+        UpdateUserProfileRequestDTO request = new UpdateUserProfileRequestDTO();
         request.setEmail("ahmed@gmail.com");
         request.setCity("Los Angeles");
         request.setState("California");
@@ -438,7 +438,7 @@ public class UserServiceTest {
      */
     @Test
     void shouldThrowNotFoundExceptionWhenUserProfileUpdateUserNotFound() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        UpdateUserProfileRequest request = new UpdateUserProfileRequest();
+        UpdateUserProfileRequestDTO request = new UpdateUserProfileRequestDTO();
         request.setEmail("notfound@gmail.com");
 
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
@@ -461,7 +461,7 @@ public class UserServiceTest {
      */
     @Test
     void shouldHandleExceptionWhenUpdatingUserProfileFails() throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        UpdateUserProfileRequest request = new UpdateUserProfileRequest();
+        UpdateUserProfileRequestDTO request = new UpdateUserProfileRequestDTO();
         request.setEmail("ahmed@gmail.com");
 
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));

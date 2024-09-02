@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ProductRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
@@ -31,6 +30,7 @@ import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
+import com.luv2code.demo.dto.setter.ProductSetterDTO;
 import com.luv2code.demo.entity.Category;
 import com.luv2code.demo.entity.Company;
 import com.luv2code.demo.entity.Product;
@@ -40,7 +40,7 @@ import com.luv2code.demo.service.impl.ProductService;
 import com.luv2code.demo.helper.IFileHelper;
 import com.luv2code.demo.helper.IPaginationHelper;
 
-class ProductServiceTest {
+public class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;

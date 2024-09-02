@@ -1,4 +1,4 @@
-package com.luv2code.demo.dto;
+package com.luv2code.demo.dto.setter;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,12 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductSetterDTO {
+public class UserSetterDTO {
 
     private Long id;
 
-    private String name;
-
-    private String imageUrl;
+    private String email;
 
 }

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,8 +16,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.luv2code.demo.config.filter.JwtAuthenticationFilter;
+import com.luv2code.demo.exc.custom.CustomAccessDeniedHandler;
 import com.luv2code.demo.exc.custom.CustomAuthenticationEntryPoint;
-import com.luv2code.demo.filter.JwtAuthenticationFilter;
 import com.luv2code.demo.service.impl.UserDetailService;
 
 import lombok.AllArgsConstructor;
@@ -27,43 +29,46 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SecurityConfiguration {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final UserDetailService userService;
-    private final CustomAuthenticationEntryPoint authEntry;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final UserDetailService userService;
+	private final CustomAuthenticationEntryPoint authEntry;
+	private final CustomAccessDeniedHandler accessHandler;
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	@Bean
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(request -> request
-                .requestMatchers("${api.version}/auth/**", "${api.version}/files/**", "${api.version}/otps/**")
-                .permitAll().anyRequest().authenticated())
-                .authenticationProvider(authenticationProvider())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(this.authEntry))
-                .logout(logout -> logout.logoutSuccessUrl("/api/v1/auth/logout"));
+		http.csrf(csrf -> csrf.disable())
+				.authorizeHttpRequests(
+						request -> request.requestMatchers("/api/v1/auth/**", "/api/v1/files/**", "/api/v1/otps/**")
+								.permitAll().anyRequest().authenticated())
+				.authenticationProvider(authenticationProvider())
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.exceptionHandling(ex -> ex.authenticationEntryPoint(this.authEntry))
+				.exceptionHandling(ex -> ex.accessDeniedHandler(this.accessHandler))
+				.cors(Customizer.withDefaults())
+				.logout(logout -> logout.logoutSuccessUrl("/api/v1/auth/logout"));
 
-        return http.build();
+		return http.build();
 
-    }
+	}
 
-    @Bean
-    AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+	@Bean
+	AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(userService);
+		provider.setPasswordEncoder(passwordEncoder());
+		return provider;
+	}
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+	@Bean
+	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
 
 }

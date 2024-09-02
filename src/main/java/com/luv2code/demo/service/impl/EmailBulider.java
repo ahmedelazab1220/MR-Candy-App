@@ -42,7 +42,7 @@ public class EmailBulider implements IEmailBulider {
                 + "        <div class=\"content fadeInScale\">\r\n" + "            <p>Dear Friend,</p>\r\n"
                 + "            <p>Your One-Time Password (OTP) is:</p>\r\n" + "            <p class=\"otp\"> " + otp
                 + " </p>\r\n"
-                + "            <p>Please use this code to complete your verification. The code is valid for 5 minutes.</p>\r\n"
+                + "            <p>Please use this code to complete your verification. The code is valid for 2 minutes.</p>\r\n"
                 + "        </div>\r\n" + "        <div class=\"footer\">\r\n"
                 + "            <p>If you did not request this code, please ignore this email.</p>\r\n"
                 + "        </div>\r\n" + "    </div>\r\n" + "</body>\r\n" + "</html>";

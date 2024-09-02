@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.helper.IFileHelper;
 import com.luv2code.demo.utils.FileUtils;
 
@@ -64,21 +66,35 @@ public class FileHelper implements IFileHelper {
     }
 
     @Override
-    public ResponseEntity<?> downloadImageFromFileSystem(String imageUrl) throws IOException {
-
+    public ResponseEntity<?> downloadImageFromFileSystem(String imageUrl) {
         try {
             log.info("Attempting to download file from {}", imageUrl);
-            byte[] compressedFileData = Files.readAllBytes(new File(imageUrl).toPath());
+            
+            Path filePath = new File(imageUrl).toPath();
+            
+            if (!Files.exists(filePath)) {
+                log.warn("File not found at {}", imageUrl);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponseDTO("File not found"));
+            }
+            
+            byte[] compressedFileData = Files.readAllBytes(filePath);
             byte[] decompressedFileData = FileUtils.decompressFile(compressedFileData);
+            
             log.info("File downloaded successfully from {}", imageUrl);
-            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/png"))
+            return ResponseEntity.status(HttpStatus.OK)
+                    .contentType(MediaType.valueOf("image/png"))
                     .body(decompressedFileData);
+            
         } catch (FileNotFoundException e) {
             log.warn("File not found at {}", imageUrl);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDTO("File not found"));
+            
         } catch (IOException e) {
             log.error("Error reading file from {}", imageUrl, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reading file");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponseDTO("Error reading file"));
         }
     }
 

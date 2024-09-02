@@ -13,14 +13,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.luv2code.demo.dto.ProductCartSetterDTO;
-import com.luv2code.demo.dto.ProductSetterDTO;
 import com.luv2code.demo.dto.response.DiscountedProductsResponseDTO;
 import com.luv2code.demo.dto.response.ProductBestSellerResponseDTO;
 import com.luv2code.demo.dto.response.ProductCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCategoryResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsCompanyResponseDTO;
 import com.luv2code.demo.dto.response.ProductDetailsResponseDTO;
+import com.luv2code.demo.dto.setter.ProductCartSetterDTO;
+import com.luv2code.demo.dto.setter.ProductSetterDTO;
 import com.luv2code.demo.entity.Product;
 
 @Repository

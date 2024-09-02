@@ -1,4 +1,4 @@
-package com.luv2code.demo.filter;
+package com.luv2code.demo.config.filter;
 
 import java.io.IOException;
 

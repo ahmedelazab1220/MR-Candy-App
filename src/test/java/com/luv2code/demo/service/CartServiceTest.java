@@ -114,7 +114,7 @@ class CartServiceTest {
                 () -> assertEquals(product.getDescription(), responseDTO.getProductDescription()),
                 () -> assertEquals(product.getCompany().getName(), responseDTO.getProductCompanyName()),
                 () -> assertEquals(cartRequestDTO.getCartItems().getQuantity(), responseDTO.getCartItemQuantity()),
-                () -> assertEquals(cartRequestDTO.getCartItems().getPrice(), responseDTO.getCartItemPrice()),
+                () -> assertEquals(PRODUCT_PRICE.add(new BigDecimal(40)), responseDTO.getCartItemPrice()),
                 () -> assertEquals(cart.getId(), responseDTO.getCartId())
         );
 

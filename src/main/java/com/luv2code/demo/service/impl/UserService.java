@@ -12,8 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.luv2code.demo.dto.SystemMapper;
 import com.luv2code.demo.dto.request.ChangePasswordRequestDTO;
-import com.luv2code.demo.dto.request.UpdateUserImageRequest;
-import com.luv2code.demo.dto.request.UpdateUserProfileRequest;
+import com.luv2code.demo.dto.request.UpdateUserImageRequestDTO;
+import com.luv2code.demo.dto.request.UpdateUserProfileRequestDTO;
 import com.luv2code.demo.dto.response.ApiResponseDTO;
 import com.luv2code.demo.dto.response.UpdateUserProfileResponseDTO;
 import com.luv2code.demo.entity.User;
@@ -150,7 +150,7 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public ResponseEntity<Map<String, String>> updateUserImage(UpdateUserImageRequest updateUserImageRequest)
+    public ResponseEntity<Map<String, String>> updateUserImage(UpdateUserImageRequestDTO updateUserImageRequest)
             throws IOException {
         log.info("Entering updateUserImage method with email: {}", updateUserImageRequest.getEmail());
 
@@ -174,7 +174,7 @@ public class UserService implements IUserService {
 
     @Transactional
     @Override
-    public UpdateUserProfileResponseDTO updateUserProfile(UpdateUserProfileRequest updateUserProfileRequest)
+    public UpdateUserProfileResponseDTO updateUserProfile(UpdateUserProfileRequestDTO updateUserProfileRequest)
             throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         log.info("Entering updateUserProfile method with email: {}", updateUserProfileRequest.getEmail());
 
