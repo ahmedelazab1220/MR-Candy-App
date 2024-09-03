@@ -46,7 +46,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u.password FROM User u WHERE u.email = :email")
     Optional<String> findUserPasswordByEmail(@Param("email") String email);
 
-    @Query("SELECT new com.luv2code.demo.dto.UserSetterDTO(u.id, u.email) FROM User u WHERE u.email = :email")
+    @Query("SELECT new com.luv2code.demo.dto.setter.UserSetterDTO(u.id, u.email) FROM User u WHERE u.email = :email")
     Optional<UserSetterDTO> findUserSetterByEmail(@Param("email") String email);
 
 }
