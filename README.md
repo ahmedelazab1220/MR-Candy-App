@@ -24,6 +24,7 @@ This project is a comprehensive application built using Spring Boot. It integrat
 - **`Spring Validation`** : For validating user inputs.
 - **`DTO (Data Transfer Objects)`** : For data transfer between layers.
 - **`Projection`** : For retrieving specific data from repositories.
+- **`Async Programming`** : allowing the execution of tasks asynchronously to improve performance and responsiveness.
 - **`SQL Injection Protection`** : Safeguarding against SQL injection attacks.
 - **`Pagination`** : Efficiently handles large data sets by retrieving data in chunks.
 
@@ -49,136 +50,138 @@ This project is a comprehensive application built using Spring Boot. It integrat
 MR-Candy-App
 │
 ├── src
-│ ├── main
-│ │ ├── java
-│ │ │ └── com
-│ │ │ └── luv2code
-│ │ │ └── demo
-│ │ │ ├── config
-│ │ │ │ ├── FirebaseConfiguration.java
-│ │ │ │ ├── SecurityConfiguration.java
-│ │ │ │ └── MrCandyAppApplication.java
-│ │ │ ├── controller
-│ │ │ │ ├── AuthenticationController.java
-│ │ │ │ ├── CartController.java
-│ │ │ │ ├── CategoryController.java
-│ │ │ │ ├── CompanyController.java
-│ │ │ │ ├── FileController.java
-│ │ │ │ ├── NotificationController.java
-│ │ │ │ ├── OrderController.java
-│ │ │ │ ├── OtpController.java
-│ │ │ │ ├── ProductController.java
-│ │ │ │ └── UserController.java
-│ │ │ ├── dto
-│ │ │ │ ├── request
-│ │ │ │ │ ├── CartItemRequestDTO.java
-│ │ │ │ │ ├── CartRequestDTO.java
-│ │ │ │ │ ├── ChangePasswordRequestDTO.java
-│ │ │ │ │ ├── CompanyRequestDTO.java
-│ │ │ │ │ ├── LoginRequestDTO.java
-│ │ │ │ │ ├── RegisterRequestDTO.java
-│ │ │ │ │ ├── UpdateUserRequestDTO.java
-│ │ │ │ │ └── UpdateUserProfileRequestDTO.java
-│ │ │ │ ├── response
-│ │ │ │ │ ├── ApiResponseDTO.java
-│ │ │ │ │ ├── CartItemResponseDTO.java
-│ │ │ │ │ ├── CategoryResponseDTO.java
-│ │ │ │ │ ├── CompanyResponseDTO.java
-│ │ │ │ │ ├── DiscountedProductsResponseDTO.java
-│ │ │ │ │ ├── JwtResponseDTO.java
-│ │ │ │ │ ├── OrderItemResponseDTO.java
-│ │ │ │ │ ├── ProductBestSellerResponseDTO.java
-│ │ │ │ │ ├── ProductCompanyResponseDTO.java
-│ │ │ │ │ ├── ProductDetailsCategoryResponseDTO.java
-│ │ │ │ │ ├── ProductDetailsCompanyResponseDTO.java
-│ │ │ │ │ ├── ProductDetailsResponseDTO.java
-│ │ │ │ │ ├── UpdateUserProfileResponseDTO.java
-│ │ │ │ │ ├── UserAuthenticationResponseDTO.java
-│ │ │ │ │ └── UserTokenResponseDTO.java
-│ │ │ │ ├── CategorySetterDTO.java
-│ │ │ │ ├── CompanySetterDTO.java
-│ │ │ │ ├── NotificationMessage.java
-│ │ │ │ ├── ProductCartSetterDTO.java
-│ │ │ │ ├── ProductGetterDTO.java
-│ │ │ │ ├── ProductSetterDTO.java
-│ │ │ │ ├── SystemMapper.java
-│ │ │ │ └── UserSetterDTO.java
-│ │ │ ├── entity
-│ │ │ │ ├── Address.java
-│ │ │ │ ├── Cart.java
-│ │ │ │ ├── CartItem.java
-│ │ │ │ ├── Category.java
-│ │ │ │ ├── Company.java
-│ │ │ │ ├── Order.java
-│ │ │ │ ├── OrderItem.java
-│ │ │ │ ├── Otp.java
-│ │ │ │ ├── Product.java
-│ │ │ │ ├── RefreshToken.java
-│ │ │ │ ├── Role.java
-│ │ │ │ └── User.java
-│ │ │ ├── exc
-│ │ │ │ ├── ErrorResponse.java
-│ │ │ │ ├── GlobalExceptionHandler.java
-│ │ │ │ ├── StatusCode.java
-│ │ │ │ ├── CalculationException.java
-│ │ │ │ ├── CustomAuthenticationEntryPoint.java
-│ │ │ │ ├── ExpiredException.java
-│ │ │ │ ├── NotFoundException.java
-│ │ │ │ ├── NotFoundTypeException.java
-│ │ │ │ └── QuantityNotAvailableException.java
-│ │ │ ├── filter
-│ │ │ │ └── JwtAuthenticationFilter.java
-│ │ │ ├── helper
-│ │ │ │ ├── FileHelper.java
-│ │ │ │ ├── OtpGenerator.java
-│ │ │ │ ├── PaginationHelper.java
-│ │ │ │ ├── SecretKeyGenerator.java
-│ │ │ │ └── impl
-│ │ │ │ ├── FileHelper.java
-│ │ │ │ ├── OtpGenerator.java
-│ │ │ │ └── PaginationHelper.java
-│ │ │ ├── repository
-│ │ │ │ ├── CartRepository.java
-│ │ │ │ ├── CategoryRepository.java
-│ │ │ │ ├── CompanyRepository.java
-│ │ │ │ ├── OrderItemRepository.java
-│ │ │ │ ├── OrderRepository.java
-│ │ │ │ ├── OtpRepository.java
-│ │ │ │ ├── ProductRepository.java
-│ │ │ │ ├── RefreshTokenRepository.java
-│ │ │ │ ├── RoleRepository.java
-│ │ │ │ └── UserRepository.java
-│ │ │ ├── security
-│ │ │ │ └── SecurityUser.java
-│ │ │ ├── service
-│ │ │ │ ├── IAuthenticationService.java
-│ │ │ │ ├── ICartService.java
-│ │ │ │ ├── ICategoryService.java
-│ │ │ │ ├── ICompanyService.java
-│ │ │ │ ├── IEmailService.java
-│ │ │ │ ├── IOrderService.java
-│ │ │ │ ├── IProductService.java
-│ │ │ │ ├── IRefreshTokenService.java
-│ │ │ │ ├── IUserService.java
-│ │ │ │ └── impl
-│ │ │ │ ├── AuthenticationService.java
-│ │ │ │ ├── CartService.java
-│ │ │ │ ├── CategoryService.java
-│ │ │ │ ├── CompanyService.java
-│ │ │ │ ├── EmailService.java
-│ │ │ │ ├── FirebaseMessagingService.java
-│ │ │ │ ├── JwtService.java
-│ │ │ │ ├── LogoutService.java
-│ │ │ │ ├── OrderService.java
-│ │ │ │ ├── OtpService.java
-│ │ │ │ ├── ProductService.java
-│ │ │ │ ├── RefreshTokenService.java
-│ │ │ │ └── UserService.java
-│ │ │ ├── utils
-│ │ │ │ └── FileUtils.java
-│ │ └── resources
-│ │ └── application.properties
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── luv2code
+│   │   │           └── demo
+│   │   │               ├── config
+│   │   │               │   ├── FirebaseConfiguration.java
+│   │   │               │   ├── SecurityConfiguration.java
+│   │   │               │   └── MrCandyAppApplication.java
+│   │   │               │   └── filter
+│   │   │               │       └── JwtAuthenticationFilter.java
+│   │   │               ├── controller
+│   │   │               │   ├── AuthenticationController.java
+│   │   │               │   ├── CartController.java
+│   │   │               │   ├── CategoryController.java
+│   │   │               │   ├── CompanyController.java
+│   │   │               │   ├── FileController.java
+│   │   │               │   ├── NotificationController.java
+│   │   │               │   ├── OrderController.java
+│   │   │               │   ├── OtpController.java
+│   │   │               │   ├── ProductController.java
+│   │   │               │   └── UserController.java
+│   │   │               ├── dto
+│   │   │               │   ├── request
+│   │   │               │   │   ├── CartItemRequestDTO.java
+│   │   │               │   │   ├── CartRequestDTO.java
+│   │   │               │   │   ├── ChangePasswordRequestDTO.java
+│   │   │               │   │   ├── CompanyRequestDTO.java
+│   │   │               │   │   ├── LoginRequestDTO.java
+│   │   │               │   │   ├── RegisterRequestDTO.java
+│   │   │               │   │   ├── UpdateUserRequestDTO.java
+│   │   │               │   │   └── UpdateUserProfileRequestDTO.java
+│   │   │               │   ├── response
+│   │   │               │   │   ├── ApiResponseDTO.java
+│   │   │               │   │   ├── CartItemResponseDTO.java
+│   │   │               │   │   ├── CategoryResponseDTO.java
+│   │   │               │   │   ├── CompanyResponseDTO.java
+│   │   │               │   │   ├── DiscountedProductsResponseDTO.java
+│   │   │               │   │   ├── JwtResponseDTO.java
+│   │   │               │   │   ├── OrderItemResponseDTO.java
+│   │   │               │   │   ├── ProductBestSellerResponseDTO.java
+│   │   │               │   │   ├── ProductCompanyResponseDTO.java
+│   │   │               │   │   ├── ProductDetailsCategoryResponseDTO.java
+│   │   │               │   │   ├── ProductDetailsCompanyResponseDTO.java
+│   │   │               │   │   ├── ProductDetailsResponseDTO.java
+│   │   │               │   │   ├── UpdateUserProfileResponseDTO.java
+│   │   │               │   │   ├── UserAuthenticationResponseDTO.java
+│   │   │               │   │   └── UserTokenResponseDTO.java
+│   │   │               │   ├── setter
+│   │   │               │   │   ├── CategorySetterDTO.java
+│   │   │               │   │   ├── CompanySetterDTO.java
+│   │   │               │   │   ├── ProductCartSetterDTO.java
+│   │   │               │   │   ├── ProductSetterDTO.java
+│   │   │               │   │   └── UserSetterDTO.java
+│   │   │               │   ├── NotificationMessage.java
+│   │   │               │   ├── ProductGetterDTO.java
+│   │   │               │   ├── SystemMapper.java
+│   │   │               ├── entity
+│   │   │               │   ├── Address.java
+│   │   │               │   ├── Cart.java
+│   │   │               │   ├── CartItem.java
+│   │   │               │   ├── Category.java
+│   │   │               │   ├── Company.java
+│   │   │               │   ├── Order.java
+│   │   │               │   ├── OrderItem.java
+│   │   │               │   ├── Otp.java
+│   │   │               │   ├── Product.java
+│   │   │               │   ├── RefreshToken.java
+│   │   │               │   ├── Role.java
+│   │   │               │   └── User.java
+│   │   │               ├── exc
+│   │   │               │   ├── ErrorResponse.java
+│   │   │               │   ├── GlobalExceptionHandler.java
+│   │   │               │   ├── StatusCode.java
+│   │   │               │   ├── CalculationException.java
+│   │   │               │   ├── CustomAuthenticationEntryPoint.java
+│   │   │               │   ├── ExpiredException.java
+│   │   │               │   ├── NotFoundException.java
+│   │   │               │   ├── NotFoundTypeException.java
+│   │   │               │   └── QuantityNotAvailableException.java
+│   │   │               ├── helper
+│   │   │               │   ├── FileHelper.java
+│   │   │               │   ├── OtpGenerator.java
+│   │   │               │   ├── PaginationHelper.java
+│   │   │               │   ├── SecretKeyGenerator.java
+│   │   │               │   └── impl
+│   │   │               │       ├── FileHelper.java
+│   │   │               │       ├── OtpGenerator.java
+│   │   │               │       └── PaginationHelper.java
+│   │   │               ├── repository
+│   │   │               │   ├── CartRepository.java
+│   │   │               │   ├── CategoryRepository.java
+│   │   │               │   ├── CompanyRepository.java
+│   │   │               │   ├── OrderItemRepository.java
+│   │   │               │   ├── OrderRepository.java
+│   │   │               │   ├── OtpRepository.java
+│   │   │               │   ├── ProductRepository.java
+│   │   │               │   ├── RefreshTokenRepository.java
+│   │   │               │   ├── RoleRepository.java
+│   │   │               │   └── UserRepository.java
+│   │   │               ├── security
+│   │   │               │   └── SecurityUser.java
+│   │   │               ├── service
+│   │   │               │   ├── IAuthenticationService.java
+│   │   │               │   ├── ICartService.java
+│   │   │               │   ├── ICategoryService.java
+│   │   │               │   ├── ICompanyService.java
+│   │   │               │   ├── IEmailService.java
+│   │   │               │   ├── IOrderService.java
+│   │   │               │   ├── IProductService.java
+│   │   │               │   ├── IRefreshTokenService.java
+│   │   │               │   ├── IUserService.java
+│   │   │               │   └── impl
+│   │   │               │       ├── AuthenticationService.java
+│   │   │               │       ├── CartService.java
+│   │   │               │       ├── CategoryService.java
+│   │   │               │       ├── CompanyService.java
+│   │   │               │       ├── EmailService.java
+│   │   │               │       ├── FirebaseMessagingService.java
+│   │   │               │       ├── JwtService.java
+│   │   │               │       ├── LogoutService.java
+│   │   │               │       ├── OrderService.java
+│   │   │               │       ├── OtpService.java
+│   │   │               │       ├── ProductService.java
+│   │   │               │       ├── RefreshTokenService.java
+│   │   │               │       └── UserService.java
+│   │   │               ├── utils
+│   │   │               │   └── FileUtils.java
+│   │   └── resources
+│   │       └── application.properties
 └── pom.xml
+
 
 ```
 
@@ -212,6 +215,10 @@ MR-Candy-App
 
   - mvn clean install
   - mvn spring-boot:run
+
+## Verification Mail (OTP)
+
+![VerificationCode](https://github.com/user-attachments/assets/cc48b98a-d100-4374-b219-4fc57e7f77b8)
 
 ## Entity RelationShip Diagram(ERD)
 
