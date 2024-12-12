@@ -8,6 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+<<<<<<< HEAD
+=======
+import org.springframework.beans.factory.annotation.Value;
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +28,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class FileHelper implements IFileHelper {
 
+<<<<<<< HEAD
+=======
+    @Value("${file.path}")
+    private String FOLDER_PATH;
+
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
     @Override
     public String uploadFileToFileSystem(MultipartFile file) throws IllegalStateException, IOException {
 
@@ -40,8 +50,19 @@ public class FileHelper implements IFileHelper {
             throw new IllegalArgumentException("Only PNG, JPEG, JPG, and SVG images are supported");
         }
 
+<<<<<<< HEAD
         String sanitizedFilename = Paths.get(file.getOriginalFilename()).getFileName().toString();
         String imageUrl = UUID.randomUUID().toString() + " - " + sanitizedFilename;
+=======
+        File directory = new File(FOLDER_PATH);
+        if (!directory.exists()) {
+            log.info("Directory {} does not exist, creating it", FOLDER_PATH);
+            directory.mkdirs();
+        }
+
+        String sanitizedFilename = Paths.get(file.getOriginalFilename()).getFileName().toString();
+        String imageUrl = FOLDER_PATH + UUID.randomUUID().toString() + " - " + sanitizedFilename;
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 
         try {
             byte[] compressedFileData = FileUtils.compressFile(file.getBytes());

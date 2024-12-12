@@ -21,12 +21,20 @@ import com.luv2code.demo.exc.custom.CustomAccessDeniedHandler;
 import com.luv2code.demo.exc.custom.CustomAuthenticationEntryPoint;
 import com.luv2code.demo.service.impl.UserDetailService;
 
+<<<<<<< HEAD
 import lombok.RequiredArgsConstructor;
+=======
+import lombok.AllArgsConstructor;
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+<<<<<<< HEAD
 @RequiredArgsConstructor
+=======
+@AllArgsConstructor
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 public class SecurityConfiguration {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -39,7 +47,11 @@ public class SecurityConfiguration {
 
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
+<<<<<<< HEAD
 						request -> request.requestMatchers("/api/v1/auth/**", "/api/v1/files/**", "/api/v1/otps/**" , "/actuator" , "/actuator/prometheus" , "/actuator/health")
+=======
+						request -> request.requestMatchers("/api/v1/auth/**", "/api/v1/files/**", "/api/v1/otps/**")
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 								.permitAll().anyRequest().authenticated())
 				.authenticationProvider(authenticationProvider())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

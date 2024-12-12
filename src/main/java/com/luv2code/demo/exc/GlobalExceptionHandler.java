@@ -25,10 +25,15 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.validation.UnexpectedTypeException;
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
+=======
+
+@RestControllerAdvice
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 public class GlobalExceptionHandler {
 
     private ErrorResponse buildErrorResponse(int statusCode, String errorType, String message, Object details,
@@ -185,7 +190,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MalformedJwtException.class)
     public ResponseEntity<ErrorResponse> handleMalformedJwtException(MalformedJwtException ex, WebRequest request) {
+<<<<<<< HEAD
     	log.info(ex.getMessage());
+=======
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
         return ResponseEntity.status(StatusCode.UNAUTHORIZED).body(
                 buildErrorResponse(StatusCode.UNAUTHORIZED, "MalformedJwtException", "Invalid Jwt token.",
                         ex.getMessage(), request));
