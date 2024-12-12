@@ -1,8 +1,14 @@
 {"properties": [
   {
+<<<<<<< HEAD
     "name": "api.version",
     "type": "java.lang.String",
     "description": "A description for 'api.version'"
+=======
+    "name": "security.jwt.expiration-time",
+    "type": "java.lang.String",
+    "description": "A description for 'security.jwt.expiration-time'"
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
   },
   {
     "name": "file.path",
@@ -20,6 +26,7 @@
     "description": "A description for 'security.jwt.secret-key'"
   },
   {
+<<<<<<< HEAD
     "name": "origin.allowed",
     "type": "java.lang.String",
     "description": "A description for 'origin.allowed'"
@@ -28,5 +35,10 @@
     "name": "security.jwt.expiration-time",
     "type": "java.lang.String",
     "description": "A description for 'security.jwt.expiration-time'"
+=======
+    "name": "api.version",
+    "type": "java.lang.String",
+    "description": "A description for 'api.version'"
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
   }
 ]}

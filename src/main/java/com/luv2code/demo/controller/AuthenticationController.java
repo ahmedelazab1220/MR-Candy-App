@@ -23,10 +23,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+<<<<<<< HEAD
+=======
+import lombok.extern.slf4j.Slf4j;
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 
 @RestController
 @RequestMapping("${api.version}/auth")
 @AllArgsConstructor
+<<<<<<< HEAD
+=======
+@Slf4j
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
 public class AuthenticationController {
 
     private final IAuthenticationService authenticationService;
@@ -37,6 +45,11 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponseDTO> register(@Valid @ModelAttribute RegisterRequestDTO registerRequestDTO)
             throws IOException {
 
+<<<<<<< HEAD
+=======
+        log.info(" - " + registerRequestDTO.getAddress().getStreet());
+
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
         return authenticationService.register(registerRequestDTO);
 
     }

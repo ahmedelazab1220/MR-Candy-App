@@ -28,11 +28,19 @@ public class ProductRequestDTO {
 
     @NotNull
     private Integer quantity;
+<<<<<<< HEAD
     
     private String discount;
     
     private String size;
     
+=======
+
+    private String discount;
+
+    private String size;
+
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
     private String type;
 
     @NotNull

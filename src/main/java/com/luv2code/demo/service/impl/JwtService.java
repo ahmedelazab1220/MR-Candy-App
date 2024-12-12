@@ -27,6 +27,10 @@ public class JwtService implements IJwtService {
     private String secretKey;
 
     @Value("${security.jwt.expiration-time}")
+<<<<<<< HEAD
+=======
+
+>>>>>>> b2e1a2adae492c6e2275b769dc62c699f10883e1
     private long jwtExpiration;
 
     @Value("${security.jwt.refresh-token.expiration-time}")
