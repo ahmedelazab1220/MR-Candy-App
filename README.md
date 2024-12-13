@@ -11,7 +11,7 @@ This project is a comprehensive application built using Spring Boot. It integrat
 - **`Spring Security`** : Utilized along with JSON Web Tokens (`JWT`) for secure access to the application's endpoints.
 - **`JUnit & Mockito`** : Testing frameworks for unit and integration tests.
 - **`Firebase`** : Integration for notifications and additional services.
-- **`Logging`** : For application-level logging.
+- **`Logging with MDC (Mapped Diagnostic Context)`**: Enhanced structured logging to track request and session-specific data across logs.
 - **`HikariCP`** : High-performance JDBC connection pool.
 - **`Spring Batch`** : Handles batch processing tasks efficiently.
 - **`MySQL`** : A reliable relational database management system used for storing the application's data.
@@ -27,6 +27,9 @@ This project is a comprehensive application built using Spring Boot. It integrat
 - **`Async Programming`** : allowing the execution of tasks asynchronously to improve performance and responsiveness.
 - **`SQL Injection Protection`** : Safeguarding against SQL injection attacks.
 - **`Pagination`** : Efficiently handles large data sets by retrieving data in chunks.
+- **`Docker`** : Used for containerizing applications to ensure consistent environments across development, testing, and production.
+- **`Grafana`** : A visualization and analytics tool integrated with Prometheus for application monitoring.
+- **`Prometheus`** : Collects and stores metrics for performance monitoring and alerting.
 
 ## Features
 
@@ -42,6 +45,9 @@ This project is a comprehensive application built using Spring Boot. It integrat
 - **`Pagination`** : Handles data retrieval efficiently in chunks to improve performance.
 - **`Database Indexs`** : Enhance database query performance by creating indexes on frequently searched columns.
 - **`Stored Procedures`** : Predefined SQL procedures stored in the database to encapsulate complex logic and improve performance.
+- **`Monitoring with Grafana and Prometheus`** : Provides real-time application monitoring, metrics collection, and alerting.
+- **`Enhanced Logging with MDC`** : Tracks context-specific data, such as user sessions and request IDs, for detailed and actionable logs.
+- **`Dockerized Environment`** : Ensures consistent development and deployment environments.
 
 ## Project Structure
 
@@ -223,6 +229,14 @@ MR-Candy-App
 ## Entity RelationShip Diagram(ERD)
 
 ![ERD](https://github.com/user-attachments/assets/8b340597-9f37-44da-86ae-1926512231c7)
+
+## Grafana Dashboard
+
+![grafana-dashboard-view-one](https://github.com/user-attachments/assets/68430432-4b92-4d1c-846b-361ba4e1d00e)
+
+![grafana-dashboard-view-two](https://github.com/user-attachments/assets/9031777d-6525-4a10-948c-fb6a9f9b2f44)
+
+![grafana-dashboard-view-three](https://github.com/user-attachments/assets/e5d9f84a-8b2d-481b-8cfb-2cb0749186f9)
 
 ## License
 
